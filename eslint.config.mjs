@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Reference prototype — kept as-is, not part of the app source.
+    "docs/**",
   ]),
 ]);
 
