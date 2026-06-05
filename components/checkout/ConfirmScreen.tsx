@@ -11,6 +11,7 @@ import { Img } from '@/components/ui/Img';
 import { rupee } from '@/components/ui/Price';
 import { catOf, find } from '@/lib/data';
 import { db } from '@/lib/firebase/client';
+import { stageFromStatus } from '@/lib/orders';
 import { routes } from '@/lib/routes';
 import type { Order } from '@/lib/types';
 import { useAuth } from '@/store/auth';
@@ -28,7 +29,6 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
   const { user } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing'>('loading');
-  const [stage, setStage] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -50,13 +50,6 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
       active = false;
     };
   }, [orderId]);
-
-  // Animate tracking progress for the demo.
-  useEffect(() => {
-    if (status !== 'ready') return;
-    const timers = [setTimeout(() => setStage(1), 1600), setTimeout(() => setStage(2), 3400)];
-    return () => timers.forEach(clearTimeout);
-  }, [status]);
 
   if (status === 'loading') {
     return (
@@ -81,6 +74,8 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
       </div>
     );
   }
+
+  const stage = stageFromStatus(order.status);
 
   return (
     <div className="page confirm">

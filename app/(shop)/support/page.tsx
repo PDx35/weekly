@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { SupportScreen } from '@/components/support/SupportScreen';
 
-export const metadata: Metadata = { title: 'Support' };
+export const metadata: Metadata = {
+  title: 'Support',
+  description: 'Get help with FreshMart orders, refunds, payments, and more.',
+};
 
 export default function SupportPage() {
-  return (
-    <Placeholder
-      title="Support"
-      icon="info"
-      heading="The support centre is coming"
-      sub="FAQ and a ticket form arrive in Sprint 5."
-    />
-  );
+  return <SupportScreen />;
 }

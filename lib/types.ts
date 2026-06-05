@@ -145,6 +145,19 @@ export interface Order {
   eta: number;
 }
 
+/** A customer support ticket. */
+export interface SupportTicket {
+  /** Generated display id, e.g. "SR48213". */
+  ticketId: string;
+  /** Owner uid, or `null` for a guest. */
+  uid: string | null;
+  topic: string;
+  /** Optional related order id. */
+  orderId: string;
+  message: string;
+  status: 'open' | 'resolved';
+}
+
 /**
  * A stop on the travelling weekly market ("haat"). The market visits a fixed
  * place on a fixed weekday, every week; orders delivered to that pincode on that
