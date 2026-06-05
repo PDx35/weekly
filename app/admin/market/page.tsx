@@ -44,8 +44,10 @@ function Market() {
     try {
       const list = await listAll<AdminMarketStop>('weeklyMarket');
       setItems(list.sort((a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7)));
-    } catch {
-      setError('Could not load market stops. Check admin access and Firestore rules.');
+    } catch (e) {
+      const err = e as { code?: string; message?: string };
+      console.error('weeklyMarket load failed:', e);
+      setError(`Could not load market stops — ${err.code ?? err.message ?? 'unknown error'}`);
     } finally {
       setLoading(false);
     }

@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "502247608063",
+    "project_id": "food-54848",
+    "storage_bucket": "food-54848.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502247608063:android:70686e7b197f422da606ca",
+        "android_client_info": {
+          "package_name": "com.freshmart.delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqqT_UjQqIiX-C1lN3x5wT2I-6e-DbtuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502247608063:android:991a5cc2c4a44859a606ca",
+        "android_client_info": {
+          "package_name": "com.freshmart.store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqqT_UjQqIiX-C1lN3x5wT2I-6e-DbtuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502247608063:android:bd624dc79bc9d374a606ca",
+        "android_client_info": {
+          "package_name": "com.freshmart.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502247608063-irhjihmb2ndseoq0hcup7015rag294jt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.freshmart.user",
+            "certificate_hash": "f6650b17afcc3d2f9cda8c10fbd9ad9c3b70d30e"
+          }
+        },
+        {
+          "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqqT_UjQqIiX-C1lN3x5wT2I-6e-DbtuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502247608063-l6q65rsb3kqm9f2rlddtkgtstk6o888t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

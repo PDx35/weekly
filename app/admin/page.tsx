@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { DashboardCharts } from '@/components/admin/DashboardCharts';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AdminPageHeader } from '@/components/admin/ui';
 import { rupee } from '@/components/ui/Price';
@@ -9,14 +10,11 @@ import type { AdminCategory, AdminProduct, AdminTicket } from '@/lib/admin/types
 import { timeAgo } from '@/lib/orders';
 import type { Order } from '@/lib/types';
 
-interface Stats {
-  products: number;
-  categories: number;
-  orders: number;
-  revenue: number;
-  pending: number;
-  openTickets: number;
-  recent: Order[];
+interface DashboardData {
+  products: AdminProduct[];
+  categories: AdminCategory[];
+  orders: Order[];
+  tickets: AdminTicket[];
 }
 
 const PENDING_STATUSES: Order['status'][] = ['pending', 'confirmed', 'packed', 'out_for_delivery'];
@@ -31,7 +29,7 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
 }
 
 function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -44,22 +42,7 @@ function Dashboard() {
           listAll<Order>('orders'),
           listAll<AdminTicket>('supportTickets'),
         ]);
-        if (!active) return;
-        const revenue = orders
-          .filter((o) => o.status !== 'cancelled')
-          .reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
-        const recent = [...orders]
-          .sort((a, b) => (b.placedAt ?? 0) - (a.placedAt ?? 0))
-          .slice(0, 6);
-        setStats({
-          products: products.length,
-          categories: categories.length,
-          orders: orders.length,
-          revenue,
-          pending: orders.filter((o) => PENDING_STATUSES.includes(o.status)).length,
-          openTickets: tickets.filter((t) => t.status !== 'resolved').length,
-          recent,
-        });
+        if (active) setData({ products, categories, orders, tickets });
       } catch {
         if (active) setError(true);
       }
@@ -68,6 +51,24 @@ function Dashboard() {
       active = false;
     };
   }, []);
+
+  const stats = useMemo(() => {
+    if (!data) return null;
+    const { products, categories, orders, tickets } = data;
+    const revenue = orders
+      .filter((o) => o.status !== 'cancelled')
+      .reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
+    const recent = [...orders].sort((a, b) => (b.placedAt ?? 0) - (a.placedAt ?? 0)).slice(0, 6);
+    return {
+      products: products.length,
+      categories: categories.length,
+      orders: orders.length,
+      revenue,
+      pending: orders.filter((o) => PENDING_STATUSES.includes(o.status)).length,
+      openTickets: tickets.filter((t) => t.status !== 'resolved').length,
+      recent,
+    };
+  }, [data]);
 
   return (
     <>
@@ -78,7 +79,7 @@ function Dashboard() {
           exist.
         </p>
       )}
-      {!stats ? (
+      {!data || !stats ? (
         <p className="text-sm text-neutral-500">Loading…</p>
       ) : (
         <>
@@ -91,7 +92,15 @@ function Dashboard() {
             <StatCard label="Open tickets" value={stats.openTickets} />
           </div>
 
-          <h2 className="mt-8 mb-3 text-base font-semibold text-neutral-900">Recent orders</h2>
+          <div className="mt-6">
+            <DashboardCharts
+              orders={data.orders}
+              products={data.products}
+              categories={data.categories}
+            />
+          </div>
+
+          <h2 className="pt-8 pb-4 text-base font-semibold text-neutral-900">Recent orders</h2>
           <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
             {stats.recent.length === 0 ? (
               <p className="p-4 text-sm text-neutral-500">No orders yet.</p>
