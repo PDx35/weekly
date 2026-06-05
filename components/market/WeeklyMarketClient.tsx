@@ -31,11 +31,12 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
 
   // Rendered client-only, so the local weekday is always correct (no SSR skew).
   const todayIndex = new Date().getDay();
-  const today = useMemo(() => schedule.find((m) => m.day === todayIndex) ?? null, [schedule, todayIndex]);
+  const today = useMemo(
+    () => schedule.find((m) => m.day === todayIndex) ?? null,
+    [schedule, todayIndex],
+  );
 
-  const initialCenter: [number, number] = today
-    ? [today.lng, today.lat]
-    : MARKET_MAP_CENTER;
+  const initialCenter: [number, number] = today ? [today.lng, today.lat] : MARKET_MAP_CENTER;
 
   const [zip, setZip] = useState('');
   const [result, setResult] = useState<ZipResult>(null);
@@ -119,8 +120,8 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
             {result.matches.length === 0 ? (
               <p style={{ color: 'var(--ink-2)' }}>
                 No FreshMart weekly market in{' '}
-                <b style={{ color: 'var(--ink)' }}>{result.zip || 'that pincode'}</b> yet. We&apos;re
-                expanding every week!
+                <b style={{ color: 'var(--ink)' }}>{result.zip || 'that pincode'}</b> yet.
+                We&apos;re expanding every week!
               </p>
             ) : (
               result.matches.map((m) => (
@@ -132,7 +133,9 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
                       It&apos;s here today — {m.discountPercent}% off!
                     </span>
                   ) : (
-                    <>Come back {dayName(m.day)} for {m.discountPercent}% off.</>
+                    <>
+                      Come back {dayName(m.day)} for {m.discountPercent}% off.
+                    </>
                   )}
                 </p>
               ))

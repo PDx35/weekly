@@ -70,11 +70,15 @@ export interface CartItem {
   qty: number;
 }
 
-/** A signed-in user's profile (auth shell — fleshed out in Sprint 2). */
+/** A signed-in user's profile, mirroring the `users/{uid}` doc. */
 export interface User {
+  /** Firebase Auth uid. */
+  uid: string;
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
+  /** Profile photo URL (e.g. from Google), or `null`. */
+  photoUrl: string | null;
 }
 
 /**

@@ -25,7 +25,14 @@ export const DAY_NAMES = [
 /** One market stop per weekday. */
 export const WEEKLY_MARKET: MarketDay[] = [
   { day: 1, zip: '560038', area: 'Indiranagar', lng: 77.6408, lat: 12.9719, discountPercent: 15 },
-  { day: 2, zip: '560025', area: 'Residency Road', lng: 77.6033, lat: 12.9611, discountPercent: 12 },
+  {
+    day: 2,
+    zip: '560025',
+    area: 'Residency Road',
+    lng: 77.6033,
+    lat: 12.9611,
+    discountPercent: 12,
+  },
   { day: 3, zip: '560095', area: 'Koramangala', lng: 77.6245, lat: 12.9352, discountPercent: 15 },
   { day: 4, zip: '560078', area: 'JP Nagar', lng: 77.5853, lat: 12.9063, discountPercent: 10 },
   { day: 5, zip: '560008', area: 'Ulsoor', lng: 77.6209, lat: 12.9826, discountPercent: 12 },
