@@ -8,6 +8,9 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
 import type { Order, OrderStatus } from '@/lib/types';
 
+/** Current epoch millis (wrapper keeps `Date.now` out of component render scope). */
+export const nowMs = (): number => Date.now();
+
 /** Relative time label, e.g. "3 hr ago". Ported from the prototype `timeAgo`. */
 export function timeAgo(ts: number): string {
   const diff = Date.now() - ts;

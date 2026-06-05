@@ -1,30 +1,47 @@
 rules_version = '2';
 
 // ===========================================================================
-// FreshMart customer web — Firestore security rules.
+// FreshMart — Firestore security rules (customer web + admin panel).
 //
 // ⚠️ SHARED PROJECT: food-54848 is also used by an existing store/admin/delivery
 // app (see docs/current_db.md: stores, banners, settings, delivery_persons,
-// reviews, product_stats, etc.). These rules ONLY cover the collections the
-// customer web app uses and DENY everything else by default — deploying them
-// as-is WILL block the other apps. Reconcile with their rules before deploying
-// to the live project. They are written to be validated in isolation by the
-// emulator rules test suite (tests/rules).
+// reviews, product_stats, etc.). These rules ONLY cover the collections this
+// repo uses and DENY everything else by default — deploying them as-is WILL
+// block the other apps. Reconcile before deploying. Validated in isolation by
+// the emulator rules test suite (tests/rules).
 // ===========================================================================
 
 service cloud.firestore {
   match /databases/{database}/documents {
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    // An admin is any signed-in user with a doc in /admins/{uid}.
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
 
-    // Public catalogue: anyone can read; writes only via Admin SDK / admin panel.
+    // Admin directory: a user may read their own admin doc (to self-check);
+    // membership is managed out-of-band (super admin / console), not by clients.
+    match /admins/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // Public catalogue: anyone can read; only admins can write.
     match /categories/{id} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
     match /products/{id} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
+    }
+
+    // Travelling weekly market: public read, admin write.
+    match /weeklyMarket/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // User profile (with embedded addresses + cart) and any subcollections:
@@ -36,26 +53,28 @@ service cloud.firestore {
       }
     }
 
-    // Orders: a user can read only their own. Orders are created and updated
-    // exclusively by the server (Admin SDK bypasses rules), guaranteeing
-    // server-validated totals and payment state.
+    // Orders: a user reads only their own; an admin reads all and may update
+    // status. Orders are still created only by the server (Admin SDK).
     match /orders/{orderId} {
-      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
-      allow create, update, delete: if false;
+      allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow update: if isAdmin();
+      allow create, delete: if false;
     }
 
     // Support tickets: a signed-in user creates/reads their own; guests may
-    // create a ticket with no uid.
+    // create with no uid; admins read all and may update (resolve).
     match /supportTickets/{ticketId} {
       allow create: if request.resource.data.uid == null
         || (isSignedIn() && request.resource.data.uid == request.auth.uid);
-      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
-      allow update, delete: if false;
+      allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow update: if isAdmin();
+      allow delete: if false;
     }
 
-    // Coupons are validated server-side only, so they are not enumerable.
+    // Coupons: validated server-side for shoppers (not client-readable); admins
+    // manage them from the panel.
     match /coupons/{code} {
-      allow read, write: if false;
+      allow read, write: if isAdmin();
     }
   }
 }

@@ -35,11 +35,13 @@ beforeEach(async () => {
     await setDoc(doc(db, 'orders', 'o1'), { uid: 'alice', totals: { grand: 100 } });
     await setDoc(doc(db, 'supportTickets', 't1'), { uid: 'alice', message: 'hi' });
     await setDoc(doc(db, 'coupons', 'SAVE10'), { type: 'percent', value: 10 });
+    await setDoc(doc(db, 'admins', 'admin1'), { role: 'admin', email: 'admin@test.com' });
   });
 });
 
 const alice = () => testEnv.authenticatedContext('alice').firestore();
 const bob = () => testEnv.authenticatedContext('bob').firestore();
+const admin = () => testEnv.authenticatedContext('admin1').firestore();
 const guest = () => testEnv.unauthenticatedContext().firestore();
 
 describe('catalogue', () => {
@@ -98,8 +100,31 @@ describe('support tickets', () => {
 });
 
 describe('coupons', () => {
-  it('are not client-readable', async () => {
+  it('are not readable by non-admins', async () => {
     await assertFails(getDoc(doc(guest(), 'coupons', 'SAVE10')));
     await assertFails(getDoc(doc(alice(), 'coupons', 'SAVE10')));
+  });
+});
+
+describe('admin', () => {
+  it('can write catalogue', async () => {
+    await assertSucceeds(setDoc(doc(admin(), 'products', 'p2'), { name: 'New' }));
+    await assertSucceeds(setDoc(doc(admin(), 'categories', 'c2'), { name: 'New' }));
+  });
+  it('can read any order and update its status', async () => {
+    await assertSucceeds(getDoc(doc(admin(), 'orders', 'o1')));
+    await assertSucceeds(
+      setDoc(doc(admin(), 'orders', 'o1'), { uid: 'alice', status: 'packed' }, { merge: true }),
+    );
+  });
+  it('can read any support ticket', async () => {
+    await assertSucceeds(getDoc(doc(admin(), 'supportTickets', 't1')));
+  });
+  it('can manage coupons', async () => {
+    await assertSucceeds(setDoc(doc(admin(), 'coupons', 'NEW10'), { type: 'flat', value: 10 }));
+    await assertSucceeds(getDoc(doc(admin(), 'coupons', 'SAVE10')));
+  });
+  it('lets a user self-check their (absent) admin doc without error', async () => {
+    await assertSucceeds(getDoc(doc(alice(), 'admins', 'alice')));
   });
 });
