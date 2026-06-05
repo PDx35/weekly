@@ -5,16 +5,23 @@ import { AuthProvider } from '@/store/auth';
 import { CartProvider } from '@/store/cart';
 import { Geist } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { SITE_URL } from '@/lib/site';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'FreshMart — Farm-fresh groceries in 30 minutes',
     template: '%s · FreshMart',
   },
   description:
     'FreshMart delivers farm-fresh fruits, vegetables, dairy, and daily essentials to your door in 30 minutes.',
+  openGraph: {
+    siteName: 'FreshMart',
+    type: 'website',
+    locale: 'en_IN',
+  },
 };
 
 /**

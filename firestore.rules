@@ -1,0 +1,61 @@
+rules_version = '2';
+
+// ===========================================================================
+// FreshMart customer web — Firestore security rules.
+//
+// ⚠️ SHARED PROJECT: food-54848 is also used by an existing store/admin/delivery
+// app (see docs/current_db.md: stores, banners, settings, delivery_persons,
+// reviews, product_stats, etc.). These rules ONLY cover the collections the
+// customer web app uses and DENY everything else by default — deploying them
+// as-is WILL block the other apps. Reconcile with their rules before deploying
+// to the live project. They are written to be validated in isolation by the
+// emulator rules test suite (tests/rules).
+// ===========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    // Public catalogue: anyone can read; writes only via Admin SDK / admin panel.
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /products/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // User profile (with embedded addresses + cart) and any subcollections:
+    // readable and writable only by the owner.
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // Orders: a user can read only their own. Orders are created and updated
+    // exclusively by the server (Admin SDK bypasses rules), guaranteeing
+    // server-validated totals and payment state.
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    // Support tickets: a signed-in user creates/reads their own; guests may
+    // create a ticket with no uid.
+    match /supportTickets/{ticketId} {
+      allow create: if request.resource.data.uid == null
+        || (isSignedIn() && request.resource.data.uid == request.auth.uid);
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Coupons are validated server-side only, so they are not enumerable.
+    match /coupons/{code} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { Crumbs } from '@/components/ui/Crumbs';
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
 import { rupee } from '@/components/ui/Price';
+import { trackBeginCheckout, trackPurchase } from '@/lib/analytics';
 import { computeBill } from '@/lib/bill';
 import { auth } from '@/lib/firebase/client';
 import { loadRazorpay, type RazorpaySuccess } from '@/lib/razorpay-checkout';
@@ -55,6 +56,12 @@ function CheckoutContent() {
     if (!placed.current && cartItems.length === 0) router.replace(routes.home());
   }, [cartItems.length, router]);
 
+  // Analytics: begin_checkout once on entry.
+  useEffect(() => {
+    void trackBeginCheckout({ value: bill.grand, currency: 'INR', num_items: cartCount });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (cartItems.length === 0) return null;
 
   const saveAddress = async (draft: AddressDraft) => {
@@ -66,6 +73,7 @@ function CheckoutContent() {
 
   const goToConfirm = (orderId: string) => {
     placed.current = true;
+    void trackPurchase({ transaction_id: orderId, value: bill.grand, currency: 'INR' });
     clearCart();
     router.push(routes.confirm(orderId));
   };

@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// ⚠️ SHARED PROJECT (food-54848): reconcile with the existing app before
+// deploying. Product/category images are world-readable; uploads happen only
+// through privileged server/admin code, never the customer client.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   return {
     title,
     description,
+    alternates: { canonical: routes.category(category.slug) },
     openGraph: { title: `${title} · FreshMart`, description, type: 'website' },
   };
 }

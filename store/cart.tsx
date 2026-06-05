@@ -20,6 +20,7 @@ import {
   type ReactNode,
 } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { trackAddToCart } from '@/lib/analytics';
 import { find } from '@/lib/data';
 import { db } from '@/lib/firebase/client';
 import type { CartItem } from '@/lib/types';
@@ -137,10 +138,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cart, user]);
 
   const addToCart = useCallback((id: string, qty = 1) => {
+    if (qty > 0) void trackAddToCart({ item_id: id, quantity: qty });
     setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] || 0) + qty) }));
   }, []);
 
   const setQty = useCallback((id: string, qty: number) => {
+    // Count a 0 → positive transition as an add-to-cart.
+    if (qty > 0 && !cartRef.current[id]) void trackAddToCart({ item_id: id, quantity: qty });
     setCart((c) => {
       const next = { ...c };
       if (qty <= 0) delete next[id];

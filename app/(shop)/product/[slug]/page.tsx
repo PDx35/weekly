@@ -14,6 +14,7 @@ import {
   getProductsByCategory,
 } from '@/lib/queries';
 import { routes } from '@/lib/routes';
+import { SITE_URL } from '@/lib/site';
 
 export const revalidate = 3600;
 
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   return {
     title: product.name,
     description,
+    alternates: { canonical: routes.product(product.slug) },
     openGraph: { title: `${product.name} · FreshMart`, description, type: 'website' },
   };
 }
@@ -60,8 +62,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
     .slice(0, 5);
   const categoryName = category?.name ?? product.cat;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.desc ?? `${product.name} (${product.unit})`,
+    sku: product.id,
+    category: categoryName,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'INR',
+      availability: `https://schema.org/${product.stock ? 'InStock' : 'OutOfStock'}`,
+      url: `${SITE_URL}${routes.product(product.slug)}`,
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: product.rating,
+      reviewCount: product.reviews,
+    },
+  };
+
   return (
     <div className="page product">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Crumbs
         items={[
           { label: 'Home', href: routes.home() },
