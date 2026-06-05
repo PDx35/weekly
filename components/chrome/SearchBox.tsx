@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
 import { Price } from '@/components/ui/Price';
-import { catName } from '@/lib/data';
 import { routes } from '@/lib/routes';
 import type { Product } from '@/lib/types';
 
@@ -86,9 +85,7 @@ export function SearchBox({ compact }: { compact?: boolean }) {
               <Img product={p} className="search-thumb" radius="8px" />
               <span className="search-meta">
                 <b>{p.name}</b>
-                <span>
-                  {catName(p.cat)} · {p.unit}
-                </span>
+                <span>{p.unit}</span>
               </span>
               <Price value={p.price} size="sm" />
             </button>

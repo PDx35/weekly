@@ -16,7 +16,7 @@ export function Price({ value, mrp, size = 'md' }: PriceProps) {
       {mrp && mrp > value && (
         <>
           <s>{rupee(mrp)}</s>
-          <span className="price-off">{Math.round((1 - value / mrp) * 100)}% off</span>
+          {/* <span className="price-off">{Math.round((1 - value / mrp) * 100)}% off</span> */}
         </>
       )}
     </span>

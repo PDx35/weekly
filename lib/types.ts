@@ -8,9 +8,9 @@
 
 /** A product category, e.g. "Fresh Fruits". */
 export interface Category {
-  /** Stable id (also the category's URL slug, e.g. "fruits"). */
+  /** Stable id (also the category's URL slug). */
   id: string;
-  /** URL slug. Equal to {@link Category.id} for the mock catalogue. */
+  /** URL slug. Equal to {@link Category.id}. */
   slug: string;
   name: string;
   blurb: string;
@@ -20,6 +20,8 @@ export interface Category {
   ink: string;
   /** Display order; preserves the curated category sequence. */
   order: number;
+  /** Category icon image URL (from the DB), if any. */
+  iconUrl?: string | null;
 }
 
 /** A catalogue product. */
@@ -47,6 +49,8 @@ export interface Product {
    * real backend without changing callers.
    */
   searchTokens: string[];
+  /** Product image URLs (empty → render a tinted placeholder tile). */
+  images: string[];
 }
 
 /** A saved delivery address. */

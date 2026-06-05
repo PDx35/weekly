@@ -3,8 +3,7 @@ import Link from 'next/link';
 import { ProductBrowser } from '@/components/catalogue/ProductBrowser';
 import { Crumbs } from '@/components/ui/Crumbs';
 import { Empty } from '@/components/ui/Empty';
-import { catName } from '@/lib/data';
-import { searchProducts } from '@/lib/queries';
+import { getCategories, searchProducts } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
 export const metadata: Metadata = { title: 'Search' };
@@ -18,7 +17,8 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = '' } = await searchParams;
   const query = q.trim();
-  const matches = await searchProducts(query);
+  const [matches, categories] = await Promise.all([searchProducts(query), getCategories()]);
+  const catName = new Map(categories.map((c) => [c.id, c.name]));
   const cats = [...new Set(matches.map((p) => p.cat))];
 
   return (
@@ -30,7 +30,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <div className="search-cats">
           {cats.map((c) => (
             <Link key={c} className="chip" href={routes.category(c)}>
-              {catName(c)}
+              {catName.get(c) ?? c}
             </Link>
           ))}
         </div>

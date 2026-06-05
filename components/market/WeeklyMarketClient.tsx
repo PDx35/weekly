@@ -100,7 +100,7 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
         )}
 
         {/* Pincode search */}
-        <form onSubmit={onSearch} className="promo-box !mt-0">
+        <form onSubmit={onSearch} className="promo-box" style={{ marginTop: 0 }}>
           <Icon name="pin" size={18} />
           <input
             value={zip}

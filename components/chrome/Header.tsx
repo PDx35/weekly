@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
-import { CATEGORIES } from '@/lib/data';
+import { CATEGORIES as FALLBACK_CATEGORIES } from '@/lib/data';
 import { routes } from '@/lib/routes';
+import type { Category } from '@/lib/types';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
 import { Logo } from './Logo';
@@ -15,6 +17,18 @@ export function Header() {
   const { user, addresses, selectedAddr } = useAuth();
   const { cartCount } = useCart();
   const activeAddr = addresses.find((a) => a.id === selectedAddr) || addresses[0];
+  const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((r) => r.json())
+      .then((cats: Category[]) => {
+        if (cats.length) setCategories(cats);
+      })
+      .catch(() => {
+        /* keep fallback */
+      });
+  }, []);
 
   return (
     <header className="hdr">
@@ -61,7 +75,7 @@ export function Header() {
           <button className="catbar-all" onClick={() => router.push(routes.browse())}>
             <Icon name="grid" size={16} /> All categories
           </button>
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <button
               key={c.id}
               className="catbar-item"

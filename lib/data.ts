@@ -121,6 +121,7 @@ const P = (
   desc: opts.desc ?? null,
   stock: opts.stock ?? true,
   searchTokens: tokenize(name, CATEGORY_NAME.get(cat) ?? cat),
+  images: [],
 });
 
 export const PRODUCTS: Product[] = [

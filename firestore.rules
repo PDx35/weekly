@@ -28,7 +28,7 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Public catalogue: anyone can read; only admins can write.
+    // Public catalogue: anyone can read (web storefront is public); admin write.
     match /categories/{id} {
       allow read: if true;
       allow write: if isAdmin();
@@ -37,7 +37,6 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
-
     // Travelling weekly market: public read, admin write.
     match /weeklyMarket/{id} {
       allow read: if true;

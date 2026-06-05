@@ -1,19 +1,27 @@
 import Link from 'next/link';
 import { Rail } from '@/components/catalogue/Rail';
+import { CategorySection } from '@/components/home/CategorySection';
+import { Ticker } from '@/components/home/Ticker';
 import { WeeklyMarket } from '@/components/market/WeeklyMarket';
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
 import { SectionHead } from '@/components/ui/SectionHead';
-import { getBestsellers, getCategories, getDeals, getWeeklyMarket } from '@/lib/queries';
+import {
+  getBestsellers,
+  getCategories,
+  getDeals,
+  getProductsByCategory,
+  getWeeklyMarket,
+} from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
 /** Catalogue is statically generated and revalidated hourly (ISR). */
 export const revalidate = 3600;
 
 /**
- * Home page (Sprint 1). Server Component composed of the ported HeroBasket,
- * PromoStrip, category grid, Best sellers rail, weekend savings banner, and
- * Today's deals rail. Data comes from the `queries` layer.
+ * Home page. Server Component: hero, promo ticker, promo strip, category grid,
+ * best-sellers rail, weekend banner, today's deals, then per-category sections
+ * (alternating, category-coloured layouts). Data comes from the `queries` layer.
  */
 export default async function HomePage() {
   const [categories, bestsellers, deals, market] = await Promise.all([
@@ -22,6 +30,19 @@ export default async function HomePage() {
     getDeals(),
     getWeeklyMarket(),
   ]);
+
+  // Products per category for the home category sections (skip empty ones).
+  const categorySections = (
+    await Promise.all(
+      categories.map(async (category) => ({
+        category,
+        products: await getProductsByCategory(category.id),
+      })),
+    )
+  ).filter((s) => s.products.length > 0);
+
+  // Link the hero/banner CTAs to a real category (fall back to browse).
+  const featuredHref = categories[0] ? routes.category(categories[0].slug) : routes.browse();
 
   return (
     <div className="page home">
@@ -45,7 +66,7 @@ export default async function HomePage() {
               <span>Start shopping</span>
               <Icon name="arrowR" size={18} />
             </Link>
-            <Link className="btn btn-ghost btn-lg" href={routes.category('fruits')}>
+            <Link className="btn btn-ghost btn-lg" href={featuredHref}>
               <span>Today&apos;s deals</span>
             </Link>
           </div>
@@ -80,6 +101,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Promo ticker */}
+      <Ticker />
 
       {/* Promo strip */}
       <section className="promo">
@@ -123,11 +147,24 @@ export default async function HomePage() {
         <div className="cat-grid">
           {categories.map((c) => (
             <Link key={c.id} className="cat-tile" href={routes.category(c.slug)}>
-              <span className="cat-tile-img" style={{ background: c.tint, color: c.ink }}>
-                <Icon name="leaf" size={26} stroke={1.6} />
+              <span
+                className="cat-tile-img"
+                style={{ background: c.tint, color: c.ink, overflow: 'hidden' }}
+              >
+                {c.iconUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- arbitrary remote hosts
+                  <img
+                    src={c.iconUrl}
+                    alt={c.name}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <Icon name="leaf" size={26} stroke={1.6} />
+                )}
               </span>
               <b>{c.name}</b>
-              <i>{c.blurb}</i>
+              {c.blurb && <i>{c.blurb}</i>}
             </Link>
           ))}
         </div>
@@ -159,7 +196,7 @@ export default async function HomePage() {
           </span>
           <h2>Up to 30% off on staples</h2>
           <p>Stock up on rice, dal, atta and oils. Limited-time prices, refreshed every week.</p>
-          <Link className="btn btn-onbrand btn-md" href={routes.category('staples')}>
+          <Link className="btn btn-onbrand btn-md" href={featuredHref}>
             <span>Shop staples</span>
             <Icon name="arrowR" size={18} />
           </Link>
@@ -181,6 +218,11 @@ export default async function HomePage() {
         actionHref={routes.browse()}
         products={deals}
       />
+
+      {/* Per-category sections (alternating, category-coloured layouts) */}
+      {categorySections.map(({ category, products }, i) => (
+        <CategorySection key={category.id} category={category} products={products} variant={i} />
+      ))}
     </div>
   );
 }

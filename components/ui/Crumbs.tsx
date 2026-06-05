@@ -11,7 +11,7 @@ export interface Crumb {
 /** Breadcrumb trail. Linked crumbs use `next/link`; the final crumb is plain. */
 export function Crumbs({ items }: { items: Crumb[] }) {
   return (
-    <nav className="crumbs">
+    <nav className="crumbs pb-2">
       {items.map((it, i) => (
         <Fragment key={i}>
           {i > 0 && <Icon name="chevR" size={13} />}
