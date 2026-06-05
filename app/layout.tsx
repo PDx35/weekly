@@ -3,6 +3,10 @@ import './globals.css';
 import { Toast } from '@/components/ui/Toast';
 import { AuthProvider } from '@/store/auth';
 import { CartProvider } from '@/store/cart';
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: {
@@ -22,7 +26,7 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={cn("font-sans", geist.variable)}>
       <head>
         {/* Design-system fonts, matching the prototype (loaded via link so the
             literal family names in globals.css resolve unchanged). */}

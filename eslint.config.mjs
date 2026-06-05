@@ -15,6 +15,14 @@ const eslintConfig = defineConfig([
     // Reference prototype — kept as-is, not part of the app source.
     "docs/**",
   ]),
+  {
+    // Vendored mapcn registry component: kept verbatim from the registry; it
+    // intentionally syncs refs during render for marker/layer perf.
+    files: ["components/ui/map.tsx"],
+    rules: {
+      "react-hooks/refs": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

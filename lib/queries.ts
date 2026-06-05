@@ -8,7 +8,8 @@
  * unchanged. The async signatures already model that future I/O boundary.
  */
 import { CATEGORIES, PRODUCTS, bestsellers, byCat, catBySlug, deals, findBySlug } from './data';
-import type { Category, Product } from './types';
+import { WEEKLY_MARKET } from './market';
+import type { Category, MarketDay, Product } from './types';
 
 /** All categories in their curated display order. */
 export async function getCategories(): Promise<Category[]> {
@@ -67,4 +68,14 @@ export async function getAllProductSlugs(): Promise<string[]> {
 /** All category slugs — used by `generateStaticParams`. */
 export async function getAllCategorySlugs(): Promise<string[]> {
   return CATEGORIES.map((c) => c.slug);
+}
+
+/**
+ * The travelling weekly market schedule (one stop per weekday).
+ *
+ * Ordered Monday → Sunday for display. Swaps to the admin-managed Firestore
+ * collection later without changing callers.
+ */
+export async function getWeeklyMarket(): Promise<MarketDay[]> {
+  return [...WEEKLY_MARKET].sort((a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7));
 }

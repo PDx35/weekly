@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { Rail } from '@/components/catalogue/Rail';
+import { WeeklyMarket } from '@/components/market/WeeklyMarket';
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
-import { getBestsellers, getCategories, getDeals } from '@/lib/queries';
+import { SectionHead } from '@/components/ui/SectionHead';
+import { getBestsellers, getCategories, getDeals, getWeeklyMarket } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
 /** Catalogue is statically generated and revalidated hourly (ISR). */
@@ -14,10 +16,11 @@ export const revalidate = 3600;
  * Today's deals rail. Data comes from the `queries` layer.
  */
 export default async function HomePage() {
-  const [categories, bestsellers, deals] = await Promise.all([
+  const [categories, bestsellers, deals, market] = await Promise.all([
     getCategories(),
     getBestsellers(),
     getDeals(),
+    getWeeklyMarket(),
   ]);
 
   return (
@@ -128,6 +131,15 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* Weekly travelling market */}
+      <section className="rail-sec">
+        <SectionHead
+          title="Weekly market near you"
+          sub="Our travelling market visits a new area each day — get extra savings when it reaches your pincode."
+        />
+        <WeeklyMarket schedule={market} />
       </section>
 
       {/* Best sellers */}
