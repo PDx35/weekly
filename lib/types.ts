@@ -8,19 +8,25 @@
 
 /** A product category, e.g. "Fresh Fruits". */
 export interface Category {
-  /** Stable id; also used as the URL slug in this phase. */
+  /** Stable id (also the category's URL slug, e.g. "fruits"). */
   id: string;
+  /** URL slug. Equal to {@link Category.id} for the mock catalogue. */
+  slug: string;
   name: string;
   blurb: string;
   /** Soft background tint used by placeholder image tiles. */
   tint: string;
   /** Foreground ink colour paired with `tint`. */
   ink: string;
+  /** Display order; preserves the curated category sequence. */
+  order: number;
 }
 
 /** A catalogue product. */
 export interface Product {
   id: string;
+  /** SEO-friendly URL slug derived from the name, e.g. "alphonso-mango". */
+  slug: string;
   /** Owning category id (see {@link Category.id}). */
   cat: string;
   name: string;
@@ -35,6 +41,12 @@ export interface Product {
   /** Long description; `null` when none. */
   desc: string | null;
   stock: boolean;
+  /**
+   * Lowercase search tokens (from the product and category names). Mirrors the
+   * Firestore `array-contains` search field so the query layer can swap to a
+   * real backend without changing callers.
+   */
+  searchTokens: string[];
 }
 
 /** A saved delivery address. */

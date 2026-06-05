@@ -1,15 +1,39 @@
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { Rail } from '@/components/catalogue/Rail';
+import { Crumbs } from '@/components/ui/Crumbs';
+import { getCategories, getProductsByCategory } from '@/lib/queries';
+import { routes } from '@/lib/routes';
 
-export const metadata: Metadata = { title: 'Browse categories' };
+export const revalidate = 3600;
 
-export default function BrowsePage() {
+export const metadata: Metadata = {
+  title: 'All categories',
+  description:
+    'Browse every FreshMart category — fresh fruits, vegetables, dairy, bakery, staples and more.',
+};
+
+/** Browse page: one rail per category with a "See all" link. */
+export default async function BrowsePage() {
+  const categories = await getCategories();
+  const sections = await Promise.all(
+    categories.map(async (c) => ({ category: c, products: await getProductsByCategory(c.id) })),
+  );
+
   return (
-    <Placeholder
-      title="Browse"
-      icon="grid"
-      heading="Category browsing is on the way"
-      sub="The full browse experience — a rail per category — arrives in Sprint 1."
-    />
+    <div className="page browse">
+      <Crumbs items={[{ label: 'Home', href: routes.home() }, { label: 'All categories' }]} />
+      <h1 className="page-title">All categories</h1>
+      {sections.map(({ category, products }) => (
+        <section className="cat-block" key={category.id}>
+          <Rail
+            title={category.name}
+            sub={category.blurb}
+            action="See all"
+            actionHref={routes.category(category.slug)}
+            products={products.slice(0, 6)}
+          />
+        </section>
+      ))}
+    </div>
   );
 }

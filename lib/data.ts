@@ -1,18 +1,40 @@
 /**
  * FreshMart mock catalogue, ported from the prototype `data.js`.
  *
- * In Sprint 1 this is replaced by Firestore reads (see the build plan), but for
- * the Sprint 0 shell it powers the category bar, search suggestions, and the
- * cart hydration so navigation and chrome work end to end.
+ * This is the in-memory backing store for the data-access layer in
+ * `lib/queries.ts`. Real categories/products will be configured later from the
+ * admin panel (with a data-import feature) and `queries.ts` will read them from
+ * Firestore; callers stay unchanged because they only depend on `queries.ts`.
  *
- * Note: the prototype randomised default rating/reviews at runtime. That is
- * replaced here with deterministic fallbacks so server and client render the
- * same markup (no hydration mismatch).
+ * Notes:
+ * - The prototype randomised default rating/reviews at runtime. That is replaced
+ *   here with deterministic fallbacks so server and client render identically
+ *   (no hydration mismatch).
+ * - `slug` and `searchTokens` are generated here so the URLs and search behave
+ *   like the eventual Firestore model.
  */
 import type { Address, Category, Product } from './types';
 
+/** Slugify a name into a URL-safe token, e.g. "Sweet Lime (Mosambi)" → "sweet-lime-mosambi". */
+const slugify = (s: string): string =>
+  s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+/** Build a unique, lowercase token set from one or more strings. */
+const tokenize = (...parts: string[]): string[] => {
+  const tokens = parts
+    .join(' ')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+  return [...new Set(tokens)];
+};
+
 /** Category tints used for placeholder tiles (soft, brand-neutral). */
-export const CATEGORIES: Category[] = [
+const RAW_CATEGORIES: Omit<Category, 'slug' | 'order'>[] = [
   {
     id: 'fruits',
     name: 'Fresh Fruits',
@@ -59,6 +81,15 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
+/** Categories with a slug (= id) and a stable display order. */
+export const CATEGORIES: Category[] = RAW_CATEGORIES.map((c, i) => ({
+  ...c,
+  slug: c.id,
+  order: i,
+}));
+
+const CATEGORY_NAME = new Map(RAW_CATEGORIES.map((c) => [c.id, c.name]));
+
 interface ProductOpts {
   mrp?: number;
   rating?: number;
@@ -78,6 +109,7 @@ const P = (
   opts: ProductOpts = {},
 ): Product => ({
   id: 'p' + ++_id,
+  slug: slugify(name),
   cat,
   name,
   price,
@@ -88,6 +120,7 @@ const P = (
   tag: opts.tag ?? null,
   desc: opts.desc ?? null,
   stock: opts.stock ?? true,
+  searchTokens: tokenize(name, CATEGORY_NAME.get(cat) ?? cat),
 });
 
 export const PRODUCTS: Product[] = [
@@ -218,8 +251,14 @@ export const PRODUCTS: Product[] = [
 export const byCat = (catId: string): Product[] => PRODUCTS.filter((p) => p.cat === catId);
 /** Find a single product by id. */
 export const find = (id: string): Product | undefined => PRODUCTS.find((p) => p.id === id);
+/** Find a single product by slug. */
+export const findBySlug = (slug: string): Product | undefined =>
+  PRODUCTS.find((p) => p.slug === slug);
 /** Find a single category by id. */
 export const catById = (id: string): Category | undefined => CATEGORIES.find((c) => c.id === id);
+/** Find a single category by slug (= id for the mock catalogue). */
+export const catBySlug = (slug: string): Category | undefined =>
+  CATEGORIES.find((c) => c.slug === slug);
 /** Display name for a category id. */
 export const catName = (id: string): string => catById(id)?.name ?? id;
 /** Category for an id, falling back to the first category. */

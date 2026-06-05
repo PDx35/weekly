@@ -1,11 +1,11 @@
 import { catOf } from '@/lib/data';
-import type { Category, Product } from '@/lib/types';
+import type { Product } from '@/lib/types';
 
 interface ImgProps {
   /** Product whose category drives the tint (takes precedence over `cat`). */
   product?: Product;
-  /** Explicit category for tinting when there is no product. */
-  cat?: Category;
+  /** Explicit tint/ink for tinting when there is no product. */
+  cat?: { tint?: string; ink?: string };
   /** CSS `aspect-ratio` value. */
   ratio?: string;
   /** Override label text shown on the tile. */

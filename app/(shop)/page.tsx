@@ -1,85 +1,174 @@
 import Link from 'next/link';
+import { Rail } from '@/components/catalogue/Rail';
 import { Icon } from '@/components/ui/Icon';
-import { CATEGORIES } from '@/lib/data';
+import { Img } from '@/components/ui/Img';
+import { getBestsellers, getCategories, getDeals } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
+/** Catalogue is statically generated and revalidated hourly (ISR). */
+export const revalidate = 3600;
+
 /**
- * Home (Sprint 0 shell). A lightweight hero plus the category grid so the
- * design tokens and chrome are visible end to end. The full home (hero basket,
- * rails, promos) is built in Sprint 1.
+ * Home page (Sprint 1). Server Component composed of the ported HeroBasket,
+ * PromoStrip, category grid, Best sellers rail, weekend savings banner, and
+ * Today's deals rail. Data comes from the `queries` layer.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const [categories, bestsellers, deals] = await Promise.all([
+    getCategories(),
+    getBestsellers(),
+    getDeals(),
+  ]);
+
   return (
-    <div className="page">
-      <section className="hero-basket">
+    <div className="page home">
+      {/* Hero (basket) */}
+      <section className="hero hero-basket">
         <div className="hero-copy">
-          <span className="hero-eyebrow light">
-            <Icon name="bolt" size={14} /> 30-minute delivery
+          <span className="hero-eyebrow">
+            <Icon name="bolt" size={14} /> Delivery in 30 minutes
           </span>
           <h1>
-            Farm-fresh groceries, <span>delivered fast</span>
+            Fresh groceries,
+            <br />
+            <span>delivered fast.</span>
           </h1>
           <p>
-            Handpicked fruits, vegetables, dairy, and daily essentials at honest prices — at your
-            door in half an hour.
+            From farm to your kitchen — fruits, vegetables, dairy and daily essentials, handpicked
+            and delivered to your door.
           </p>
           <div className="hero-cta">
-            <Link className="btn btn-onbrand btn-lg" href={routes.browse()}>
-              Start shopping
+            <Link className="btn btn-primary btn-lg" href={routes.browse()}>
+              <span>Start shopping</span>
+              <Icon name="arrowR" size={18} />
             </Link>
-            <Link className="btn btn-ghost btn-lg" href={routes.support()}>
-              Get help
+            <Link className="btn btn-ghost btn-lg" href={routes.category('fruits')}>
+              <span>Today&apos;s deals</span>
             </Link>
           </div>
           <div className="hero-stats">
             <div>
-              <b>5,000+</b>
-              <i>products</i>
+              <b>30 min</b>
+              <i>Avg. delivery</i>
             </div>
             <div>
-              <b>30 min</b>
-              <i>avg delivery</i>
+              <b>5,000+</b>
+              <i>Products</i>
             </div>
             <div>
               <b>4.8★</b>
-              <i>customer rating</i>
+              <i>Customer rating</i>
             </div>
           </div>
         </div>
         <div className="hero-art">
-          <div
-            className="ph hero-img"
-            style={{
-              aspectRatio: '1 / 1',
-              background: '#E9F4ED',
-              color: '#1E6B43',
-              borderRadius: 'var(--radius-card)',
-            }}
-          >
-            <div className="ph-stripes" />
-            <span className="ph-label">fresh basket</span>
+          <Img
+            label="hero basket of fresh produce"
+            ratio="1 / 1"
+            className="hero-img"
+            cat={{ tint: '#E7F3E4', ink: '#3C7A36' }}
+            radius="calc(var(--radius-card) * 1.4)"
+          />
+          <div className="hero-chip hero-chip-1">
+            <Icon name="truck" size={16} /> Out for delivery
+          </div>
+          <div className="hero-chip hero-chip-2">
+            <Icon name="leaf" size={16} /> Sourced today
           </div>
         </div>
       </section>
 
-      <h2 className="sec-head" style={{ marginTop: 40 }}>
-        Shop by category
-      </h2>
-      <div className="cat-grid">
-        {CATEGORIES.map((c) => (
-          <Link key={c.id} className="cat-tile" href={routes.category(c.id)}>
-            <div
-              className="cat-tile-img"
-              style={{ background: c.tint, color: c.ink }}
-              aria-hidden="true"
-            >
-              <Icon name="leaf" size={26} />
-            </div>
-            <b>{c.name}</b>
-            <i>{c.blurb}</i>
-          </Link>
-        ))}
+      {/* Promo strip */}
+      <section className="promo">
+        <div className="promo-item">
+          <Icon name="truck" size={22} />
+          <div>
+            <b>Free delivery</b>
+            <i>On orders over ₹199</i>
+          </div>
+        </div>
+        <div className="promo-item">
+          <Icon name="clock" size={22} />
+          <div>
+            <b>30-minute delivery</b>
+            <i>From dark stores near you</i>
+          </div>
+        </div>
+        <div className="promo-item">
+          <Icon name="leaf" size={22} />
+          <div>
+            <b>Farm fresh</b>
+            <i>Sourced &amp; packed daily</i>
+          </div>
+        </div>
+        <div className="promo-item">
+          <Icon name="shield" size={22} />
+          <div>
+            <b>Quality promise</b>
+            <i>Not fresh? Full refund</i>
+          </div>
+        </div>
+      </section>
+
+      {/* Category grid */}
+      <div className="sec-head">
+        <div>
+          <h2>Shop by category</h2>
+        </div>
       </div>
+      <section className="cat-grid-wrap">
+        <div className="cat-grid">
+          {categories.map((c) => (
+            <Link key={c.id} className="cat-tile" href={routes.category(c.slug)}>
+              <span className="cat-tile-img" style={{ background: c.tint, color: c.ink }}>
+                <Icon name="leaf" size={26} stroke={1.6} />
+              </span>
+              <b>{c.name}</b>
+              <i>{c.blurb}</i>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Best sellers */}
+      <Rail
+        title="Best sellers"
+        sub="What everyone's adding to cart"
+        action="View all"
+        actionHref={routes.browse()}
+        products={bestsellers}
+      />
+
+      {/* Weekend savings banner */}
+      <section className="banner">
+        <div className="banner-copy">
+          <span className="hero-eyebrow light">
+            <Icon name="tag" size={14} /> Weekend savings
+          </span>
+          <h2>Up to 30% off on staples</h2>
+          <p>Stock up on rice, dal, atta and oils. Limited-time prices, refreshed every week.</p>
+          <Link className="btn btn-onbrand btn-md" href={routes.category('staples')}>
+            <span>Shop staples</span>
+            <Icon name="arrowR" size={18} />
+          </Link>
+        </div>
+        <Img
+          label="pantry staples"
+          ratio="3 / 2"
+          cat={{ tint: 'rgba(255,255,255,.18)', ink: 'rgba(255,255,255,.9)' }}
+          className="banner-img"
+          radius="calc(var(--radius-card))"
+        />
+      </section>
+
+      {/* Today's deals */}
+      <Rail
+        title="Today's deals"
+        sub="Fresh markdowns, while stocks last"
+        action="View all"
+        actionHref={routes.browse()}
+        products={deals}
+      />
     </div>
   );
 }

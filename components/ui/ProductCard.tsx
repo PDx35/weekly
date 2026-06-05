@@ -17,7 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
   const qty = cart[product.id] || 0;
 
   return (
-    <article className="pcard" onClick={() => router.push(routes.product(product.id))}>
+    <article className="pcard" onClick={() => router.push(routes.product(product.slug))}>
       <div className="pcard-img">
         <Img product={product} radius="calc(var(--radius-card) * 0.7)" />
         {product.tag && <span className="pcard-tag">{product.tag}</span>}

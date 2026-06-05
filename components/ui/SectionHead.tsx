@@ -1,5 +1,4 @@
-'use client';
-
+import Link from 'next/link';
 import { Icon } from './Icon';
 
 interface SectionHeadProps {
@@ -8,22 +7,25 @@ interface SectionHeadProps {
   sub?: string;
   /** Optional action label, e.g. "See all". */
   action?: string;
-  /** Click handler for the action button. */
-  onAction?: () => void;
+  /** Where the action link points (preferred in Server Components). */
+  actionHref?: string;
 }
 
-/** Section header with a title, optional subtitle, and an optional action link. */
-export function SectionHead({ title, sub, action, onAction }: SectionHeadProps) {
+/**
+ * Section header with a title, optional subtitle, and an optional action link.
+ * The action is a `next/link`, so this stays a Server Component.
+ */
+export function SectionHead({ title, sub, action, actionHref }: SectionHeadProps) {
   return (
     <div className="sec-head">
       <div>
         <h2>{title}</h2>
         {sub && <p>{sub}</p>}
       </div>
-      {action && (
-        <button className="sec-action" onClick={onAction}>
+      {action && actionHref && (
+        <Link className="sec-action" href={actionHref}>
           {action} <Icon name="arrowR" size={16} />
-        </button>
+        </Link>
       )}
     </div>
   );
