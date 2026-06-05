@@ -7,7 +7,16 @@
  * functions will read Firestore instead and every caller keeps working
  * unchanged. The async signatures already model that future I/O boundary.
  */
-import { CATEGORIES, PRODUCTS, bestsellers, byCat, catBySlug, deals, findBySlug } from './data';
+import {
+  CATEGORIES,
+  PRODUCTS,
+  bestsellers,
+  byCat,
+  catBySlug,
+  deals,
+  find,
+  findBySlug,
+} from './data';
 import { WEEKLY_MARKET } from './market';
 import type { Category, MarketDay, Product } from './types';
 
@@ -29,6 +38,11 @@ export async function getProductsByCategory(categoryId: string): Promise<Product
 /** A single product by slug, or `null` if it doesn't exist. */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   return findBySlug(slug) ?? null;
+}
+
+/** A single product by id, or `null` if it doesn't exist. Used by checkout. */
+export async function getProductById(id: string): Promise<Product | null> {
+  return find(id) ?? null;
 }
 
 /**

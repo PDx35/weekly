@@ -1,28 +1,55 @@
 'use client';
 
 /**
- * Cart context shell (Sprint 0).
+ * Cart context (Sprint 3).
  *
- * In-memory cart keyed by product id → quantity, mirroring the prototype
- * `store.jsx`. Sprint 3 adds localStorage persistence for guests and Firestore
- * sync on sign-in; for now this is enough to drive the chrome (cart badge),
- * `ProductCard`, and the `Toast`.
+ * Cart is keyed by product id → quantity. It persists to localStorage for
+ * guests and syncs to a `cart` field on `users/{uid}` once signed in: on
+ * sign-in the local (guest) cart is merged into the remote cart (local wins on
+ * conflicts), and subsequent changes are written through to Firestore. Also
+ * owns the global `Toast`.
  */
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { find } from '@/lib/data';
+import { db } from '@/lib/firebase/client';
 import type { CartItem } from '@/lib/types';
+import { useAuth } from './auth';
+
+type CartMap = Record<string, number>;
+
+const LS_KEY = 'freshmart_cart_v1';
+
+function loadLS(): CartMap {
+  if (typeof window === 'undefined') return {};
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY) || '{}') as CartMap;
+  } catch {
+    return {};
+  }
+}
+
+function saveLS(cart: CartMap) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(cart));
+  } catch {
+    /* ignore quota / private-mode errors */
+  }
+}
 
 interface CartContextValue {
   /** Map of product id → quantity. */
-  cart: Record<string, number>;
+  cart: CartMap;
   addToCart: (id: string, qty?: number) => void;
   setQty: (id: string, qty: number) => void;
   removeFromCart: (id: string) => void;
@@ -42,9 +69,72 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<Record<string, number>>({});
+  const { user } = useAuth();
+  const [cart, setCart] = useState<CartMap>({});
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const hydrated = useRef(false);
+  const cartRef = useRef<CartMap>(cart);
+  // The uid whose remote cart we've already merged (gates write-through).
+  const mergedUid = useRef<string | null>(null);
+
+  // Keep a ref to the latest cart for the sign-in merge (read in an effect).
+  useEffect(() => {
+    cartRef.current = cart;
+  }, [cart]);
+
+  // Hydrate from localStorage once on mount. Done in an effect (not a lazy
+  // initial state) so server and client first-render match — avoiding a
+  // hydration mismatch on the cart badge.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR-safe localStorage hydration
+    setCart(loadLS());
+    hydrated.current = true;
+  }, []);
+
+  // Persist to localStorage on every change (after hydration).
+  useEffect(() => {
+    if (hydrated.current) saveLS(cart);
+  }, [cart]);
+
+  // On sign-in: merge the local cart into the remote cart (local wins), then
+  // write back. On sign-out: reset the merge gate.
+  useEffect(() => {
+    if (!user) {
+      mergedUid.current = null;
+      return;
+    }
+    if (mergedUid.current === user.uid) return;
+    let cancelled = false;
+    (async () => {
+      const ref = doc(db, 'users', user.uid);
+      try {
+        const snap = await getDoc(ref);
+        const remote = (snap.data()?.cart as CartMap) ?? {};
+        const local = cartRef.current;
+        const merged = Object.keys(local).length ? { ...remote, ...local } : remote;
+        if (cancelled) return;
+        mergedUid.current = user.uid;
+        setCart(merged);
+        await setDoc(ref, { cart: merged }, { merge: true });
+      } catch {
+        // Firestore unavailable/denied — keep the local cart.
+        if (!cancelled) mergedUid.current = user.uid;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Write cart changes through to Firestore while signed in (after merge).
+  useEffect(() => {
+    if (!user || mergedUid.current !== user.uid) return;
+    setDoc(doc(db, 'users', user.uid), { cart }, { merge: true }).catch(() => {
+      /* ignore offline / rules errors */
+    });
+  }, [cart, user]);
 
   const addToCart = useCallback((id: string, qty = 1) => {
     setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] || 0) + qty) }));

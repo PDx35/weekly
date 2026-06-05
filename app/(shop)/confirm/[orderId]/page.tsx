@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { ConfirmScreen } from '@/components/checkout/ConfirmScreen';
 
 export const metadata: Metadata = { title: 'Order confirmed' };
 
@@ -9,12 +9,5 @@ interface ConfirmPageProps {
 
 export default async function ConfirmPage({ params }: ConfirmPageProps) {
   const { orderId } = await params;
-  return (
-    <Placeholder
-      title={`Order ${orderId}`}
-      icon="check"
-      heading="Order confirmation is coming"
-      sub="The confirmation and tracking screen arrives in Sprint 4."
-    />
-  );
+  return <ConfirmScreen orderId={orderId} />;
 }

@@ -81,6 +81,47 @@ export interface User {
   photoUrl: string | null;
 }
 
+/** A line item snapshotted onto an order (price frozen at purchase time). */
+export interface OrderItem {
+  productId: string;
+  name: string;
+  unit: string;
+  price: number;
+  qty: number;
+}
+
+/** The computed bill for a cart/order. */
+export interface OrderTotals {
+  /** Item subtotal. */
+  items: number;
+  delivery: number;
+  handling: number;
+  discount: number;
+  /** Final amount to pay. */
+  grand: number;
+}
+
+/** Order lifecycle status. */
+export type OrderStatus = 'confirmed' | 'packed' | 'out_for_delivery' | 'delivered' | 'cancelled';
+
+/** A placed order (written server-side). */
+export interface Order {
+  id: string;
+  uid: string;
+  items: OrderItem[];
+  /** Snapshot of the delivery address at purchase time. */
+  address: Address;
+  payment: { method: string; label: string; status: string };
+  totals: OrderTotals;
+  /** Chosen delivery slot label. */
+  slot: string;
+  status: OrderStatus;
+  /** Epoch millis when placed. */
+  placedAt: number;
+  /** Estimated delivery time in minutes. */
+  eta: number;
+}
+
 /**
  * A stop on the travelling weekly market ("haat"). The market visits a fixed
  * place on a fixed weekday, every week; orders delivered to that pincode on that
