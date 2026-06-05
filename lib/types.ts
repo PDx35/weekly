@@ -101,8 +101,31 @@ export interface OrderTotals {
   grand: number;
 }
 
-/** Order lifecycle status. */
-export type OrderStatus = 'confirmed' | 'packed' | 'out_for_delivery' | 'delivered' | 'cancelled';
+/**
+ * Order lifecycle status. `pending` is a placed-but-unpaid online order awaiting
+ * payment verification; it advances to `confirmed` once paid.
+ */
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'packed'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled';
+
+/** Payment details on an order. */
+export interface OrderPayment {
+  /** Method id: 'cod' | 'upi' | 'card' | 'wallet' | 'netbank'. */
+  method: string;
+  /** Display label, e.g. "UPI" or "Cash on Delivery". */
+  label: string;
+  /** 'pending_cod' | 'created' | 'paid' | 'failed'. */
+  status: string;
+  /** Razorpay order id (online payments). */
+  razorpayOrderId?: string;
+  /** Razorpay payment id, set after verification. */
+  razorpayPaymentId?: string;
+}
 
 /** A placed order (written server-side). */
 export interface Order {
@@ -111,7 +134,7 @@ export interface Order {
   items: OrderItem[];
   /** Snapshot of the delivery address at purchase time. */
   address: Address;
-  payment: { method: string; label: string; status: string };
+  payment: OrderPayment;
   totals: OrderTotals;
   /** Chosen delivery slot label. */
   slot: string;

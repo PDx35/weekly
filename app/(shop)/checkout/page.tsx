@@ -14,6 +14,7 @@ import { Img } from '@/components/ui/Img';
 import { rupee } from '@/components/ui/Price';
 import { computeBill } from '@/lib/bill';
 import { auth } from '@/lib/firebase/client';
+import { loadRazorpay, type RazorpaySuccess } from '@/lib/razorpay-checkout';
 import { routes } from '@/lib/routes';
 import type { Address } from '@/lib/types';
 import { useAuth } from '@/store/auth';
@@ -22,9 +23,19 @@ import { useCart } from '@/store/cart';
 const STEPS = ['Address', 'Payment', 'Review'];
 const SLOTS = ['Within 30 minutes', 'Today, 5–7 PM', 'Today, 7–9 PM', 'Tomorrow, 8–10 AM'];
 
+interface CreateOrderResponse {
+  orderId?: string;
+  online?: boolean;
+  razorpayOrderId?: string;
+  amount?: number;
+  keyId?: string;
+  freshmartOrderId?: string;
+  error?: string;
+}
+
 function CheckoutContent() {
   const router = useRouter();
-  const { addresses, selectedAddr, setSelectedAddr, upsertAddress } = useAuth();
+  const { user, addresses, selectedAddr, setSelectedAddr, upsertAddress } = useAuth();
   const { cartItems, cartCount, cartSubtotal, clearCart, showToast } = useCart();
 
   const [step, setStep] = useState(0);
@@ -53,6 +64,54 @@ function CheckoutContent() {
     setEditing(null);
   };
 
+  const goToConfirm = (orderId: string) => {
+    placed.current = true;
+    clearCart();
+    router.push(routes.confirm(orderId));
+  };
+
+  /** Open Razorpay Checkout, then verify the payment server-side. */
+  const payOnline = async (data: CreateOrderResponse, token: string) => {
+    const Razorpay = await loadRazorpay();
+    const rzp = new Razorpay({
+      key: data.keyId!,
+      amount: (data.amount ?? 0) * 100,
+      currency: 'INR',
+      name: 'FreshMart',
+      description: `Order ${data.freshmartOrderId}`,
+      order_id: data.razorpayOrderId!,
+      prefill: { name: user?.name, email: user?.email, contact: user?.phone },
+      theme: { color: '#2C8C5A' },
+      handler: async (resp: RazorpaySuccess) => {
+        try {
+          const vres = await fetch('/api/checkout/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ ...resp, freshmartOrderId: data.freshmartOrderId }),
+          });
+          const vdata = (await vres.json()) as { orderId?: string; error?: string };
+          if (vres.ok && vdata.orderId) {
+            showToast('Payment successful!');
+            goToConfirm(vdata.orderId);
+          } else {
+            showToast(vdata.error ?? 'Payment verification failed');
+            setPlacing(false);
+          }
+        } catch {
+          showToast('Could not verify payment. Check your orders shortly.');
+          setPlacing(false);
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          showToast('Payment cancelled — your order is saved as pending');
+          setPlacing(false);
+        },
+      },
+    });
+    rzp.open();
+  };
+
   const place = async () => {
     if (!addr) {
       showToast('Add a delivery address first');
@@ -77,21 +136,18 @@ function CheckoutContent() {
           clientTotal: bill.grand,
         }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as CreateOrderResponse;
       if (!res.ok) {
         showToast(data.error ?? 'Could not place order');
         setPlacing(false);
         return;
       }
       if (data.online) {
-        showToast('Online payments arrive in Sprint 4 — choose Cash on Delivery');
-        setPlacing(false);
+        await payOnline(data, token);
         return;
       }
-      placed.current = true;
-      clearCart();
       showToast('Order placed!');
-      router.push(routes.confirm(data.orderId));
+      goToConfirm(data.orderId!);
     } catch {
       showToast('Network error. Please try again.');
       setPlacing(false);

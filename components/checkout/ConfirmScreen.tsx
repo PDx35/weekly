@@ -150,7 +150,12 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
             <h3>Bill</h3>
             <BillRows bill={order.totals} />
             <div className="confirm-pay">
-              <Icon name="check" size={14} /> {order.payment.label}
+              <Icon name="check" size={14} />{' '}
+              {order.payment.status === 'paid'
+                ? `Paid via ${order.payment.label}`
+                : order.payment.method === 'cod'
+                  ? `${order.payment.label} · pay on delivery`
+                  : `${order.payment.label} · payment pending`}
             </div>
             <Button
               variant="ghost"

@@ -14,6 +14,7 @@ import { computeBill } from '@/lib/bill';
 import { validateCoupon } from '@/lib/coupons';
 import { getAdminAuth, getAdminDb, isAdminConfigured } from '@/lib/firebase/admin';
 import { getProductById } from '@/lib/queries';
+import { createRazorpayOrder, getRazorpayKeyId, isRazorpayConfigured } from '@/lib/razorpay';
 import type { Address, OrderItem } from '@/lib/types';
 
 interface CreateOrderBody {
@@ -27,6 +28,12 @@ interface CreateOrderBody {
 }
 
 const ONLINE_METHODS = new Set(['upi', 'card', 'wallet', 'netbank']);
+const ONLINE_LABELS: Record<string, string> = {
+  upi: 'UPI',
+  card: 'Credit / Debit Card',
+  wallet: 'Wallets',
+  netbank: 'Net Banking',
+};
 
 /** Order id in the prototype's format, e.g. "FM103421". */
 function newOrderId(): string {
@@ -112,9 +119,54 @@ export async function POST(request: Request) {
   }
   const address: Address = { ...chosen, def: chosen.id === userData.defaultAddressId };
 
-  // 6. Online methods: return the computed amount only (Razorpay in Sprint 4).
+  // 6. Online methods: create a Razorpay order + a pending FreshMart order.
+  //    The order is only marked paid after /api/checkout/verify or the webhook.
   if (method !== 'cod') {
-    return NextResponse.json({ online: true, amount: totals.grand, totals });
+    if (!isRazorpayConfigured()) {
+      return NextResponse.json(
+        { error: 'Online payments are not configured yet. Choose Cash on Delivery.' },
+        { status: 503 },
+      );
+    }
+    const orderId = newOrderId();
+    const placedAt = Date.now();
+    let rzpOrder;
+    try {
+      rzpOrder = await createRazorpayOrder(totals.grand * 100, orderId);
+    } catch {
+      return NextResponse.json(
+        { error: 'Could not start payment. Please try again.' },
+        { status: 502 },
+      );
+    }
+    await adminDb
+      .collection('orders')
+      .doc(orderId)
+      .set({
+        id: orderId,
+        uid,
+        items: lineItems,
+        address,
+        payment: {
+          method,
+          label: ONLINE_LABELS[method] ?? 'Online',
+          status: 'created',
+          razorpayOrderId: rzpOrder.id,
+        },
+        totals,
+        slot: body.slot ?? '',
+        status: 'pending',
+        statusHistory: [{ status: 'pending', at: placedAt }],
+        placedAt,
+        eta: 32,
+      });
+    return NextResponse.json({
+      online: true,
+      razorpayOrderId: rzpOrder.id,
+      amount: totals.grand,
+      keyId: getRazorpayKeyId(),
+      freshmartOrderId: orderId,
+    });
   }
 
   // 7. COD: write the confirmed order (server is the only writer), clear cart.
