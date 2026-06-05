@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { FilterBar, SortTh, useSort } from '@/components/admin/SortHeader';
 import {
   AdminButton,
   AdminCheckbox,
   AdminInput,
   AdminModal,
   AdminPageHeader,
+  AdminSelect,
   Labeled,
 } from '@/components/admin/ui';
 import { createDoc, listAll, removeDoc, updateDocFields } from '@/lib/admin/db';
@@ -31,6 +33,15 @@ const emptyDraft = (): Draft => ({
   browseIconUrl: '',
 });
 
+type CatSortKey = 'name' | 'id' | 'order' | 'active';
+
+const CAT_ACCESSORS: Record<CatSortKey, (c: AdminCategory) => string | number | boolean> = {
+  name: (c) => (c.name ?? '').toLowerCase(),
+  id: (c) => c.id.toLowerCase(),
+  order: (c) => c.sortOrder ?? 0,
+  active: (c) => c.active ?? true,
+};
+
 function Categories() {
   const [items, setItems] = useState<AdminCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,10 +50,14 @@ function Categories() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Filters
+  const [searchQ, setSearchQ] = useState('');
+  const [filterActive, setFilterActive] = useState<'all' | 'yes' | 'no'>('all');
+
   const reload = async () => {
     try {
       const c = await listAll<AdminCategory>('categories');
-      setItems(c.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)));
+      setItems(c);
     } catch {
       setError('Could not load categories. Check admin access and Firestore rules.');
     } finally {
@@ -58,6 +73,21 @@ function Categories() {
     setDraft(null);
     setEditing(null);
   };
+
+  const filtered = useMemo(() => {
+    let list = items;
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      list = list.filter(
+        (c) => (c.name ?? '').toLowerCase().includes(q) || c.id.toLowerCase().includes(q),
+      );
+    }
+    if (filterActive === 'yes') list = list.filter((c) => c.active !== false);
+    if (filterActive === 'no') list = list.filter((c) => c.active === false);
+    return list;
+  }, [items, searchQ, filterActive]);
+
+  const { sorted, sort, toggle } = useSort(filtered, CAT_ACCESSORS, 'order');
 
   const save = async () => {
     if (!draft) return;
@@ -114,24 +144,49 @@ function Categories() {
       />
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
+      {!loading && items.length > 0 && (
+        <FilterBar>
+          <AdminInput
+            placeholder="Search name or id…"
+            value={searchQ}
+            onChange={(e) => setSearchQ(e.target.value)}
+            className="!w-52"
+          />
+          <AdminSelect
+            value={filterActive}
+            onChange={(e) => setFilterActive(e.target.value as 'all' | 'yes' | 'no')}
+            className="!w-36"
+          >
+            <option value="all">Status</option>
+            <option value="yes">Active</option>
+            <option value="no">Inactive</option>
+          </AdminSelect>
+          <span className="text-xs text-neutral-400">
+            {sorted.length} of {items.length}
+          </span>
+        </FilterBar>
+      )}
+
       {loading ? (
         <p className="text-sm text-neutral-500">Loading…</p>
       ) : items.length === 0 ? (
         <p className="text-sm text-neutral-500">No categories yet.</p>
+      ) : sorted.length === 0 ? (
+        <p className="text-sm text-neutral-500">No categories match filters.</p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
               <tr>
-                <th className="px-4 py-2.5">Name</th>
-                <th className="px-4 py-2.5">Id</th>
-                <th className="px-4 py-2.5">Order</th>
-                <th className="px-4 py-2.5">Active</th>
+                <SortTh label="Name" sortKey="name" current={sort} onToggle={toggle} />
+                <SortTh label="Id" sortKey="id" current={sort} onToggle={toggle} />
+                <SortTh label="Order" sortKey="order" current={sort} onToggle={toggle} />
+                <SortTh label="Active" sortKey="active" current={sort} onToggle={toggle} />
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody>
-              {items.map((c) => (
+              {sorted.map((c) => (
                 <tr key={c.id} className="border-t border-neutral-100">
                   <td className="px-4 py-2.5 font-medium">{c.name}</td>
                   <td className="px-4 py-2.5 text-neutral-500">{c.id}</td>

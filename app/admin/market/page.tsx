@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { FilterBar, SortTh, useSort } from '@/components/admin/SortHeader';
 import {
   AdminButton,
   AdminInput,
@@ -32,6 +33,15 @@ const emptyDraft = (): Draft => ({
   discountPercent: '10',
 });
 
+type MarketSortKey = 'day' | 'area' | 'zip' | 'discount';
+
+const MARKET_ACCESSORS: Record<MarketSortKey, (m: AdminMarketStop) => string | number | boolean> = {
+  day: (m) => ((m.day + 6) % 7), // Mon=0 .. Sun=6
+  area: (m) => (m.area ?? '').toLowerCase(),
+  zip: (m) => m.zip ?? '',
+  discount: (m) => m.discountPercent ?? 0,
+};
+
 function Market() {
   const [items, setItems] = useState<AdminMarketStop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,10 +50,14 @@ function Market() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Filters
+  const [searchQ, setSearchQ] = useState('');
+  const [filterDay, setFilterDay] = useState<string>('all');
+
   const reload = async () => {
     try {
       const list = await listAll<AdminMarketStop>('weeklyMarket');
-      setItems(list.sort((a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7)));
+      setItems(list);
     } catch (e) {
       const err = e as { code?: string; message?: string };
       console.error('weeklyMarket load failed:', e);
@@ -61,6 +75,21 @@ function Market() {
     setDraft(null);
     setEditing(null);
   };
+
+  const filtered = useMemo(() => {
+    let list = items;
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      list = list.filter(
+        (m) =>
+          (m.area ?? '').toLowerCase().includes(q) || (m.zip ?? '').includes(q),
+      );
+    }
+    if (filterDay !== 'all') list = list.filter((m) => String(m.day) === filterDay);
+    return list;
+  }, [items, searchQ, filterDay]);
+
+  const { sorted, sort, toggle } = useSort(filtered, MARKET_ACCESSORS, 'day');
 
   const save = async () => {
     if (!draft) return;
@@ -120,24 +149,52 @@ function Market() {
       </p>
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
+      {!loading && items.length > 0 && (
+        <FilterBar>
+          <AdminInput
+            placeholder="Search area or pincode…"
+            value={searchQ}
+            onChange={(e) => setSearchQ(e.target.value)}
+            className="!w-52"
+          />
+          <AdminSelect
+            value={filterDay}
+            onChange={(e) => setFilterDay(e.target.value)}
+            className="!w-40"
+          >
+            <option value="all">All days</option>
+            {DAY_NAMES.map((name, i) => (
+              <option key={name} value={i}>
+                {name}
+              </option>
+            ))}
+          </AdminSelect>
+          <span className="text-xs text-neutral-400">
+            {sorted.length} of {items.length}
+          </span>
+        </FilterBar>
+      )}
+
       {loading ? (
         <p className="text-sm text-neutral-500">Loading…</p>
       ) : items.length === 0 ? (
         <p className="text-sm text-neutral-500">No market stops yet.</p>
+      ) : sorted.length === 0 ? (
+        <p className="text-sm text-neutral-500">No stops match filters.</p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
               <tr>
-                <th className="px-4 py-2.5">Day</th>
-                <th className="px-4 py-2.5">Area</th>
-                <th className="px-4 py-2.5">Pincode</th>
-                <th className="px-4 py-2.5">Discount</th>
+                <SortTh label="Day" sortKey="day" current={sort} onToggle={toggle} />
+                <SortTh label="Area" sortKey="area" current={sort} onToggle={toggle} />
+                <SortTh label="Pincode" sortKey="zip" current={sort} onToggle={toggle} />
+                <SortTh label="Discount" sortKey="discount" current={sort} onToggle={toggle} />
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody>
-              {items.map((m) => (
+              {sorted.map((m) => (
                 <tr key={m.id} className="border-t border-neutral-100">
                   <td className="px-4 py-2.5 font-medium">{DAY_NAMES[m.day] ?? m.day}</td>
                   <td className="px-4 py-2.5">{m.area}</td>
