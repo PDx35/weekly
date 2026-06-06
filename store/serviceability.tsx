@@ -101,6 +101,54 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
       setError('Location is not available on this device.');
       return;
     }
+
+    interface LocalityInfoItem {
+      name: string;
+      description?: string;
+    }
+    interface BigDataCloudResponse {
+      postcode?: string;
+      localityInfo?: {
+        administrative?: LocalityInfoItem[];
+      };
+    }
+
+    // IP-based geocoding fallback (no lat/lng passed to BigDataCloud reverse geocode)
+    const fallbackToIp = async () => {
+      try {
+        const res = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en`,
+        );
+        if (res.ok) {
+          const data = (await res.json()) as BigDataCloudResponse;
+          let zip = String(data.postcode ?? '')
+            .replace(/\D/g, '')
+            .slice(0, 6);
+
+          if (!zip && data.localityInfo?.administrative) {
+            const postalItem = data.localityInfo.administrative.find(
+              (item) =>
+                item.description?.toLowerCase() === 'postal code' ||
+                /^\d{6}$/.test(item.name.trim())
+            );
+            if (postalItem) {
+              zip = postalItem.name.replace(/\D/g, '').slice(0, 6);
+            }
+          }
+
+          if (zip) {
+            setPincodeState(zip);
+            persist(zip);
+            setError(null);
+            return true;
+          }
+        }
+      } catch (e) {
+        console.error('IP location fallback failed:', e);
+      }
+      return false;
+    };
+
     setLocating(true);
     setError(null);
     navigator.geolocation.getCurrentPosition(
@@ -110,24 +158,78 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           const res = await fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
           );
-          const data = (await res.json()) as { postcode?: string };
-          const zip = String(data.postcode ?? '')
+
+          const data = (await res.json()) as BigDataCloudResponse;
+          let zip = String(data.postcode ?? '')
             .replace(/\D/g, '')
             .slice(0, 6);
+
+          // Fallback 1: Scan administrative records for postal code descriptions or 6-digit names
+          if (!zip && data.localityInfo?.administrative) {
+            const postalItem = data.localityInfo.administrative.find(
+              (item) =>
+                item.description?.toLowerCase() === 'postal code' ||
+                /^\d{6}$/.test(item.name.trim())
+            );
+            if (postalItem) {
+              zip = postalItem.name.replace(/\D/g, '').slice(0, 6);
+            }
+          }
+
+          // Fallback 2: Query OpenStreetMap Nominatim reverse geocoding
+          if (!zip) {
+            try {
+              const osmRes = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`
+              );
+              if (osmRes.ok) {
+                const osmData = (await osmRes.json()) as {
+                  address?: { postcode?: string };
+                };
+                zip = String(osmData.address?.postcode ?? '')
+                  .replace(/\D/g, '')
+                  .slice(0, 6);
+              }
+            } catch (err) {
+              console.error('OSM Nominatim fallback failed:', err);
+            }
+          }
+
           if (zip) {
             setPincodeState(zip);
             persist(zip);
           } else {
-            setError('Could not detect your pincode — enter it manually.');
+            const success = await fallbackToIp();
+            if (!success) {
+              setError('Could not detect your pincode — enter it manually.');
+            }
           }
         } catch {
-          setError('Could not detect your location — enter your pincode.');
+          const success = await fallbackToIp();
+          if (!success) {
+            setError('Could not detect your location — enter your pincode.');
+          }
         } finally {
           setLocating(false);
         }
       },
-      () => {
-        setError('Location permission denied — enter your pincode.');
+      async (err) => {
+        // Attempt IP fallback first regardless of browser error
+        const success = await fallbackToIp();
+        if (success) {
+          setLocating(false);
+          return;
+        }
+
+        if (err.code === 1) {
+          setError('Location permission denied — enter your pincode.');
+        } else if (err.code === 2) {
+          setError('Location unavailable — enter your pincode.');
+        } else if (err.code === 3) {
+          setError('Location detection timed out — enter your pincode.');
+        } else {
+          setError('Could not detect your location — enter your pincode.');
+        }
         setLocating(false);
       },
       { timeout: 10000, maximumAge: 600000 },
