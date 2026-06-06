@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Rail } from '@/components/catalogue/Rail';
+import { CategoryGrid } from '@/components/catalogue/CategoryGrid';
 import { Crumbs } from '@/components/ui/Crumbs';
 import { getCategories, getProductsByCategory } from '@/lib/queries';
 import { routes } from '@/lib/routes';
@@ -23,6 +24,7 @@ export default async function BrowsePage() {
     <div className="page browse">
       <Crumbs items={[{ label: 'Home', href: routes.home() }, { label: 'All categories' }]} />
       <h1 className="page-title">All categories</h1>
+      <CategoryGrid categories={categories} title={null} />
       {sections.map(({ category, products }) => (
         <section className="cat-block" key={category.id}>
           <Rail

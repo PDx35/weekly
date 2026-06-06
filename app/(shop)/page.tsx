@@ -9,6 +9,7 @@ import { AnnouncementBanner } from '@/components/serviceability/AnnouncementBann
 
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
+import { CategoryGrid } from '@/components/catalogue/CategoryGrid';
 import { getBestsellers, getCategories, getDeals, getProductsByCategory } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
@@ -153,37 +154,7 @@ export default async function HomePage() {
       </section>
 
       {/* Category grid */}
-      <div className="sec-head">
-        <div>
-          <h2>Shop by category</h2>
-        </div>
-      </div>
-      <section className="cat-grid-wrap">
-        <div className="cat-grid">
-          {categories.map((c) => (
-            <Link key={c.id} className="cat-tile" href={routes.category(c.slug)}>
-              <span
-                className="cat-tile-img"
-                style={{ background: c.tint, color: c.ink, overflow: 'hidden' }}
-              >
-                {c.iconUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- arbitrary remote hosts
-                  <img
-                    src={c.iconUrl}
-                    alt={c.name}
-                    loading="lazy"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <Icon name="leaf" size={26} stroke={1.6} />
-                )}
-              </span>
-              <b>{c.name}</b>
-              {c.blurb && <i>{c.blurb}</i>}
-            </Link>
-          ))}
-        </div>
-      </section>
+      <CategoryGrid categories={categories} />
 
       {/* Weekly travelling market 
       <section className="rail-sec">

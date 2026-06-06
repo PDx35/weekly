@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ProductBrowser } from '@/components/catalogue/ProductBrowser';
+import { CategoryGrid } from '@/components/catalogue/CategoryGrid';
 import { Crumbs } from '@/components/ui/Crumbs';
 import { Icon } from '@/components/ui/Icon';
-import { getAllCategorySlugs, getCategoryBySlug, getProductsByCategory } from '@/lib/queries';
+import { getAllCategorySlugs, getCategoryBySlug, getProductsByCategory, getCategories } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
 export const revalidate = 3600;
@@ -38,7 +39,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 
-  const products = await getProductsByCategory(category.id);
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProductsByCategory(category.id),
+  ]);
 
   return (
     <div className="page category">
@@ -60,6 +64,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <Icon name="leaf" size={40} stroke={1.4} />
         </span>
       </header>
+      <CategoryGrid categories={categories} activeSlug={slug} />
       <ProductBrowser products={products} />
     </div>
   );

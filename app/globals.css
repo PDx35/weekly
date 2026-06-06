@@ -1474,6 +1474,13 @@ s {
   border-color: transparent
 }
 
+.cat-tile.active {
+  border-color: var(--brand);
+  background: var(--brand-050);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
 .cat-tile-img {
   width: 64px;
   height: 64px;
