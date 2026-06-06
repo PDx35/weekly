@@ -6,6 +6,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/store/auth';
 import { AdminGuard } from './AdminGuard';
+import { Logo } from '@/components/chrome/Logo';
+import { routes } from '@/lib/routes';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard' },
@@ -35,13 +37,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <AdminGuard>
       <div className="flex min-h-screen bg-neutral-50 text-neutral-900">
         <aside className="hidden w-60 shrink-0 flex-col border-r border-neutral-200 bg-white md:flex">
-          <div className="px-5 py-4 text-lg font-bold">
-            fresh<span className="text-emerald-600">mart</span>
-            <span className="ml-1.5 rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-              Admin
-            </span>
+          <div className='px-3 py-4'>
+            <Logo onClick={() => router.push(routes.home())} />
           </div>
-          <nav className="flex flex-1 flex-col gap-0.5 px-3 py-2">
+          <nav className="flex flex-1 flex-col gap-0.5 px-3 py-2 border-t">
             {NAV.map((item) => (
               <Link
                 key={item.href}

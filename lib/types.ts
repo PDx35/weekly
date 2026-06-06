@@ -164,12 +164,12 @@ export interface SupportTicket {
 
 /**
  * A stop on the travelling weekly market ("haat"). The market visits a fixed
- * place on a fixed weekday, every week; orders delivered to that pincode on that
- * day get a market discount. Managed from the admin panel later.
+ * place on one or more weekdays each week; orders delivered to that pincode on
+ * those days get a market discount. Managed from the admin panel.
  */
 export interface MarketDay {
-  /** Day of week the market is at this stop: 0 = Sunday … 6 = Saturday. */
-  day: number;
+  /** Weekdays the market is at this stop: 0 = Sunday … 6 = Saturday. */
+  days: number[];
   /** Delivery pincode covered by this stop. */
   zip: string;
   /** Human-readable area name, e.g. "Indiranagar". */

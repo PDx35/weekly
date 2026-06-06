@@ -2,17 +2,14 @@ import Link from 'next/link';
 import { Rail } from '@/components/catalogue/Rail';
 import { CategorySection } from '@/components/home/CategorySection';
 import { Ticker } from '@/components/home/Ticker';
-import { WeeklyMarket } from '@/components/market/WeeklyMarket';
+import { AnnouncementBanner } from '@/components/serviceability/AnnouncementBanner';
+
+// import { WeeklyMarket } from '@/components/market/WeeklyMarket';
+// import { SectionHead } from '@/components/ui/SectionHead';
+
 import { Icon } from '@/components/ui/Icon';
 import { Img } from '@/components/ui/Img';
-import { SectionHead } from '@/components/ui/SectionHead';
-import {
-  getBestsellers,
-  getCategories,
-  getDeals,
-  getProductsByCategory,
-  getWeeklyMarket,
-} from '@/lib/queries';
+import { getBestsellers, getCategories, getDeals, getProductsByCategory } from '@/lib/queries';
 import { routes } from '@/lib/routes';
 
 /** Catalogue is statically generated and revalidated hourly (ISR). */
@@ -24,11 +21,10 @@ export const revalidate = 3600;
  * (alternating, category-coloured layouts). Data comes from the `queries` layer.
  */
 export default async function HomePage() {
-  const [categories, bestsellers, deals, market] = await Promise.all([
+  const [categories, bestsellers, deals] = await Promise.all([
     getCategories(),
     getBestsellers(),
     getDeals(),
-    getWeeklyMarket(),
   ]);
 
   // Products per category for the home category sections (skip empty ones).
@@ -46,60 +42,79 @@ export default async function HomePage() {
 
   return (
     <div className="page home">
-      {/* Hero (basket) */}
-      <section className="hero hero-basket">
-        <div className="hero-copy">
-          <span className="hero-eyebrow">
-            <Icon name="bolt" size={14} /> Delivery in 30 minutes
-          </span>
-          <h1>
-            Fresh groceries,
-            <br />
-            <span>delivered fast.</span>
-          </h1>
-          <p>
-            From farm to your kitchen — fruits, vegetables, dairy and daily essentials, handpicked
-            and delivered to your door.
-          </p>
-          <div className="hero-cta">
-            <Link className="btn btn-primary btn-lg" href={routes.browse()}>
-              <span>Start shopping</span>
-              <Icon name="arrowR" size={18} />
-            </Link>
-            <Link className="btn btn-ghost btn-lg" href={featuredHref}>
-              <span>Today&apos;s deals</span>
-            </Link>
-          </div>
-          <div className="hero-stats">
-            <div>
-              <b>30 min</b>
-              <i>Avg. delivery</i>
-            </div>
-            <div>
-              <b>5,000+</b>
-              <i>Products</i>
-            </div>
-            <div>
-              <b>4.8★</b>
-              <i>Customer rating</i>
-            </div>
-          </div>
+      {/* Delivery serviceability announcement */}
+      <AnnouncementBanner />
+
+      {/* Hero — daily essentials banner */}
+      <section className="hero-essentials">
+        <div className="hero-essentials-copy">
+          <h1>Stock up on daily essentials</h1>
+          <p>Get farm-fresh goodness &amp; a range of exotic fruits, vegetables, eggs &amp; more</p>
+          <Link className="btn btn-onbrand btn-lg" href={routes.browse()}>
+            <span>Shop Now</span>
+          </Link>
         </div>
-        <div className="hero-art">
+        <Img
+          label="basket of fresh produce, eggs and dairy"
+          ratio="16 / 10"
+          className="hero-essentials-img"
+          cat={{ tint: 'rgba(255,255,255,.16)', ink: 'rgba(255,255,255,.9)' }}
+          radius="calc(var(--radius-card) * 1.2)"
+        />
+      </section>
+
+      {/* Promo cards */}
+      <section className="promo-cards">
+        <Link className="promo-card promo-card-teal" href={featuredHref}>
+          <div className="promo-card-copy">
+            <h3>
+              Pharmacy at
+              <br />
+              your doorstep!
+            </h3>
+            <p>Cough syrups, pain relief sprays &amp; more</p>
+            <span className="promo-card-btn">Order Now</span>
+          </div>
           <Img
-            label="hero basket of fresh produce"
+            label="medicines and pharmacy"
             ratio="1 / 1"
-            className="hero-img"
-            cat={{ tint: '#E7F3E4', ink: '#3C7A36' }}
-            radius="calc(var(--radius-card) * 1.4)"
+            className="promo-card-img"
+            cat={{ tint: 'rgba(255,255,255,.4)', ink: '#1d6e6a' }}
           />
-          <div className="hero-chip hero-chip-1">
-            <Icon name="truck" size={16} /> Out for delivery
+        </Link>
+        <Link className="promo-card promo-card-amber" href={featuredHref}>
+          <div className="promo-card-copy">
+            <h3>
+              Pet care supplies
+              <br />
+              at your door
+            </h3>
+            <p>Food, treats, toys &amp; more</p>
+            <span className="promo-card-btn">Order Now</span>
           </div>
-          <div className="hero-chip hero-chip-2">
-            <Icon name="leaf" size={16} /> Sourced today
+          <Img
+            label="pet food and supplies"
+            ratio="1 / 1"
+            className="promo-card-img"
+            cat={{ tint: 'rgba(255,255,255,.45)', ink: '#9a7400' }}
+          />
+        </Link>
+        <Link className="promo-card promo-card-slate" href={featuredHref}>
+          <div className="promo-card-copy">
+            <h3>
+              No time for
+              <br />a diaper run?
+            </h3>
+            <p>Get baby care essentials</p>
+            <span className="promo-card-btn">Order Now</span>
           </div>
-        </div>
+          <Img
+            label="baby care essentials"
+            ratio="1 / 1"
+            className="promo-card-img"
+            cat={{ tint: 'rgba(255,255,255,.5)', ink: '#4a5b6b' }}
+          />
+        </Link>
       </section>
 
       {/* Promo ticker */}
@@ -170,14 +185,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Weekly travelling market */}
+      {/* Weekly travelling market 
       <section className="rail-sec">
         <SectionHead
           title="Weekly market near you"
           sub="Our travelling market visits a new area each day — get extra savings when it reaches your pincode."
         />
         <WeeklyMarket schedule={market} />
-      </section>
+      </section>*/}
 
       {/* Best sellers */}
       <Rail

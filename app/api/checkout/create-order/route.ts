@@ -13,7 +13,8 @@ import { NextResponse } from 'next/server';
 import { computeBill } from '@/lib/bill';
 import { validateCoupon } from '@/lib/coupons';
 import { getAdminAuth, getAdminDb, isAdminConfigured } from '@/lib/firebase/admin';
-import { getProductById } from '@/lib/queries';
+import { dayName, evaluateServiceability } from '@/lib/market';
+import { getProductById, getWeeklyMarket } from '@/lib/queries';
 import { createRazorpayOrder, getRazorpayKeyId, isRazorpayConfigured } from '@/lib/razorpay';
 import type { Address, OrderItem } from '@/lib/types';
 
@@ -118,6 +119,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Select a delivery address.' }, { status: 400 });
   }
   const address: Address = { ...chosen, def: chosen.id === userData.defaultAddressId };
+
+  // 5b. Serviceability: the market must be in the delivery pincode TODAY.
+  const schedule = await getWeeklyMarket();
+  const today = new Date().getDay();
+  const service = evaluateServiceability(address.pin, schedule, today);
+  if (service.state !== 'serviceable') {
+    const error =
+      service.state === 'scheduled'
+        ? `We deliver to ${address.pin} on ${dayName(service.nextDay)}, not today.`
+        : `We currently cannot deliver to ${address.pin}.`;
+    return NextResponse.json({ error }, { status: 409 });
+  }
 
   // 6. Online methods: create a Razorpay order + a pending FreshMart order.
   //    The order is only marked paid after /api/checkout/verify or the webhook.

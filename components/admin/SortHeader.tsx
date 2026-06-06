@@ -27,16 +27,11 @@ export function useSort<T, K extends string>(
 ) {
   const [sort, setSort] = useState<SortState<K>>({ key: defaultKey, dir: defaultDir });
 
-  const toggle = useCallback(
-    (key: K) => {
-      setSort((prev) =>
-        prev.key === key
-          ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' }
-          : { key, dir: 'asc' },
-      );
-    },
-    [],
-  );
+  const toggle = useCallback((key: K) => {
+    setSort((prev) =>
+      prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' },
+    );
+  }, []);
 
   const sorted = useMemo(() => {
     const fn = accessors[sort.key];
@@ -67,18 +62,14 @@ interface SortThProps {
   label: string;
   sortKey: string;
   current: SortState<string>;
-  onToggle: (key: any) => void;
+  // Method syntax → bivariant params, so a narrower `(key: K) => void` toggle
+  // from useSort is accepted without an `any`.
+  onToggle(key: string): void;
   className?: string;
 }
 
 /** A clickable table header cell with sort indicators. */
-export function SortTh({
-  label,
-  sortKey,
-  current,
-  onToggle,
-  className = '',
-}: SortThProps) {
+export function SortTh({ label, sortKey, current, onToggle, className = '' }: SortThProps) {
   const active = current.key === sortKey;
   return (
     <th
@@ -101,7 +92,5 @@ export function SortTh({
 
 /** Simple flex wrapper for filter controls above a table. */
 export function FilterBar({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mb-4 flex flex-wrap items-center gap-3">{children}</div>
-  );
+  return <div className="mb-4 flex flex-wrap items-center gap-3">{children}</div>;
 }

@@ -3,6 +3,7 @@ import './globals.css';
 import { Toast } from '@/components/ui/Toast';
 import { AuthProvider } from '@/store/auth';
 import { CartProvider } from '@/store/cart';
+import { ServiceabilityProvider } from '@/store/serviceability';
 import { Geist } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { SITE_URL } from '@/lib/site';
@@ -49,10 +50,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <AuthProvider>
-          <CartProvider>
-            {children}
-            <Toast />
-          </CartProvider>
+          <ServiceabilityProvider>
+            <CartProvider>
+              {children}
+              <Toast />
+            </CartProvider>
+          </ServiceabilityProvider>
         </AuthProvider>
       </body>
     </html>

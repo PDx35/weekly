@@ -11,7 +11,7 @@ import {
   MarkerTooltip,
   type MapRef,
 } from '@/components/ui/map';
-import { MARKET_MAP_CENTER, MARKET_MAP_ZOOM, dayName, marketsForZip } from '@/lib/market';
+import { MARKET_MAP_CENTER, MARKET_MAP_ZOOM, dayName, dayNames, marketsForZip } from '@/lib/market';
 import type { MarketDay } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/store/auth';
@@ -32,7 +32,7 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
   // Rendered client-only, so the local weekday is always correct (no SSR skew).
   const todayIndex = new Date().getDay();
   const today = useMemo(
-    () => schedule.find((m) => m.day === todayIndex) ?? null,
+    () => schedule.find((m) => m.days.includes(todayIndex)) ?? null,
     [schedule, todayIndex],
   );
 
@@ -59,7 +59,7 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
     if (matches[0]) focus(matches[0]);
   };
 
-  const isToday = (m: MarketDay) => m.day === todayIndex;
+  const isToday = (m: MarketDay) => m.days.includes(todayIndex);
   const myMarketToday = today && today.zip === myZip ? today : null;
 
   return (
@@ -126,15 +126,15 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
             ) : (
               result.matches.map((m) => (
                 <p key={m.zip} style={{ color: 'var(--ink-2)' }}>
-                  The market visits <b style={{ color: 'var(--ink)' }}>{m.area}</b> ({m.zip}) every{' '}
-                  <b style={{ color: 'var(--ink)' }}>{dayName(m.day)}</b>.{' '}
+                  The market visits <b style={{ color: 'var(--ink)' }}>{m.area}</b> ({m.zip}) on{' '}
+                  <b style={{ color: 'var(--ink)' }}>{dayNames(m.days)}</b>.{' '}
                   {isToday(m) ? (
                     <span style={{ color: 'var(--brand-700)', fontWeight: 700 }}>
                       It&apos;s here today — {m.discountPercent}% off!
                     </span>
                   ) : (
                     <>
-                      Come back {dayName(m.day)} for {m.discountPercent}% off.
+                      Come back on {dayNames(m.days)} for {m.discountPercent}% off.
                     </>
                   )}
                 </p>
@@ -169,14 +169,14 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
                     color: todayRow ? '#fff' : 'var(--ink-2)',
                   }}
                 >
-                  {dayName(m.day).slice(0, 2)}
+                  {dayName(m.days[0] ?? 0).slice(0, 2)}
                 </span>
                 <span className="min-w-0 flex-1">
                   <b className="block text-[14px] font-semibold" style={{ color: 'var(--ink)' }}>
                     {m.area}
                   </b>
                   <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
-                    {m.zip} · {dayName(m.day)}
+                    {m.zip} · {dayNames(m.days)}
                   </span>
                 </span>
                 <span
@@ -236,7 +236,7 @@ export function WeeklyMarketClient({ schedule }: { schedule: MarketDay[] }) {
                   </MarkerLabel>
                 )}
                 <MarkerTooltip>
-                  {m.area} · {dayName(m.day)} · {m.discountPercent}% off
+                  {m.area} · {dayNames(m.days)} · {m.discountPercent}% off
                 </MarkerTooltip>
               </MapMarker>
             );

@@ -1195,6 +1195,134 @@ s {
   right: -10px
 }
 
+/* ---------- Hero (daily essentials) ---------- */
+.hero-essentials {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: clamp(16px, 3vw, 40px);
+  align-items: center;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-700) 100%);
+  color: #fff;
+  border-radius: calc(var(--radius-card) * 1.4);
+  padding: clamp(24px, 3.5vw, 52px);
+  margin-top: 8px;
+  overflow: hidden
+}
+
+.hero-essentials-copy h1 {
+  color: #fff;
+  font-size: clamp(28px, 4.4vw, 52px);
+  line-height: 1.05;
+  margin: 0 0 14px
+}
+
+.hero-essentials-copy p {
+  font-size: clamp(15px, 1.7vw, 21px);
+  color: rgba(255, 255, 255, .9);
+  max-width: 26ch;
+  line-height: 1.4;
+  margin: 0 0 26px
+}
+
+.hero-essentials-img {
+  width: 100%;
+  box-shadow: var(--shadow-lg)
+}
+
+/* ---------- Promo cards ---------- */
+.promo-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin-top: var(--gap)
+}
+
+.promo-card {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: var(--radius-card);
+  padding: clamp(18px, 1.8vw, 26px);
+  overflow: hidden;
+  position: relative;
+  transition: transform .14s, box-shadow .14s
+}
+
+.promo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow)
+}
+
+.promo-card-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0
+}
+
+.promo-card-copy h3 {
+  font-size: clamp(18px, 1.7vw, 23px);
+  line-height: 1.12;
+  margin: 0 0 8px
+}
+
+.promo-card-copy p {
+  font-size: 13.5px;
+  line-height: 1.35;
+  margin: 0 0 16px;
+  opacity: .85
+}
+
+.promo-card-btn {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm)
+}
+
+.promo-card-img {
+  width: clamp(120px, 44%, 170px);
+  flex-shrink: 0;
+  align-self: flex-end
+}
+
+.promo-card-teal {
+  background: linear-gradient(135deg, #6fd0cb 0%, #45b7b1 100%);
+  color: #06403d
+}
+
+.promo-card-teal .promo-card-btn {
+  color: #06403d
+}
+
+.promo-card-amber {
+  background: linear-gradient(135deg, #f8d04f 0%, #f3bc1f 100%);
+  color: #4a3800
+}
+
+.promo-card-amber .promo-card-btn {
+  background: #1e1e1e;
+  color: #fff
+}
+
+.promo-card-slate {
+  background: linear-gradient(135deg, #cdd6df 0%, #b3bfca 100%);
+  color: #2b3946
+}
+
+.promo-card-slate .promo-card-btn {
+  background: #1e1e1e;
+  color: #fff
+}
+
 /* ---------- Hero (editorial) ---------- */
 .hero-editorial {
   display: grid;
@@ -3738,6 +3866,19 @@ s {
 
   .hero-art {
     max-width: 420px
+  }
+
+  .hero-essentials {
+    grid-template-columns: 1fr;
+    gap: 20px
+  }
+
+  .hero-essentials-img {
+    order: -1
+  }
+
+  .promo-cards {
+    grid-template-columns: 1fr
   }
 
   .hero-editorial {

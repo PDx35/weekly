@@ -195,8 +195,12 @@ export async function getWeeklyMarket(): Promise<MarketDay[]> {
     if (snap.empty) return sortMarket(WEEKLY_MARKET);
     const stops = snap.docs.map((doc) => {
       const d = doc.data() as Doc;
+      // Prefer the multi-day `days` array; fall back to a legacy single `day`.
+      const days = Array.isArray(d.days)
+        ? (d.days as unknown[]).map((x) => Number(x)).filter((n) => Number.isFinite(n))
+        : [num(d.day)];
       return {
-        day: num(d.day),
+        days,
         zip: str(d.zip),
         area: str(d.area),
         lng: num(d.lng),
@@ -210,5 +214,8 @@ export async function getWeeklyMarket(): Promise<MarketDay[]> {
   }
 }
 
+const firstWeekday = (m: MarketDay): number =>
+  m.days.length ? Math.min(...m.days.map((d) => ((d % 7) + 6) % 7)) : 7;
+
 const sortMarket = (m: MarketDay[]): MarketDay[] =>
-  [...m].sort((a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7));
+  [...m].sort((a, b) => firstWeekday(a) - firstWeekday(b));

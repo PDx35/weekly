@@ -15,11 +15,13 @@ import { rupee } from '@/components/ui/Price';
 import { trackBeginCheckout, trackPurchase } from '@/lib/analytics';
 import { computeBill } from '@/lib/bill';
 import { auth } from '@/lib/firebase/client';
+import { dayName } from '@/lib/market';
 import { loadRazorpay, type RazorpaySuccess } from '@/lib/razorpay-checkout';
 import { routes } from '@/lib/routes';
 import type { Address } from '@/lib/types';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
+import { useServiceability } from '@/store/serviceability';
 
 const STEPS = ['Address', 'Payment', 'Review'];
 const SLOTS = ['Within 30 minutes', 'Today, 5–7 PM', 'Today, 7–9 PM', 'Tomorrow, 8–10 AM'];
@@ -38,6 +40,7 @@ function CheckoutContent() {
   const router = useRouter();
   const { user, addresses, selectedAddr, setSelectedAddr, upsertAddress } = useAuth();
   const { cartItems, cartCount, cartSubtotal, clearCart, showToast } = useCart();
+  const { evaluate } = useServiceability();
 
   const [step, setStep] = useState(0);
   const [adding, setAdding] = useState(false);
@@ -50,6 +53,18 @@ function CheckoutContent() {
   const bill = computeBill(cartSubtotal, 0);
   const addr = addresses.find((a) => a.id === selectedAddr) ?? addresses[0];
   const payMeta = PAYMENTS.find((p) => p.id === method)!;
+
+  // Delivery serviceability for the chosen address's pincode (today's market).
+  const delivery = addr ? evaluate(addr.pin) : { state: 'unknown' as const };
+  const canOrder = delivery.state === 'serviceable';
+  const deliveryMessage =
+    delivery.state === 'scheduled'
+      ? `The market reaches ${addr?.pin} on ${dayName(delivery.nextDay)} — ordering opens then. You can keep items in your cart.`
+      : delivery.state === 'unserviceable'
+        ? `We currently cannot deliver to ${addr?.pin}. Your cart is saved — try a serviceable address.`
+        : delivery.state === 'serviceable'
+          ? `Delivering to ${addr?.pin} today (${delivery.market.area}).`
+          : 'Add a delivery address to check serviceability.';
 
   // Bounce to home if the cart empties (but not right after placing an order).
   useEffect(() => {
@@ -123,6 +138,10 @@ function CheckoutContent() {
   const place = async () => {
     if (!addr) {
       showToast('Add a delivery address first');
+      return;
+    }
+    if (!canOrder) {
+      showToast(deliveryMessage);
       return;
     }
     setPlacing(true);
@@ -312,16 +331,32 @@ function CheckoutContent() {
                   ))}
                 </div>
               </div>
+              {!canOrder && (
+                <div
+                  className="review-sec"
+                  style={{
+                    background: 'var(--accent-soft)',
+                    borderColor: 'transparent',
+                    color: '#9A6B16',
+                  }}
+                >
+                  <div className="review-head" style={{ color: 'inherit' }}>
+                    <Icon name="truck" size={16} /> {deliveryMessage}
+                  </div>
+                </div>
+              )}
               <div className="co-actions">
                 <Button variant="ghost" onClick={() => setStep(1)} icon="back">
                   Back
                 </Button>
-                <Button size="lg" disabled={placing} onClick={place}>
+                <Button size="lg" disabled={placing || !canOrder} onClick={place}>
                   {placing
                     ? 'Placing order…'
-                    : method === 'cod'
-                      ? `Place order · ${rupee(bill.grand)}`
-                      : `Pay ${rupee(bill.grand)}`}
+                    : !canOrder
+                      ? 'Not deliverable here'
+                      : method === 'cod'
+                        ? `Place order · ${rupee(bill.grand)}`
+                        : `Pay ${rupee(bill.grand)}`}
                 </Button>
               </div>
             </div>

@@ -44,8 +44,8 @@ export interface AdminCoupon {
 
 export interface AdminMarketStop {
   id: string;
-  /** 0 = Sunday … 6 = Saturday. */
-  day: number;
+  /** Weekdays the stop is open: 0 = Sunday … 6 = Saturday. */
+  days: number[];
   zip: string;
   area: string;
   lng: number;
