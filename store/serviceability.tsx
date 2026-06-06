@@ -16,6 +16,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useRef,
   type ReactNode,
 } from 'react';
 import { evaluateServiceability, type Serviceability } from '@/lib/market';
@@ -96,7 +97,10 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
     persist(null);
   }, []);
 
+  const locatingRef = useRef(false);
+
   const detect = useCallback(() => {
+    if (locatingRef.current) return;
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       setError('Location is not available on this device.');
       return;
@@ -149,6 +153,7 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
       return false;
     };
 
+    locatingRef.current = true;
     setLocating(true);
     setError(null);
     navigator.geolocation.getCurrentPosition(
@@ -198,19 +203,26 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           if (zip) {
             setPincodeState(zip);
             persist(zip);
+            setError(null);
+            locatingRef.current = false; // Mark resolved immediately to preempt error timeout
           } else {
             const success = await fallbackToIp();
-            if (!success) {
+            if (success) {
+              locatingRef.current = false;
+            } else {
               setError('Could not detect your pincode — enter it manually.');
             }
           }
         } catch {
           const success = await fallbackToIp();
-          if (!success) {
+          if (success) {
+            locatingRef.current = false;
+          } else {
             setError('Could not detect your location — enter your pincode.');
           }
         } finally {
           setLocating(false);
+          locatingRef.current = false;
         }
       },
       async (err) => {
@@ -218,19 +230,26 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
         const success = await fallbackToIp();
         if (success) {
           setLocating(false);
+          locatingRef.current = false;
           return;
         }
 
-        if (err.code === 1) {
-          setError('Location permission denied — enter your pincode.');
-        } else if (err.code === 2) {
-          setError('Location unavailable — enter your pincode.');
-        } else if (err.code === 3) {
-          setError('Location detection timed out — enter your pincode.');
-        } else {
-          setError('Could not detect your location — enter your pincode.');
-        }
-        setLocating(false);
+        // Delay setting the error to let success geocoding finish if it runs concurrently (e.g. WebKit bug)
+        setTimeout(() => {
+          if (!locatingRef.current) return;
+
+          if (err.code === 1) {
+            setError('Location permission denied — enter your pincode.');
+          } else if (err.code === 2) {
+            setError('Location unavailable — enter your pincode.');
+          } else if (err.code === 3) {
+            setError('Location detection timed out — enter your pincode.');
+          } else {
+            setError('Could not detect your location — enter your pincode.');
+          }
+          setLocating(false);
+          locatingRef.current = false;
+        }, 1000);
       },
       { timeout: 10000, maximumAge: 600000 },
     );
