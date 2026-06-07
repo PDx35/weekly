@@ -62,3 +62,23 @@ export interface AdminTicket {
   message: string;
   status: 'open' | 'resolved';
 }
+
+export interface AdminBanner {
+  id: string;
+  title: string;
+  subtitle?: string;
+  imageUrlDesktop: string;
+  imageUrlMobile: string;
+  bgColor?: string;
+  ctaText?: string;
+  ctaColor?: string;
+  type: 'hero' | 'promo' | 'category' | 'offer' | 'brand' | 'seasonal' | 'mid_page' | 'footer';
+  targetType: 'product' | 'category' | 'offer' | 'search' | 'url';
+  targetValue: string;
+  active: boolean;
+  priority: number;
+  startDate?: string;
+  endDate?: string;
+  views?: number;
+  clicks?: number;
+}

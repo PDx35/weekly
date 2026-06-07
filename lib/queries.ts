@@ -21,7 +21,7 @@ import {
 } from './data';
 import { db } from './firebase/client';
 import { WEEKLY_MARKET } from './market';
-import type { Category, MarketDay, Product } from './types';
+import type { Category, MarketDay, Product, Banner } from './types';
 
 // Tints for category tiles (the DB has no colours), assigned by display order.
 const TINTS: [string, string][] = [
@@ -84,6 +84,7 @@ function mapProduct(id: string, d: Doc, catName: string): Product {
     tag: null,
     desc: str(d.description) || null,
     stock: d.isAvailable !== false && num(d.stock) > 0,
+    inventory: d.isAvailable === false ? 0 : (num(d.stock) !== undefined && num(d.stock) !== null ? num(d.stock) : 10),
     searchTokens: tokenize(name, catName),
     images,
   };
@@ -222,3 +223,47 @@ const firstWeekday = (m: MarketDay): number =>
 
 const sortMarket = (m: MarketDay[]): MarketDay[] =>
   [...m].sort((a, b) => firstWeekday(a) - firstWeekday(b));
+
+const getBannersRaw = cache(async (): Promise<Banner[]> => {
+  try {
+    const snap = await getDocs(collection(db, 'banners'));
+    if (snap.empty) return [];
+    const nowStr = new Date().toISOString().split('T')[0];
+    return snap.docs
+      .map((d) => {
+        const data = d.data() as Doc;
+        return {
+          id: d.id,
+          title: str(data.title),
+          subtitle: str(data.subtitle),
+          imageUrlDesktop: str(data.imageUrlDesktop),
+          imageUrlMobile: str(data.imageUrlMobile || data.imageUrlDesktop),
+          bgColor: str(data.bgColor),
+          ctaText: str(data.ctaText) || 'Shop Now',
+          ctaColor: str(data.ctaColor) || '#ffffff',
+          type: (str(data.type) || 'hero') as Banner['type'],
+          targetType: (str(data.targetType) || 'category') as Banner['targetType'],
+          targetValue: str(data.targetValue),
+          active: data.active !== false,
+          priority: num(data.priority),
+          startDate: str(data.startDate),
+          endDate: str(data.endDate),
+          views: num(data.views),
+          clicks: num(data.clicks),
+        } satisfies Banner;
+      })
+      .filter((b) => {
+        if (!b.active) return false;
+        if (b.startDate && nowStr < b.startDate) return false;
+        if (b.endDate && nowStr > b.endDate) return false;
+        return true;
+      })
+      .sort((a, b) => a.priority - b.priority);
+  } catch {
+    return [];
+  }
+});
+
+export async function getBanners(): Promise<Banner[]> {
+  return getBannersRaw();
+}

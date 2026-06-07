@@ -69,6 +69,8 @@ interface AuthContextValue {
   deleteAddress: (id: string) => Promise<void>;
   /** Set the default/selected delivery address. */
   setSelectedAddr: (id: string) => Promise<void>;
+  /** Update user profile details. */
+  updateUserProfile: (updates: { name?: string; phone?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -242,6 +244,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, addresses, persist],
   );
 
+  const updateUserProfile = useCallback(
+    async (updates: { name?: string; phone?: string }) => {
+      if (!user) return;
+      const ref = doc(db, 'users', user.uid);
+      await updateDoc(ref, updates);
+      setUser((prev) => (prev ? { ...prev, ...updates } : null));
+    },
+    [user],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -256,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       upsertAddress,
       deleteAddress,
       setSelectedAddr,
+      updateUserProfile,
     }),
     [
       user,
@@ -270,6 +283,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       upsertAddress,
       deleteAddress,
       setSelectedAddr,
+      updateUserProfile,
     ],
   );
 

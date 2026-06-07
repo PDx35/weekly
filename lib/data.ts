@@ -97,6 +97,7 @@ interface ProductOpts {
   tag?: string;
   desc?: string;
   stock?: boolean;
+  inventory?: number;
 }
 
 let _id = 0;
@@ -120,6 +121,7 @@ const P = (
   tag: opts.tag ?? null,
   desc: opts.desc ?? null,
   stock: opts.stock ?? true,
+  inventory: opts.stock === false ? 0 : (opts.inventory !== undefined ? opts.inventory : 10),
   searchTokens: tokenize(name, CATEGORY_NAME.get(cat) ?? cat),
   images: [],
 });
@@ -137,6 +139,7 @@ export const PRODUCTS: Product[] = [
     mrp: 64,
     rating: 4.5,
     reviews: 388,
+    inventory: 3,
     desc: 'Everyday energy fruit. Firm, slightly green tips that ripen on the counter in a day or two.',
   }),
   P('fruits', 'Royal Gala Apple', 189, '4 pcs (600 g)', {
@@ -152,7 +155,7 @@ export const PRODUCTS: Product[] = [
   P('fruits', 'Sweet Lime (Mosambi)', 78, '1 kg', { mrp: 92, rating: 4.3 }),
   P('fruits', 'Seedless Grapes', 96, '500 g', { tag: 'Fresh', rating: 4.5 }),
   P('fruits', 'Tender Coconut', 49, '1 pc', { rating: 4.7 }),
-
+ 
   // Vegetables
   P('veggies', 'Tomato (Hybrid)', 32, '1 kg', {
     mrp: 40,
@@ -176,7 +179,7 @@ export const PRODUCTS: Product[] = [
   }),
   P('veggies', 'Green Chilli', 18, '100 g', { rating: 4.2 }),
   P('veggies', 'Ginger', 24, '200 g', { rating: 4.3 }),
-
+ 
   // Dairy & Eggs
   P('dairy', 'Farm Fresh Milk', 33, '500 ml', {
     tag: 'Daily',
@@ -187,6 +190,7 @@ export const PRODUCTS: Product[] = [
   P('dairy', 'Free-Range Eggs', 84, '6 pcs', {
     mrp: 96,
     rating: 4.6,
+    stock: false,
     desc: 'Brown free-range eggs from grain-fed hens.',
   }),
   P('dairy', 'Greek Yogurt', 65, '400 g', { tag: 'High protein', rating: 4.5 }),

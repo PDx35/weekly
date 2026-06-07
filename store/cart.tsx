@@ -169,19 +169,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addToCart = useCallback((id: string, qty = 1) => {
-    if (!user) {
-      showLoginToast();
-      return;
-    }
     if (qty > 0) void trackAddToCart({ item_id: id, quantity: qty });
     setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] || 0) + qty) }));
-  }, [user, showLoginToast]);
+  }, []);
 
   const setQty = useCallback((id: string, qty: number) => {
-    if (!user) {
-      showLoginToast();
-      return;
-    }
     // Count a 0 → positive transition as an add-to-cart.
     if (qty > 0 && !cartRef.current[id]) void trackAddToCart({ item_id: id, quantity: qty });
     setCart((c) => {
@@ -190,7 +182,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       else next[id] = qty;
       return next;
     });
-  }, [user, showLoginToast]);
+  }, []);
 
   const removeFromCart = useCallback((id: string) => {
     setCart((c) => {

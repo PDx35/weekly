@@ -43,6 +43,7 @@ export interface Product {
   /** Long description; `null` when none. */
   desc: string | null;
   stock: boolean;
+  inventory: number;
   /**
    * Lowercase search tokens (from the product and category names). Mirrors the
    * Firestore `array-contains` search field so the query layer can swap to a
@@ -180,4 +181,24 @@ export interface MarketDay {
   lat: number;
   /** Discount percentage applied in this zip on this day (e.g. 15 = 15% off). */
   discountPercent: number;
+}
+
+export interface Banner {
+  id: string;
+  title: string;
+  subtitle?: string;
+  imageUrlDesktop: string;
+  imageUrlMobile: string;
+  bgColor?: string;
+  ctaText?: string;
+  ctaColor?: string;
+  type: 'hero' | 'promo' | 'category' | 'offer' | 'brand' | 'seasonal' | 'mid_page' | 'footer';
+  targetType: 'product' | 'category' | 'search' | 'url';
+  targetValue: string;
+  active: boolean;
+  priority: number;
+  startDate?: string;
+  endDate?: string;
+  views?: number;
+  clicks?: number;
 }

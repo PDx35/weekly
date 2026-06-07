@@ -43,6 +43,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Banners: public read, admin write.
+    match /banners/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // User profile (with embedded addresses + cart) and any subcollections:
     // readable and writable only by the owner.
     match /users/{uid} {
