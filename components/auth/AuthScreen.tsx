@@ -134,7 +134,7 @@ export function AuthScreen() {
 
   return (
     <div className="auth">
-      <div className="auth-art">
+      <div className="auth-art !min-h-screen">
         <Logo onClick={() => router.push(routes.home())} />
         <div className="auth-art-mid">
           <h2>
@@ -168,6 +168,9 @@ export function AuthScreen() {
 
       <div className="auth-form-wrap">
         <div className="auth-form">
+          <div className="auth-mobile-logo">
+            <Logo onClick={() => router.push(routes.home())} />
+          </div>
           {mode === 'phone' ? (
             <>
               <h1>Sign in with phone</h1>

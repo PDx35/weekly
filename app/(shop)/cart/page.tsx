@@ -138,7 +138,7 @@ export default function CartPage() {
           </div>
         </div>
 
-        <aside className="checkout-side">
+        <aside className="checkout-side" style={{ order: 1 }}>
           <div className="summary-card">
             <h3>Bill details</h3>
             <BillRows bill={bill} freeNote />
