@@ -373,10 +373,10 @@ export default function HomePage() {
     }
   }, [pincode, activeAddr, detect]);
 
-  const locationLabel = activeAddr?.label 
-    || (locationName && pincode 
-        ? `${locationName} (${pincode})` 
-        : locationName || pincode || 'Set location');
+  const locationLabel = activeAddr?.label
+    || (locationName && pincode
+      ? `${locationName} (${pincode})`
+      : locationName || pincode || 'Set location');
 
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -556,7 +556,7 @@ export default function HomePage() {
         `
       }} />
 
-      {/* WEEKLY MARKET HEADER */}
+      {/* GROWEXY HEADER */}
       <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           {/* Logo & Location */}
@@ -566,7 +566,7 @@ export default function HomePage() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               </span>
               <span>
-                Weekly <span className="text-emerald-600 font-extrabold">Market</span>
+                Grow<span className="text-emerald-600 font-extrabold">exy</span>
               </span>
             </Link>
 
@@ -626,57 +626,46 @@ export default function HomePage() {
 
       {/* HERO SECTION */}
       <section className="mx-auto max-w-7xl px-6 pt-6">
-        {loading ? (
-          <div className="h-[350px] w-full rounded-[2.5rem] bg-neutral-100 animate-pulse" />
-        ) : heroBanners.length > 0 ? (
-          <HeroCarousel banners={heroBanners} onBannerClick={handleBannerClick} />
-        ) : (
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#d2efff] via-[#e6f5ff] to-white p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex-1 space-y-6 max-w-xl z-10">
-              <span className="inline-block rounded-full bg-white/80 px-4 py-1 text-xs font-bold tracking-wider text-emerald-800 uppercase shadow-sm">
-                Fresh & Authentic
-              </span>
-              <h1 className="text-4xl md:text-6xl font-black tracking-tight text-neutral-900 leading-tight">
-                DELICIOUS SNACKS TO CURB YOUR HUNGER
-              </h1>
-              <p className="text-neutral-600 text-sm md:text-base leading-relaxed">
-                Our organic whole milk comes from pasture-raised cows, free from synthetic hormones and antibiotics, delivering a rich and creamy taste.
-              </p>
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <Link href={routes.browse()} className="flex items-center gap-3 rounded-full bg-amber-400 hover:bg-amber-500 text-neutral-950 font-bold px-6 py-3.5 shadow-lg shadow-amber-100 transition-all group">
-                  <span>Shop Now</span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:translate-x-1 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </span>
-                </Link>
-                <div className="text-sm text-neutral-600 font-semibold flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                  <span>2400+ Fresh Products</span>
-                </div>
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#d2efff] via-[#e6f5ff] to-white p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex-1 space-y-6 max-w-xl z-10">
+            <span className="inline-block rounded-full bg-white/80 px-4 py-1 text-xs font-bold tracking-wider text-emerald-800 uppercase shadow-sm">
+              Fresh & Authentic
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-neutral-900 leading-tight">
+              DELICIOUS SNACKS TO CURB YOUR HUNGER
+            </h1>
+            <p className="text-neutral-600 text-sm md:text-base leading-relaxed">
+              Our organic whole milk comes from pasture-raised cows, free from synthetic hormones and antibiotics, delivering a rich and creamy taste.
+            </p>
+            <div className="flex flex-wrap items-center gap-6 pt-2">
+              <Link href={routes.browse()} className="flex items-center gap-3 rounded-full bg-amber-400 hover:bg-amber-500 text-neutral-950 font-bold px-6 py-3.5 shadow-lg shadow-amber-100 transition-all group">
+                <span>Shop Now</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:translate-x-1 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </Link>
+              <div className="text-sm text-neutral-600 font-semibold flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span>2400+ Fresh Products</span>
               </div>
             </div>
-            <div className="relative flex-1 flex justify-center md:justify-end z-10 w-full max-w-md md:max-w-none">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/growexy_hero_delivery_guy.png"
-                alt="Delivery Person holding vegetable basket"
-                className="w-full max-w-md md:max-w-lg object-contain rounded-2xl hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
           </div>
-        )}
+          <div className="relative flex-1 flex justify-center md:justify-end z-10 w-full max-w-md md:max-w-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/growexy_hero_delivery_guy.png"
+              alt="Delivery Person holding vegetable basket"
+              className="w-full max-w-md md:max-w-lg object-contain rounded-2xl hover:scale-[1.02] transition-transform duration-300"
+            />
+          </div>
+        </div>
       </section>
 
       {/* DYNAMIC POPULAR CATEGORIES */}
-      <section className="mx-auto max-w-7xl px-6 py-10 text-center space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-            Shop By Category
-          </h2>
-          <Link href={routes.browse()} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-            See All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </Link>
-        </div>
+      <section className="mx-auto max-w-7xl px-6 py-16 text-center space-y-10">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
+          Our Popular Categories
+        </h2>
         {loading ? (
           <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
             {[...Array(7)].map((_, idx) => (
@@ -709,14 +698,14 @@ export default function HomePage() {
       {/* STYLE 1: COMPACT HORIZONTAL SCROLL - BEST SELLERS */}
       <section className="mx-auto max-w-7xl px-6 py-4 space-y-4">
         <div className="flex items-center justify-between">
-          <div className="space-y-0.5 text-left">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Best Sellers
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Popular items loved by our community</p>
-          </div>
-          <Link href={routes.browse()} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-            See All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 uppercase">
+            Our Seasonal Offers
+          </h2>
+          <Link href={routes.browse()} className="flex items-center gap-2 rounded-full border border-neutral-200 hover:border-neutral-900 px-5 py-2 text-xs font-bold tracking-tight text-neutral-950 transition-all group">
+            <span>Shop Now</span>
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white group-hover:translate-x-1 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
           </Link>
         </div>
 
@@ -786,314 +775,51 @@ export default function HomePage() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-            {[...Array(4)].map((_, idx) => (
-              <div key={idx} className="h-64 w-40 md:w-48 flex-shrink-0 rounded-2xl bg-neutral-100 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
-            {flashSaleProducts.map((p) => (
-              <ProductCardOffer key={p.id} product={p} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* STYLE 4: CATEGORY SHELF - FRUITS & VEGETABLES */}
-      {fruitsAndVeggies.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5 text-left">
-              <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-                Fruits & Vegetables
-              </h2>
-              <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Fresh organic farm selections</p>
+        {/* Promo cards below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          {/* Card Left: Best Deals */}
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-emerald-950 text-white p-8 md:p-12 flex flex-row items-center justify-between gap-4">
+            <div className="space-y-3 max-w-[55%] text-left">
+              <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Sales of the month</span>
+              <h4 className="text-xl md:text-2xl font-black uppercase leading-snug">BEST DEALS OF THIS WEEK!</h4>
+              <span className="inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
+                15% OFF
+              </span>
             </div>
-            <Link href={routes.category('fruits')} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-              View All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </Link>
+            <div className="w-[40%] flex justify-end">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/growexy_fresh_fruits.png" alt="Fresh fruits pile" className="w-full max-h-36 object-contain rounded-xl" />
+            </div>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {fruitsAndVeggies.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* PROMOTIONAL BANNERS ROW */}
-      <PromoBannerRow 
-        banners={promoBanners.slice(3, 5)} 
-        fallbackList={[
-          {
-            bgColor: '#fef2f2',
-            title: 'ORGANIC JUICES AND NATURAL HEALTH DRINKS',
-            subtitle: 'Category Highlights',
-            imageUrl: '/growexy_carrots_basket.png',
-            ctaText: 'Shop Health'
-          },
-          {
-            bgColor: '#faf5ff',
-            title: 'GET FLAT 15% OFF ON YOUR FIRST ORDER',
-            subtitle: 'Welcome Discount · Code: FIRST15',
-            imageUrl: '/growexy_hero_delivery_guy.png',
-            ctaText: 'Use Code'
-          }
-        ]}
-        onBannerClick={handleBannerClick}
-      />
-
-      {/* STYLE 4: CATEGORY SHELF - DAIRY PRODUCTS */}
-      {dairyProducts.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5 text-left">
-              <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-                Dairy & Eggs
-              </h2>
-              <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Chilled farm fresh dairy products</p>
+          {/* Card Right: Organic Foods */}
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-neutral-900 p-8 md:p-12 flex flex-row items-center justify-between gap-4">
+            <div className="space-y-3 max-w-[55%] text-left">
+              <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Sales of the month</span>
+              <h4 className="text-xl md:text-2xl font-black uppercase leading-snug">ORGANIC FRESH FOODS</h4>
+              <span className="inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
+                20% OFF
+              </span>
+            </div>
+            <div className="w-[40%] flex justify-end">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/growexy_carrots_basket.png" alt="Carrots basket" className="w-full max-h-36 object-contain rounded-xl" />
             </div>
             <Link href={routes.category('dairy')} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
               View All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
           </div>
+        </div>
+      </section>
 
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {dairyProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* AutoScrolling Promotional Banner Carousel 2 */}
-      {loading ? (
-        <section className="mx-auto max-w-7xl px-6 py-4">
-          <div className="h-[160px] sm:h-[180px] w-full rounded-[2rem] bg-neutral-100 animate-pulse" />
-        </section>
-      ) : (
-        <AutoScrollingPromoCarousel 
-          banners={promoBanners.slice(5, 8)} 
-          fallbackList={[
-            {
-              bgColor: '#faf5ff',
-              title: 'WEEKEND SPECIAL: FLAT 20% DISCOUNT',
-              subtitle: 'Super Savings Weekend',
-              imageUrl: '/growexy_fresh_fruits.png',
-              ctaText: 'Redeem Now'
-            },
-            {
-              bgColor: '#f0fdf4',
-              title: 'HANDPICKED ORGANIC VEGETABLES FRESH ON SHELVES',
-              subtitle: 'Fresh Picks',
-              imageUrl: '/growexy_organic_basket.png',
-              ctaText: 'Browse Vegetables'
-            }
-          ]}
-          onBannerClick={handleBannerClick}
-        />
-      )}
-
-      {/* STYLE 4: CATEGORY SHELF - SNACKS & BEVERAGES */}
-      {snacksAndBeverages.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5 text-left">
-              <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-                Snacks & Beverages
-              </h2>
-              <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Curb your hunger and quench your thirst</p>
-            </div>
-            <Link href={routes.category('snacks')} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-              View All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </Link>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {snacksAndBeverages.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* STYLE 7: RECOMMENDED PRODUCTS */}
-      {recommendedProducts.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-8 bg-neutral-50/50 rounded-[2.5rem] border border-neutral-100 my-6 space-y-6">
-          <div className="text-left px-2">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Recommended For You
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Personalized selections based on your favorites</p>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, idx) => (
-                <div key={idx} className="h-56 rounded-2xl bg-neutral-100 animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {recommendedProducts.map((p) => (
-                <div key={p.id} className="flex justify-center">
-                  <ProductCardCompact product={p} />
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* PROMOTIONAL BANNERS ROW 3 */}
-      <PromoBannerRow 
-        banners={promoBanners.slice(4)} 
-        fallbackList={[
-          {
-            bgColor: '#faf5ff',
-            title: 'GET FLAT 15% OFF ON YOUR FIRST ORDER',
-            subtitle: 'Welcome Discount · Code: FIRST15',
-            imageUrl: '/growexy_hero_delivery_guy.png',
-            ctaText: 'Use Code'
-          }
-        ]}
-        onBannerClick={handleBannerClick}
-      />
-
-      {/* STYLE 6: RECENTLY ADDED */}
-      {recentlyAdded.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-8 space-y-6">
-          <div className="text-left">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Recently Added Products
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Discover our latest catalog updates</p>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, idx) => (
-                <div key={idx} className="h-56 rounded-2xl bg-neutral-100 animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {recentlyAdded.map((p) => (
-                <div key={p.id} className="relative flex justify-center">
-                  <span className="absolute top-2 left-5 z-20 bg-rose-600 text-white font-black text-[7.5px] px-1.5 py-0.5 rounded tracking-wide shadow-sm select-none uppercase">NEW</span>
-                  <ProductCardCompact product={p} />
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* Frequently Bought Shelf */}
-      {frequentlyBought.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-6 space-y-4">
-          <div className="text-left">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Frequently Bought
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Items you purchase most often</p>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {frequentlyBought.map((p) => (
-              <ProductCardCompact key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Trending Near You Grid */}
-      {trendingNear.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-8 bg-emerald-50/20 rounded-[2.5rem] border border-emerald-100/30 my-6 space-y-6">
-          <div className="text-left px-2">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Trending Near You
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Popular items flying off the shelves in your local area</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {trendingNear.map((p) => (
-              <div key={p.id} className="flex justify-center">
-                <ProductCardCompact product={p} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Daily Essentials Shelf */}
-      {dailyEssentials.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-6 space-y-4">
-          <div className="text-left">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Daily Essentials
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Your everyday household grocery essentials</p>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {dailyEssentials.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Top Rated & Budget Deals Section */}
-      <div className="mx-auto max-w-7xl px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {topRated.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-black text-neutral-900 uppercase tracking-tight">Top Rated Products</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {topRated.slice(0, 4).map((p) => (
-                <ProductCardCompact key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )}
-        {budgetDeals.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-black text-neutral-900 uppercase tracking-tight">Budget Deals</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {budgetDeals.slice(0, 4).map((p) => (
-                <ProductCardCompact key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Under ₹99 Shelf */}
-      {under99.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-8 bg-amber-50/15 rounded-[2.5rem] border border-amber-100/30 my-6 space-y-6">
-          <div className="text-left px-2">
-            <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-              Pocket Friendly Deals Under ₹99
-            </h2>
-            <p className="text-[11px] md:text-xs font-semibold text-neutral-400">Budget-friendly quick selections</p>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {under99.map((p) => (
-              <ProductCardCompact key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* STYLE 2: PREMIUM GRID - FEATURED PRODUCTS */}
-      <section className="mx-auto max-w-7xl px-6 py-12 border-t border-neutral-150/40 mt-6 space-y-8 text-center">
-        <div className="space-y-2 text-center">
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 uppercase">
-            Featured Products
+      {/* DYNAMIC BEST SELLING PRODUCT */}
+      <section className="mx-auto max-w-7xl px-6 py-16 space-y-10 text-center">
+        <div className="space-y-3">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
+            Our Best Selling Product
           </h2>
-          <p className="text-neutral-400 text-xs max-w-md mx-auto leading-relaxed font-semibold">
-            Explore our prime selection of organic and quick-commerce staples sourced from eco-certified farms.
+          <p className="text-neutral-500 text-sm max-w-xl mx-auto leading-relaxed">
+            Discover our fresh organic selections, sourced directly from local eco-farms to provide the highest nutritional quality.
           </p>
         </div>
 
@@ -1101,7 +827,7 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
           <button
             onClick={() => setActiveTab('all')}
-            className={`rounded-full px-5 py-2 text-xs font-bold transition-all ${
+            className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
               activeTab === 'all'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
@@ -1113,7 +839,7 @@ export default function HomePage() {
             <button
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
-              className={`rounded-full px-5 py-2 text-xs font-bold transition-all ${
+              className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
                 activeTab === cat.id
                   ? 'bg-emerald-600 text-white shadow-md'
                   : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
@@ -1134,65 +860,164 @@ export default function HomePage() {
         ) : filteredProducts.length === 0 ? (
           <p className="text-neutral-500 py-10 font-medium">No products found in this category.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {filteredProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((p) => {
+              const hasDiscount = p.mrp && p.mrp > p.price;
+              const discountPercent = hasDiscount ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
+              return (
+                <div
+                  key={p.id}
+                  className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-neutral-100 bg-white p-4 shadow-sm hover:shadow-xl hover:shadow-neutral-50 hover:border-emerald-100 transition-all"
+                >
+                  {/* Discount Badge */}
+                  {hasDiscount && (
+                    <span className="absolute left-4 top-4 z-10 rounded-lg bg-emerald-600 text-white font-bold text-[10px] px-2.5 py-1">
+                      -{discountPercent}%
+                    </span>
+                  )}
+
+                  {/* Wishlist Button */}
+                  <button className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-50 text-neutral-400 hover:text-red-500 hover:bg-neutral-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </button>
+
+                  {/* Image */}
+                  <div className="aspect-square w-full overflow-hidden rounded-2xl bg-neutral-50 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getProductImage(p)}
+                      alt={p.name}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  {/* Body */}
+                  <div className="mt-4 space-y-2 text-left">
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex text-amber-400">
+                        {'★'.repeat(Math.ceil(p.rating || 5))}
+                      </span>
+                      <span className="text-[11px] font-bold text-neutral-800">({(p.rating || 5.0).toFixed(1)})</span>
+                    </div>
+                    <h3 className="font-bold text-neutral-900 text-base truncate">{p.name}</h3>
+                    <p className="text-xs font-semibold text-neutral-400">{p.unit || 'Each'}</p>
+
+                    {/* Price and Add button */}
+                    <div className="flex items-center justify-between pt-2 border-t border-neutral-50">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-black text-emerald-700 text-lg">₹{p.price}</span>
+                        {hasDiscount && (
+                          <s className="text-xs text-neutral-400 font-semibold">₹{p.mrp}</s>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => handleAddToCart(p.id)}
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
 
-      {/* BRANDS SECTION */}
-      <section className="mx-auto max-w-7xl px-6 py-10 border-t border-neutral-150/40 text-center space-y-8">
-        <h2 className="text-xl md:text-2xl font-black tracking-tight text-neutral-900 uppercase">
-          Top Brands Partners
+      {/* WEEKLY HOT DEALS */}
+      <section className="mx-auto max-w-7xl px-6 py-4 space-y-10">
+        <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 text-center uppercase">
+          Our Weekly Hot Deals
         </h2>
-        <div className="flex gap-8 overflow-x-auto pb-4 no-scrollbar justify-start md:justify-center items-center opacity-85 select-none">
-          {['Amul', 'Organic India', 'Mother Dairy', 'Tata Sampann', 'Nestle', 'Britannia', 'Safal'].map((b, i) => (
-            <div key={i} className="flex-shrink-0 flex items-center justify-center bg-neutral-50/50 hover:bg-neutral-50 px-6 py-3.5 rounded-2xl border border-neutral-100 font-extrabold text-neutral-600 text-sm tracking-wide shadow-sm transition-all hover:scale-102">
-              {b}
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* FOOTER PROMOTIONAL BANNER */}
-      {seasonalBanners.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-6">
-          <div 
-            onClick={() => handleBannerClick(seasonalBanners[0])}
-            className="relative overflow-hidden rounded-[2.5rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:scale-[1.005] transition-all duration-200 border border-neutral-100 shadow-sm"
-            style={{ backgroundColor: seasonalBanners[0].bgColor || '#f2e6ff' }}
-          >
-            <div className="space-y-4 max-w-md z-10 text-left">
-              {seasonalBanners[0].subtitle && (
-                <span className="inline-block rounded-full bg-purple-600 px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                  {seasonalBanners[0].subtitle}
-                </span>
-              )}
-              <h3 className="text-3xl md:text-4xl font-extrabold text-neutral-900 leading-tight uppercase">
-                {seasonalBanners[0].title}
-              </h3>
-              {seasonalBanners[0].ctaText && (
-                <span 
-                  className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-amber-400 font-black text-neutral-950 text-xs shadow-lg shadow-amber-100 flex-col leading-none"
-                  style={{ color: seasonalBanners[0].ctaColor }}
-                >
-                  <span>{seasonalBanners[0].ctaText}</span>
-                </span>
-              )}
-            </div>
-            <div className="relative w-full max-w-xs md:max-w-sm z-10 flex justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={seasonalBanners[0].imageUrlDesktop}
-                alt={seasonalBanners[0].title}
-                className="w-full max-h-[180px] object-contain rounded-2xl"
-              />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#f2e6ff] via-[#f7f0ff] to-white p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-4 max-w-md z-10 text-left">
+            <span className="inline-block rounded-full bg-purple-600 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
+              Fresh, Premium Drinks
+            </span>
+            <h3 className="text-3xl md:text-4xl font-extrabold text-neutral-900 leading-tight uppercase">
+              Fresh, Premium Drinks From The Farm.
+            </h3>
+            <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-amber-400 font-black text-neutral-950 text-sm shadow-lg shadow-amber-100 flex-col leading-none">
+              <span>30%</span>
+              <span className="text-[10px] tracking-wider uppercase mt-0.5">Off</span>
             </div>
           </div>
-        </section>
-      )}
+          <div className="relative w-full max-w-sm md:max-w-md z-10 flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/growexy_almonds_bowl.png"
+              alt="Premium raw almonds bowl"
+              className="w-full max-h-56 object-contain rounded-2xl"
+            />
+          </div>
+        </div>
+
+        {/* Small deal grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, idx) => (
+              <div key={idx} className="h-80 rounded-3xl bg-neutral-100 animate-pulse"></div>
+            ))}
+          </div>
+        ) : dealProducts.length === 0 ? (
+          <p className="text-neutral-500 py-6 text-center font-medium">No active discounted deals at the moment.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-2">
+            {dealProducts.map((p) => {
+              const hasDiscount = p.mrp && p.mrp > p.price;
+              const discountPercent = hasDiscount ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
+              return (
+                <div
+                  key={p.id}
+                  className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-neutral-100 bg-white p-4 shadow-sm hover:shadow-xl hover:shadow-neutral-50 transition-all"
+                >
+                  {/* Image */}
+                  <div className="aspect-square w-full overflow-hidden rounded-2xl bg-neutral-50 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getProductImage(p)}
+                      alt={p.name}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  {/* Body */}
+                  <div className="mt-4 space-y-2 text-left">
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex text-amber-400">
+                        {'★'.repeat(Math.ceil(p.rating || 5))}
+                      </span>
+                      <span className="text-[11px] font-bold text-neutral-800">({(p.rating || 5).toFixed(1)})</span>
+                    </div>
+                    <h3 className="font-bold text-neutral-900 text-base truncate">{p.name}</h3>
+                    <p className="text-xs font-semibold text-neutral-400">{p.unit || 'Each'}</p>
+
+                    {/* Price and Add button */}
+                    <div className="flex items-center justify-between pt-2 border-t border-neutral-50">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-black text-emerald-700 text-lg">₹{p.price}</span>
+                        {hasDiscount && (
+                          <s className="text-xs text-neutral-400 font-semibold">₹{p.mrp}</s>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => handleAddToCart(p.id)}
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* FOOTER */}
       <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left">
@@ -1204,11 +1029,11 @@ export default function HomePage() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               </span>
               <span>
-                Weekly <span className="text-emerald-600 font-extrabold">Market</span>
+                Grow<span className="text-emerald-600 font-extrabold">exy</span>
               </span>
             </Link>
             <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
-              Weekly Market is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
+              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
             </p>
           </div>
 
@@ -1237,10 +1062,10 @@ export default function HomePage() {
           {/* Newsletter / Contact */}
           <div className="space-y-4">
             <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
-            <p className="text-xs text-neutral-500 leading-relaxed font-bold">
+            <p className="text-xs text-neutral-500 leading-relaxed">
               Have questions? Reach out at:
               <br />
-              <strong className="text-neutral-850">support@weeklymarket.com</strong>
+              <strong className="text-neutral-800">support@growexy.com</strong>
             </p>
             <div className="flex gap-2">
               <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
@@ -1256,7 +1081,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
-          © {new Date().getFullYear()} Weekly Market. All rights reserved.
+          © {new Date().getFullYear()} Growexy. All rights reserved.
         </div>
       </footer>
     </div>

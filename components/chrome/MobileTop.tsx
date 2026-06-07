@@ -11,8 +11,8 @@ import { SearchBox } from './SearchBox';
 /** Mobile sub-header (location + account + search) shown under the top app bar. */
 export function MobileTop() {
   const router = useRouter();
-  const { user, addresses, selectedAddr } = useAuth();
-  const { pincode, serviceability, detect, locationName } = useServiceability();
+  const { addresses, selectedAddr } = useAuth();
+  const { pincode, detect, locationName } = useServiceability();
   const activeAddr = addresses.find((a) => a.id === selectedAddr) || addresses[0];
 
   useEffect(() => {
@@ -34,12 +34,7 @@ export function MobileTop() {
           <b>{locationLabel}</b>
           <Icon name="chevD" size={13} />
         </button>
-        <button
-          className="mtop-user"
-          onClick={() => router.push(user ? routes.account() : routes.auth())}
-        >
-          <Icon name="user" size={20} />
-        </button>
+
       </div>
       <div className="mtop-search">
         <SearchBox />

@@ -1,14 +1,16 @@
+
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { routes } from '@/lib/routes';
-import type { Product } from '@/lib/types';
 import { useCart } from '@/store/cart';
-import { Img } from './Img';
-import { Price } from './Price';
-import { QtyStepper } from './QtyStepper';
-import { Rating } from './Rating';
+import { routes } from '@/lib/routes';
+import { Img } from '@/components/ui/Img';
+import { Rating } from '@/components/ui/Rating';
+import { Price } from '@/components/ui/Price';
+import { QtyStepper } from '@/components/ui/QtyStepper';
+import type { Product } from '@/lib/types';
 
 // Shared Wishlist Hook
 export function useWishlist(productId: string) {
@@ -41,7 +43,7 @@ export function useWishlist(productId: string) {
 
 /** Style 2: Standard/Premium Product Card.
  * Ideal for grids and standard catalog pages. */
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, className }: { product: Product; className?: string }) {
   const router = useRouter();
   const { cart, setQty, showToast } = useCart();
   const qty = cart[product.id] || 0;
@@ -58,7 +60,7 @@ export function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <article className="pcard relative group" onClick={() => router.push(routes.product(product.slug))}>
+    <article className={`pcard relative group ${className || ''}`} onClick={() => router.push(routes.product(product.slug))}>
       <div className="pcard-img relative overflow-hidden bg-neutral-50 flex items-center justify-center">
         <Img product={product} radius="calc(var(--radius-card) * 0.7)" />
         

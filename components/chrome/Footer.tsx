@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { routes } from '@/lib/routes';
 import { Logo } from './Logo';
+import Link from 'next/link';
+
 
 const COLUMNS = [
   {
@@ -39,44 +41,69 @@ function linkTarget(label: string): string {
 export function Footer() {
   const router = useRouter();
   return (
-    <footer className="ftr">
-      <div className="ftr-inner">
-        <div className="ftr-brand">
-          <Logo onClick={() => router.push(routes.home())} />
-          <p>
-            Farm-fresh groceries delivered to your door in 30 minutes. Handpicked quality, honest
-            prices.
-          </p>
-          <div className="ftr-badges">
-            <span>
-              <Icon name="truck" size={15} /> 30-min delivery
-            </span>
-            <span>
-              <Icon name="shield" size={15} /> 100% quality promise
-            </span>
+    <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
+          {/* Logo & Description */}
+          <div className="space-y-4">
+            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </span>
+              <span>
+                Grow<span className="text-emerald-600 font-extrabold">exy</span>
+              </span>
+            </Link>
+            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
+              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
+            </p>
+          </div>
+
+          {/* About Links */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800 pb-4">Company</h4>
+            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
+              <li><Link href="#" className="hover:text-emerald-600">About Us</Link></li>
+              <li><Link href={routes.browse()} className="hover:text-emerald-600">Shop Catalog</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Our Brands</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Partner Program</Link></li>
+            </ul>
+          </div>
+
+          {/* Help Links */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800 pb-4">Support</h4>
+            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
+              <li><Link href={routes.support()} className="hover:text-emerald-600">Help Center</Link></li>
+              <li><Link href={routes.addresses()} className="hover:text-emerald-600">Delivery Areas</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Terms of Use</Link></li>
+            </ul>
+          </div>
+
+          {/* Newsletter / Contact */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Have questions? Reach out at:
+              <br />
+              <strong className="text-neutral-800">support@growexy.com</strong>
+            </p>
+            <div className="flex gap-2">
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                F
+              </span>
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                T
+              </span>
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                I
+              </span>
+            </div>
           </div>
         </div>
-        <div className="ftr-cols">
-          {COLUMNS.map((col) => (
-            <div key={col.h} className="ftr-col">
-              <h4>{col.h}</h4>
-              {col.links.map((l) => (
-                <button key={l} onClick={() => router.push(linkTarget(l))}>
-                  {l}
-                </button>
-              ))}
-            </div>
-          ))}
+        <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
+          © {new Date().getFullYear()} Growexy. All rights reserved.
         </div>
-      </div>
-      <div className="ftr-bottom">
-        <span>© 2026 FreshMart Retail Pvt. Ltd.</span>
-        <span className="ftr-legal">
-          <button>Terms</button>
-          <button>Privacy</button>
-          <button>FSSAI Lic. 100xxxxxxxx1234</button>
-        </span>
-      </div>
-    </footer>
+      </footer>
   );
 }
