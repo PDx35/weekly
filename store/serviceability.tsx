@@ -37,6 +37,12 @@ interface ServiceabilityContextValue {
   ready: boolean;
   /** Serviceability for the current `pincode`. */
   serviceability: Serviceability;
+  /** Coordinates of the user's detected location. */
+  coords: { lat: number; lng: number } | null;
+  /** Resolved city or locality name, or `null` if unknown. */
+  locationName: string | null;
+  /** Whether the user's coordinates are further than 20km from all markets. */
+  isOutOfRange: boolean;
   /** Detect the pincode via the browser's geolocation. */
   detect: () => void;
   /** Set the pincode manually (digits only). */
@@ -58,6 +64,20 @@ function persist(zip: string | null) {
   }
 }
 
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 export function ServiceabilityProvider({ children }: { children: ReactNode }) {
   const [pincode, setPincodeState] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<MarketDay[]>([]);
@@ -65,6 +85,8 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
   const [day, setDay] = useState<number | null>(null);
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationName, setLocationName] = useState<string | null>(null);
 
   // Client-only init: today's weekday, remembered pincode, market schedule.
   // setState runs here (not in render) so server/client first paint match.
@@ -74,6 +96,12 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) setPincodeState(saved);
+      const savedCoords = localStorage.getItem('freshmart_coords_v1');
+      if (savedCoords) {
+        setCoords(JSON.parse(savedCoords));
+      }
+      const savedLoc = localStorage.getItem('freshmart_loc_name_v1');
+      if (savedLoc) setLocationName(savedLoc);
     } catch {
       /* ignore */
     }
@@ -90,11 +118,31 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
     setPincodeState(z || null);
     persist(z || null);
     setError(null);
-  }, []);
+
+    // Look up area name from schedule
+    const stop = schedule.find((s) => s.zip === z);
+    if (stop) {
+      setLocationName(stop.area);
+      try {
+        localStorage.setItem('freshmart_loc_name_v1', stop.area);
+      } catch {}
+    } else {
+      setLocationName(null);
+      try {
+        localStorage.removeItem('freshmart_loc_name_v1');
+      } catch {}
+    }
+  }, [schedule]);
 
   const clearPincode = useCallback(() => {
     setPincodeState(null);
+    setCoords(null);
+    setLocationName(null);
     persist(null);
+    try {
+      localStorage.removeItem('freshmart_coords_v1');
+      localStorage.removeItem('freshmart_loc_name_v1');
+    } catch {}
   }, []);
 
   const locatingRef = useRef(false);
@@ -112,6 +160,8 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
     }
     interface BigDataCloudResponse {
       postcode?: string;
+      locality?: string;
+      city?: string;
       localityInfo?: {
         administrative?: LocalityInfoItem[];
       };
@@ -143,6 +193,13 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           if (zip) {
             setPincodeState(zip);
             persist(zip);
+            const locName = data.locality || data.city || '';
+            if (locName) {
+              setLocationName(locName);
+              try {
+                localStorage.setItem('freshmart_loc_name_v1', locName);
+              } catch {}
+            }
             setError(null);
             return true;
           }
@@ -160,6 +217,11 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
       async (pos) => {
         try {
           const { latitude, longitude } = pos.coords;
+          setCoords({ lat: latitude, lng: longitude });
+          try {
+            localStorage.setItem('freshmart_coords_v1', JSON.stringify({ lat: latitude, lng: longitude }));
+          } catch {}
+
           const res = await fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
           );
@@ -168,6 +230,7 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           let zip = String(data.postcode ?? '')
             .replace(/\D/g, '')
             .slice(0, 6);
+          let locName = data.locality || data.city || '';
 
           // Fallback 1: Scan administrative records for postal code descriptions or 6-digit names
           if (!zip && data.localityInfo?.administrative) {
@@ -189,11 +252,14 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
               );
               if (osmRes.ok) {
                 const osmData = (await osmRes.json()) as {
-                  address?: { postcode?: string };
+                  address?: { postcode?: string; suburb?: string; city?: string; town?: string; village?: string };
                 };
                 zip = String(osmData.address?.postcode ?? '')
                   .replace(/\D/g, '')
                   .slice(0, 6);
+                if (!locName) {
+                  locName = osmData.address?.suburb || osmData.address?.city || osmData.address?.town || osmData.address?.village || '';
+                }
               }
             } catch (err) {
               console.error('OSM Nominatim fallback failed:', err);
@@ -203,6 +269,12 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           if (zip) {
             setPincodeState(zip);
             persist(zip);
+            if (locName) {
+              setLocationName(locName);
+              try {
+                localStorage.setItem('freshmart_loc_name_v1', locName);
+              } catch {}
+            }
             setError(null);
             locatingRef.current = false; // Mark resolved immediately to preempt error timeout
           } else {
@@ -220,7 +292,6 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
           } else {
             setError('Could not detect your location — enter your pincode.');
           }
-        } finally {
           setLocating(false);
           locatingRef.current = false;
         }
@@ -266,6 +337,23 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
     [pincode, schedule, day],
   );
 
+  const distanceToMarket = useMemo(() => {
+    if (!coords || !schedule || schedule.length === 0) return null;
+    let minD = Infinity;
+    for (const stop of schedule) {
+      if (stop.lat != null && stop.lng != null) {
+        const d = getDistanceKm(coords.lat, coords.lng, stop.lat, stop.lng);
+        if (d < minD) minD = d;
+      }
+    }
+    return minD === Infinity ? null : minD;
+  }, [coords, schedule]);
+
+  const isOutOfRange = useMemo(() => {
+    if (!coords || distanceToMarket == null) return false;
+    return distanceToMarket > 20;
+  }, [coords, distanceToMarket]);
+
   const value = useMemo<ServiceabilityContextValue>(
     () => ({
       pincode,
@@ -274,6 +362,9 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
       error,
       ready: scheduleLoaded && day != null,
       serviceability,
+      coords,
+      locationName,
+      isOutOfRange,
       detect,
       setPincode,
       clearPincode,
@@ -287,6 +378,9 @@ export function ServiceabilityProvider({ children }: { children: ReactNode }) {
       scheduleLoaded,
       day,
       serviceability,
+      coords,
+      locationName,
+      isOutOfRange,
       detect,
       setPincode,
       clearPincode,

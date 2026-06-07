@@ -8,6 +8,7 @@ import { routes } from '@/lib/routes';
 import type { Category } from '@/lib/types';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
+import { useServiceability } from '@/store/serviceability';
 import { Logo } from './Logo';
 import { SearchBox } from './SearchBox';
 
@@ -16,6 +17,7 @@ export function Header() {
   const router = useRouter();
   const { user, addresses, selectedAddr } = useAuth();
   const { cartCount } = useCart();
+  const { pincode, serviceability, detect, locationName } = useServiceability();
   const activeAddr = addresses.find((a) => a.id === selectedAddr) || addresses[0];
   const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
 
@@ -30,6 +32,17 @@ export function Header() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!pincode && !activeAddr) {
+      detect();
+    }
+  }, [pincode, activeAddr, detect]);
+
+  const locationLabel = activeAddr?.label 
+    || (locationName && pincode 
+        ? `${locationName} (${pincode})` 
+        : locationName || pincode || 'Set location');
+
   return (
     <header className="hdr">
       <div className="hdr-inner">
@@ -40,7 +53,7 @@ export function Header() {
           <span>
             <i>Deliver in 30 min to</i>
             <b>
-              {activeAddr?.label || 'Set location'} <Icon name="chevD" size={13} />
+              {locationLabel} <Icon name="chevD" size={13} />
             </b>
           </span>
         </button>

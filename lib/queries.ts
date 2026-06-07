@@ -89,7 +89,7 @@ function mapProduct(id: string, d: Doc, catName: string): Product {
   };
 }
 
-/** All categories from Firestore (cached per request); falls back to the mock. */
+/** All categories from Firestore (cached per request); returns empty array on failure/empty. */
 const getCategoriesRaw = cache(async (): Promise<Category[]> => {
   try {
     const snap = await getDocs(collection(db, 'categories'));
@@ -97,25 +97,25 @@ const getCategoriesRaw = cache(async (): Promise<Category[]> => {
       .filter((doc) => (doc.data() as Doc).active !== false)
       .map((doc, i) => mapCategory(doc.id, doc.data() as Doc, i))
       .sort((a, b) => a.order - b.order);
-    return cats.length ? cats : MOCK_CATEGORIES;
+    return cats;
   } catch {
-    return MOCK_CATEGORIES;
+    return [];
   }
 });
 
-/** All products from Firestore (cached per request); falls back to the mock. */
+/** All products from Firestore (cached per request); returns empty array on failure/empty. */
 const getProductsRaw = cache(async (): Promise<Product[]> => {
   try {
     const cats = await getCategoriesRaw();
     const catName = new Map(cats.map((c) => [c.id, c.name]));
     const snap = await getDocs(collection(db, 'products'));
-    if (snap.empty) return MOCK_PRODUCTS;
+    if (snap.empty) return [];
     return snap.docs.map((doc) => {
       const data = doc.data() as Doc;
       return mapProduct(doc.id, data, catName.get(str(data.category)) ?? '');
     });
   } catch {
-    return MOCK_PRODUCTS;
+    return [];
   }
 });
 
@@ -169,14 +169,12 @@ export async function searchProducts(query: string): Promise<Product[]> {
 /** Home rail: best sellers (most-reviewed first). */
 export async function getBestsellers(): Promise<Product[]> {
   const products = await getProductsRaw();
-  if (products === MOCK_PRODUCTS) return MOCK_BESTSELLERS;
   return [...products].sort((a, b) => b.reviews - a.reviews).slice(0, 8);
 }
 
 /** Home rail: today's deals (products with a strike-through MRP). */
 export async function getDeals(): Promise<Product[]> {
   const products = await getProductsRaw();
-  if (products === MOCK_PRODUCTS) return MOCK_DEALS;
   return products.filter((p) => p.mrp).slice(0, 8);
 }
 

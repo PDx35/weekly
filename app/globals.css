@@ -2287,19 +2287,20 @@ s {
 .field select,
 .field textarea {
   border: 1.5px solid var(--line);
-  border-radius: 11px;
+  border-radius: var(--radius-btn);
   padding: 11px 13px;
   background: #fff;
   color: var(--ink);
   outline: none;
-  transition: border-color .14s;
+  transition: border-color .14s, box-shadow .14s;
   width: 100%
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--brand)
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(44, 140, 90, 0.1)
 }
 
 .field textarea {
@@ -2316,7 +2317,7 @@ s {
   display: flex;
   align-items: center;
   border: 1.5px solid var(--line);
-  border-radius: 11px;
+  border-radius: var(--radius-btn);
   background: #fff;
   padding-right: 6px
 }

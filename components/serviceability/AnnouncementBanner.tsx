@@ -18,20 +18,23 @@ const TONE: Record<string, string> = {
  * day, or not at all. Informational only — it never blocks browsing or the cart.
  */
 export function AnnouncementBanner() {
-  const { pincode, serviceability, ready, locating, error, detect, setPincode } =
+  const { pincode, serviceability, ready, locating, error, detect, setPincode, isOutOfRange } =
     useServiceability();
   const [input, setInput] = useState('');
 
   if (!ready) return null;
 
   const message = (() => {
+    if (isOutOfRange) {
+      return `🚚 We are currently working on your location. You can still browse — try another pincode.`;
+    }
     switch (serviceability.state) {
       case 'serviceable':
         return `🎉 We're delivering to ${pincode} today — ${serviceability.market.area}. Enjoy ${serviceability.market.discountPercent}% off!`;
       case 'scheduled':
         return `🗓️ The weekly market reaches ${pincode} (${serviceability.market.area}) on ${dayName(serviceability.nextDay)}. Browse now — ordering opens then.`;
       case 'unserviceable':
-        return `🚚 We currently cannot deliver to ${pincode}. You can still browse — try another pincode.`;
+        return `🚚 We are currently working on your location. You can still browse — try another pincode.`;
       default:
         return '📍 Check delivery in your area — share your location or enter your pincode.';
     }
