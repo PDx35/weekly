@@ -238,7 +238,7 @@ function CheckoutContent() {
               )}
 
               <h2 style={{ marginTop: 22 }}>Delivery slot</h2>
-              <div className="addr-types">
+              <div className="flex flex-wrap gap-2">
                 {SLOTS.map((s) => (
                   <button
                     key={s}

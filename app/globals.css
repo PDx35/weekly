@@ -3109,7 +3109,13 @@ s {
 .auth {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .auth {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .auth-art {
@@ -3119,7 +3125,14 @@ s {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 30px
+  gap: 30px;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .auth-art {
+    display: flex;
+  }
 }
 
 .auth-art .logo-text {
@@ -3253,6 +3266,25 @@ s {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px
+}
+
+@media (max-width: 480px) {
+  .auth-social {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.auth-mobile-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 900px) {
+  .auth-mobile-logo {
+    display: none;
+  }
 }
 
 .auth-social button {
