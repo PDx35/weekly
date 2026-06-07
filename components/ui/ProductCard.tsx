@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { routes } from '@/lib/routes';
 import type { Product } from '@/lib/types';
 import { useCart } from '@/store/cart';
+import { cn } from '@/lib/utils';
 import { Img } from './Img';
 import { Price } from './Price';
 import { QtyStepper } from './QtyStepper';
@@ -11,13 +12,13 @@ import { Rating } from './Rating';
 
 /** Catalogue product card. Clicking the body opens the product page; the footer
  * quantity controls add to cart without navigating. */
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, className }: { product: Product; className?: string }) {
   const router = useRouter();
   const { cart, setQty } = useCart();
   const qty = cart[product.id] || 0;
 
   return (
-    <article className="pcard" onClick={() => router.push(routes.product(product.slug))}>
+    <article className={cn("pcard", className)} onClick={() => router.push(routes.product(product.slug))}>
       <div className="pcard-img">
         <Img product={product} radius="calc(var(--radius-card) * 0.7)" />
         {product.tag && <span className="pcard-tag">{product.tag}</span>}

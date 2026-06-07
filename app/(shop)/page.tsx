@@ -85,10 +85,10 @@ export default function HomePage() {
     }
   }, [pincode, activeAddr, detect]);
 
-  const locationLabel = activeAddr?.label 
-    || (locationName && pincode 
-        ? `${locationName} (${pincode})` 
-        : locationName || pincode || 'Set location');
+  const locationLabel = activeAddr?.label
+    || (locationName && pincode
+      ? `${locationName} (${pincode})`
+      : locationName || pincode || 'Set location');
 
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -161,73 +161,6 @@ export default function HomePage() {
         `
       }} />
 
-      {/* GROWEXY HEADER */}
-      <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          {/* Logo & Location */}
-          <div className="flex items-center gap-4">
-            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              </span>
-              <span>
-                Grow<span className="text-emerald-600 font-extrabold">exy</span>
-              </span>
-            </Link>
-
-            {/* Location Selector (Auto-fetched & Manual) */}
-            <button 
-              onClick={() => router.push(routes.addresses())}
-              className="flex items-center gap-2 rounded-full border border-neutral-200/80 bg-neutral-50/60 px-3.5 py-1.5 hover:bg-neutral-50 hover:border-neutral-300 transition-all text-left max-w-[200px] sm:max-w-[240px] truncate"
-            >
-              <span className="text-emerald-600 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              </span>
-              <div className="flex flex-col text-[10px] sm:text-xs">
-                <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-tight leading-none">Deliver to</span>
-                <span className="font-extrabold text-neutral-800 truncate mt-0.5 max-w-[120px] sm:max-w-[150px] leading-tight">{locationLabel}</span>
-              </div>
-            </button>
-          </div>
-
-          {/* Icons & Account */}
-          <div className="flex items-center gap-4">
-            {/* Search Box Trigger */}
-            <div className="relative hidden sm:block">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white transition-all"
-              />
-              <span className="absolute right-3 top-2 text-neutral-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
-              </span>
-            </div>
-
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            </button>
-
-            <Link href={routes.cart()} className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              {cartCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href={user ? routes.account() : routes.auth()}
-              className="flex h-9 items-center justify-center rounded-full bg-neutral-900 px-4 text-xs font-semibold text-white hover:bg-neutral-800 transition-colors"
-            >
-              {user ? user.name.split(' ')[0] : 'Sign In'}
-            </Link>
-          </div>
-        </div>
-      </header>
 
       {/* HERO SECTION */}
       <section className="mx-auto max-w-7xl px-6 pt-6">
@@ -246,7 +179,7 @@ export default function HomePage() {
               <Link href={routes.browse()} className="flex items-center gap-3 rounded-full bg-amber-400 hover:bg-amber-500 text-neutral-950 font-bold px-6 py-3.5 shadow-lg shadow-amber-100 transition-all group">
                 <span>Shop Now</span>
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:translate-x-1 transition-transform">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                 </span>
               </Link>
               <div className="text-sm text-neutral-600 font-semibold flex items-center gap-2">
@@ -268,7 +201,7 @@ export default function HomePage() {
 
       {/* DYNAMIC POPULAR CATEGORIES */}
       <section className="mx-auto max-w-7xl px-6 py-16 text-center space-y-10">
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase pb-4">
           Our Popular Categories
         </h2>
         {loading ? (
@@ -309,7 +242,7 @@ export default function HomePage() {
           <Link href={routes.browse()} className="flex items-center gap-2 rounded-full border border-neutral-200 hover:border-neutral-900 px-5 py-2 text-xs font-bold tracking-tight text-neutral-950 transition-all group">
             <span>Shop Now</span>
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white group-hover:translate-x-1 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
             </span>
           </Link>
         </div>
@@ -340,8 +273,8 @@ export default function HomePage() {
           <div className="relative overflow-hidden rounded-[2.5rem] bg-emerald-950 text-white p-8 md:p-12 flex flex-row items-center justify-between gap-4">
             <div className="space-y-3 max-w-[55%] text-left">
               <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Sales of the month</span>
-              <h4 className="text-xl md:text-2xl font-black uppercase leading-snug">BEST DEALS OF THIS WEEK!</h4>
-              <span className="inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
+              <h4 className="text-xl md:text-2xl font-black !text-white uppercase leading-snug">BEST DEALS OF THIS WEEK!</h4>
+              <span className="mt-3 inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
                 15% OFF
               </span>
             </div>
@@ -356,7 +289,7 @@ export default function HomePage() {
             <div className="space-y-3 max-w-[55%] text-left">
               <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Sales of the month</span>
               <h4 className="text-xl md:text-2xl font-black uppercase leading-snug">ORGANIC FRESH FOODS</h4>
-              <span className="inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
+              <span className="mt-3 inline-flex items-center justify-center rounded-full bg-amber-400 text-neutral-950 font-black text-xs px-3 py-1.5 shadow-sm shadow-amber-200">
                 20% OFF
               </span>
             </div>
@@ -370,7 +303,7 @@ export default function HomePage() {
 
       {/* DYNAMIC BEST SELLING PRODUCT */}
       <section className="mx-auto max-w-7xl px-6 py-16 space-y-10 text-center">
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col items-center justify-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
             Our Best Selling Product
           </h2>
@@ -383,11 +316,10 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
           <button
             onClick={() => setActiveTab('all')}
-            className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
-              activeTab === 'all'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
-            }`}
+            className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === 'all'
+              ? 'bg-emerald-600 text-white shadow-md'
+              : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
+              }`}
           >
             All
           </button>
@@ -395,11 +327,10 @@ export default function HomePage() {
             <button
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
-              className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
-                activeTab === cat.id
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
-              }`}
+              className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === cat.id
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
+                }`}
             >
               {cat.name}
             </button>
@@ -434,7 +365,7 @@ export default function HomePage() {
 
                   {/* Wishlist Button */}
                   <button className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-50 text-neutral-400 hover:text-red-500 hover:bg-neutral-100 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
                   </button>
 
                   {/* Image */}
@@ -471,7 +402,7 @@ export default function HomePage() {
                         onClick={() => handleAddToCart(p.id)}
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
                       </button>
                     </div>
                   </div>
@@ -484,7 +415,7 @@ export default function HomePage() {
 
       {/* WEEKLY HOT DEALS */}
       <section className="mx-auto max-w-7xl px-6 py-4 space-y-10">
-        <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 text-center uppercase">
+        <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 text-center uppercase pb-4">
           Our Weekly Hot Deals
         </h2>
 
@@ -564,7 +495,7 @@ export default function HomePage() {
                         onClick={() => handleAddToCart(p.id)}
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
                       </button>
                     </div>
                   </div>
@@ -574,72 +505,6 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      {/* FOOTER */}
-      <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
-          {/* Logo & Description */}
-          <div className="space-y-4">
-            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              </span>
-              <span>
-                Grow<span className="text-emerald-600 font-extrabold">exy</span>
-              </span>
-            </Link>
-            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
-              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
-            </p>
-          </div>
-
-          {/* About Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Company</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href="#" className="hover:text-emerald-600">About Us</Link></li>
-              <li><Link href={routes.browse()} className="hover:text-emerald-600">Shop Catalog</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Our Brands</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Partner Program</Link></li>
-            </ul>
-          </div>
-
-          {/* Help Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Support</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href={routes.support()} className="hover:text-emerald-600">Help Center</Link></li>
-              <li><Link href={routes.addresses()} className="hover:text-emerald-600">Delivery Areas</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Terms of Use</Link></li>
-            </ul>
-          </div>
-
-          {/* Newsletter / Contact */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
-            <p className="text-xs text-neutral-500 leading-relaxed">
-              Have questions? Reach out at:
-              <br />
-              <strong className="text-neutral-800">support@growexy.com</strong>
-            </p>
-            <div className="flex gap-2">
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                F
-              </span>
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                T
-              </span>
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                I
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
-          © {new Date().getFullYear()} Growexy. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 }
