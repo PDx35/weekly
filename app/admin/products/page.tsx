@@ -16,7 +16,117 @@ import {
 import { rupee } from '@/components/ui/Price';
 import { createDoc, listAll, removeDoc, updateDocFields } from '@/lib/admin/db';
 import type { AdminCategory, AdminProduct } from '@/lib/admin/types';
-import { auth } from '@/lib/firebase/client';
+import { auth, storage } from '@/lib/firebase/client';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+
+function ProductImageUploadField({
+  value,
+  onChange,
+  pathPrefix,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  pathPrefix: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const urls = useMemo(() => {
+    return value
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }, [value]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const newUrls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) continue;
+
+        const fileExt = file.name.split('.').pop() || 'png';
+        const safePrefix = pathPrefix.trim().replace(/[^a-zA-Z0-9_-]/g, '_') || 'product';
+        const fileName = `${safePrefix}-${Date.now()}-${i}.${fileExt}`;
+        const storageRef = ref(storage, `images/products/${fileName}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadUrl = await getDownloadURL(snapshot.ref);
+        newUrls.push(downloadUrl);
+      }
+
+      if (newUrls.length > 0) {
+        const currentList = value.trim();
+        const updated = currentList ? `${currentList}\n${newUrls.join('\n')}` : newUrls.join('\n');
+        onChange(updated);
+      }
+    } catch (err: unknown) {
+      console.error('Upload failed:', err);
+      setError('Upload failed. Ensure Storage rules allow writes.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeUrl = (urlToRemove: string) => {
+    const updated = urls.filter((u) => u !== urlToRemove).join('\n');
+    onChange(updated);
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-neutral-700">Product Images</span>
+        <label className="flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-neutral-300 px-3 text-xs font-semibold text-neutral-700 transition-colors hover:bg-neutral-100">
+          {uploading ? 'Uploading...' : 'Choose Files'}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+        </label>
+      </div>
+
+      {error && <p className="text-xs text-red-600">{error}</p>}
+
+      {urls.length > 0 && (
+        <div className="flex flex-wrap gap-2 rounded-lg border border-neutral-100 bg-neutral-50 p-2">
+          {urls.map((url, index) => (
+            <div key={index} className="group relative h-16 w-16 overflow-hidden rounded-md border border-neutral-200 bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt={`Preview ${index + 1}`} className="h-full w-full object-cover" />
+              <button
+                type="button"
+                onClick={() => removeUrl(url)}
+                className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-red-600 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100"
+                title="Remove image"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <Labeled label="Or Edit Image URLs directly (one per line)">
+        <AdminTextarea
+          rows={2}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://…"
+        />
+      </Labeled>
+    </div>
+  );
+}
 
 type Draft = {
   name: string;
@@ -452,14 +562,11 @@ function Products() {
               </Labeled>
             </div>
             <div className="col-span-2">
-              <Labeled label="Image URLs (one per line)">
-                <AdminTextarea
-                  rows={2}
-                  value={draft.imageUrls}
-                  onChange={(e) => setDraft({ ...draft, imageUrls: e.target.value })}
-                  placeholder="https://…"
-                />
-              </Labeled>
+              <ProductImageUploadField
+                value={draft.imageUrls}
+                onChange={(val) => setDraft({ ...draft, imageUrls: val })}
+                pathPrefix={draft.name || 'product'}
+              />
             </div>
             <div className="col-span-2">
               <AdminCheckbox

@@ -30,7 +30,8 @@ export function useAdmin(): AdminState {
       try {
         const snap = await getDoc(doc(db, 'admins', user.uid));
         if (active) setIsAdmin(snap.exists());
-      } catch {
+      } catch (err) {
+        console.error("Error checking admin status in Firestore:", err);
         if (active) setIsAdmin(false);
       }
     })();

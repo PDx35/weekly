@@ -14,6 +14,88 @@ import {
 } from '@/components/admin/ui';
 import { createDoc, listAll, removeDoc, updateDocFields } from '@/lib/admin/db';
 import type { AdminCategory } from '@/lib/admin/types';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '@/lib/firebase/client';
+
+function ImageUploadField({
+  label,
+  value,
+  onChange,
+  pathPrefix,
+}: {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  pathPrefix: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file.');
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const fileExt = file.name.split('.').pop() || 'png';
+      const safePrefix = pathPrefix.trim().replace(/[^a-zA-Z0-9_-]/g, '_') || 'category';
+      const fileName = `${safePrefix}-${Date.now()}.${fileExt}`;
+      const storageRef = ref(storage, `images/categories/${fileName}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(snapshot.ref);
+      onChange(downloadUrl);
+    } catch (err: unknown) {
+      console.error('Upload failed:', err);
+      setError('Upload failed. Ensure Firestore/Storage rules allow writes.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <span className="text-sm font-medium text-neutral-700">{label}</span>
+      <div className="flex gap-2">
+        <AdminInput
+          placeholder="Paste URL or choose a file..."
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <label className="flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-neutral-300 px-3.5 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-100">
+          {uploading ? 'Uploading...' : 'Upload'}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+        </label>
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+      {value && (
+        <div className="flex items-center gap-2 mt-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={value} alt="Preview" className="h-12 w-12 rounded object-cover border border-neutral-200" />
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="text-xs text-red-600 hover:underline font-medium"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type Draft = {
   id: string;
@@ -247,18 +329,18 @@ function Categories() {
                 onChange={(e) => setDraft({ ...draft, sortOrder: e.target.value })}
               />
             </Labeled>
-            <Labeled label="Home icon URL">
-              <AdminInput
-                value={draft.homeIconUrl}
-                onChange={(e) => setDraft({ ...draft, homeIconUrl: e.target.value })}
-              />
-            </Labeled>
-            <Labeled label="Browse icon URL">
-              <AdminInput
-                value={draft.browseIconUrl}
-                onChange={(e) => setDraft({ ...draft, browseIconUrl: e.target.value })}
-              />
-            </Labeled>
+            <ImageUploadField
+              label="Home icon URL"
+              value={draft.homeIconUrl}
+              onChange={(val) => setDraft({ ...draft, homeIconUrl: val })}
+              pathPrefix={`${draft.id || 'home'}-icon`}
+            />
+            <ImageUploadField
+              label="Browse icon URL"
+              value={draft.browseIconUrl}
+              onChange={(val) => setDraft({ ...draft, browseIconUrl: val })}
+              pathPrefix={`${draft.id || 'browse'}-icon`}
+            />
             <AdminCheckbox
               label="Active"
               checked={draft.active}
