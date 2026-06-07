@@ -119,6 +119,11 @@ const getProductsRaw = cache(async (): Promise<Product[]> => {
   }
 });
 
+/** All products in display order. */
+export async function getProducts(): Promise<Product[]> {
+  return getProductsRaw();
+}
+
 /** All categories in display order. */
 export async function getCategories(): Promise<Category[]> {
   return getCategoriesRaw();

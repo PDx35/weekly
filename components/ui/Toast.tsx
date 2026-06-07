@@ -8,11 +8,14 @@ export function Toast() {
   const { toast } = useCart();
   return (
     <div className={`toast ${toast ? 'toast-on' : ''}`}>
-      {toast && (
-        <>
-          <Icon name="check" size={16} /> {toast}
-        </>
-      )}
+      {toast &&
+        (typeof toast === 'string' ? (
+          <>
+            <Icon name="check" size={16} /> {toast}
+          </>
+        ) : (
+          toast
+        ))}
     </div>
   );
 }

@@ -20,10 +20,12 @@ import {
   type ReactNode,
 } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import Link from 'next/link';
 import { trackAddToCart } from '@/lib/analytics';
-import { find } from '@/lib/data';
+import { PRODUCTS as MOCK_PRODUCTS } from '@/lib/data';
 import { db } from '@/lib/firebase/client';
-import type { CartItem } from '@/lib/types';
+import { routes } from '@/lib/routes';
+import type { CartItem, Product } from '@/lib/types';
 import { useAuth } from './auth';
 
 type CartMap = Record<string, number>;
@@ -62,9 +64,9 @@ interface CartContextValue {
   /** Sum of price × qty across the cart. */
   cartSubtotal: number;
   /** Current toast message, or `null` when hidden. */
-  toast: string | null;
+  toast: ReactNode | null;
   /** Show a transient toast message. */
-  showToast: (msg: string) => void;
+  showToast: (msg: ReactNode) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -72,13 +74,28 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [cart, setCart] = useState<CartMap>({});
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ReactNode | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const hydrated = useRef(false);
   const cartRef = useRef<CartMap>(cart);
   // The uid whose remote cart we've already merged (gates write-through).
   const mergedUid = useRef<string | null>(null);
+
+  // Fetch all live products on mount for client-side catalog matching.
+  useEffect(() => {
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((data: Product[]) => {
+        if (data && data.length) {
+          setProducts(data);
+        }
+      })
+      .catch(() => {
+        /* fallback to MOCK_PRODUCTS is handled in cartItems lookup */
+      });
+  }, []);
 
   // Keep a ref to the latest cart for the sign-in merge (read in an effect).
   useEffect(() => {
@@ -137,12 +154,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, [cart, user]);
 
-  const addToCart = useCallback((id: string, qty = 1) => {
-    if (qty > 0) void trackAddToCart({ item_id: id, quantity: qty });
-    setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] || 0) + qty) }));
+  const showLoginToast = useCallback(() => {
+    clearTimeout(toastTimer.current);
+    setToast(
+      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        Please login to add items to cart.
+        <Link href={routes.auth()} className="toast-btn" onClick={() => setToast(null)}>
+          Login
+        </Link>
+      </span>
+    );
+    // Give more time (4 seconds) for the user to read and click the login button
+    toastTimer.current = setTimeout(() => setToast(null), 4000);
   }, []);
 
+  const addToCart = useCallback((id: string, qty = 1) => {
+    if (!user) {
+      showLoginToast();
+      return;
+    }
+    if (qty > 0) void trackAddToCart({ item_id: id, quantity: qty });
+    setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] || 0) + qty) }));
+  }, [user, showLoginToast]);
+
   const setQty = useCallback((id: string, qty: number) => {
+    if (!user) {
+      showLoginToast();
+      return;
+    }
     // Count a 0 → positive transition as an add-to-cart.
     if (qty > 0 && !cartRef.current[id]) void trackAddToCart({ item_id: id, quantity: qty });
     setCart((c) => {
@@ -151,7 +190,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       else next[id] = qty;
       return next;
     });
-  }, []);
+  }, [user, showLoginToast]);
 
   const removeFromCart = useCallback((id: string) => {
     setCart((c) => {
@@ -163,18 +202,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setCart({}), []);
 
-  const showToast = useCallback((msg: string) => {
+  const showToast = useCallback((msg: ReactNode) => {
     clearTimeout(toastTimer.current);
     setToast(msg);
     toastTimer.current = setTimeout(() => setToast(null), 2200);
   }, []);
 
   const cartItems = useMemo<CartItem[]>(
-    () =>
-      Object.entries(cart)
-        .map(([id, qty]) => ({ product: find(id), qty }))
-        .filter((x): x is CartItem => Boolean(x.product)),
-    [cart],
+    () => {
+      const list = products.length ? products : MOCK_PRODUCTS;
+      return Object.entries(cart)
+        .map(([id, qty]) => ({ product: list.find((p) => p.id === id), qty }))
+        .filter((x): x is CartItem => Boolean(x.product));
+    },
+    [cart, products],
   );
   const cartCount = useMemo(() => cartItems.reduce((s, x) => s + x.qty, 0), [cartItems]);
   const cartSubtotal = useMemo(

@@ -3496,7 +3496,33 @@ s {
 
 .toast-on {
   transform: translate(-50%, 0);
-  opacity: 1
+  opacity: 1;
+  pointer-events: auto
+}
+
+.toast-btn {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.14s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-head);
+  margin-left: 6px;
+}
+
+.toast-btn:hover {
+  background: var(--brand-700);
+}
+
+.toast-btn:active {
+  transform: scale(0.95);
 }
 
 /* ---------- Footer ---------- */
