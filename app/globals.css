@@ -4160,3 +4160,64 @@ s {
     @apply font-sans;
   }
 }
+
+/* ---------- Product Variants Selector ---------- */
+.pd-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 8px;
+}
+
+.pd-variants-title {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--ink-2);
+}
+
+.pd-variants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pd-variant-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  position: relative;
+}
+
+.pd-variant-chip:hover {
+  border-color: var(--brand);
+  color: var(--brand-700);
+}
+
+.pd-variant-chip.active {
+  background: var(--brand-050);
+  border-color: var(--brand);
+  color: var(--brand-700);
+  box-shadow: 0 2px 4px rgba(44, 140, 90, 0.08);
+}
+
+.pd-variant-chip.out-of-stock::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 50%;
+  height: 1px;
+  background: var(--ink-3);
+  opacity: 0.5;
+}

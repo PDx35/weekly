@@ -1,0 +1,44 @@
+{
+    "Document ID": "7QYdCJSQplLMYM3zl6j1",
+    "category": "Grocery100",
+    "description": "India Gate Basmati Rice Super is a premium quality long-grain rice known for its rich aroma, fine texture, and excellent taste. Carefully aged and processed, it cooks into long, fluffy grains—perfect for biryani, pulao, and everyday meals. A trusted choice for authentic Indian cooking.",
+    "discountPrice": 120,
+    "imageUrl": "https://goldenrod-stork-529775.hostingersite.com/uploads/IDndUQz4iGOdBuQt7d2DyzwupLv1/1776927561_product_image_3ca05b314fd0e03405ed37808e60663e.jpg",
+    "imageUrls": [
+      "https://goldenrod-stork-529775.hostingersite.com/uploads/IDndUQz4iGOdBuQt7d2DyzwupLv1/1776927561_product_image_3ca05b314fd0e03405ed37808e60663e.jpg"
+    ],
+    "isAvailable": true,
+    "lowStockAlertAt": 5,
+    "name": "India Gate Basmati Rice Super – Premium Long Grain Rice",
+    "pieces": 1,
+    "price": 125,
+    "primaryImageIndex": 0,
+    "rating": 0,
+    "reviewCount": 0,
+    "stock": 95,
+    "storeId": "IDndUQz4iGOdBuQt7d2DyzwupLv1",
+    "unit": "kg",
+    "variants": [
+      {
+        "stock": 100,
+        "label": "5 kg",
+        "id": "1776927512698",
+        "discountPrice": 560,
+        "weight": 5,
+        "unit": "kg",
+        "pieces": 1,
+        "price": 580
+      },
+      {
+        "price": 1100,
+        "weight": 10,
+        "unit": "kg",
+        "pieces": 1,
+        "discountPrice": 1000,
+        "stock": 100,
+        "label": "10 kg",
+        "id": "1776927533234"
+      }
+    ],
+    "weight": 1
+  }

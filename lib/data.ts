@@ -13,7 +13,7 @@
  * - `slug` and `searchTokens` are generated here so the URLs and search behave
  *   like the eventual Firestore model.
  */
-import type { Address, Category, Product } from './types';
+import type { Address, Category, Product, ProductVariant } from './types';
 
 /** Slugify a name into a URL-safe token, e.g. "Sweet Lime (Mosambi)" → "sweet-lime-mosambi". */
 const slugify = (s: string): string =>
@@ -98,6 +98,7 @@ interface ProductOpts {
   desc?: string;
   stock?: boolean;
   inventory?: number;
+  variants?: ProductVariant[];
 }
 
 let _id = 0;
@@ -124,6 +125,7 @@ const P = (
   inventory: opts.stock === false ? 0 : (opts.inventory !== undefined ? opts.inventory : 10),
   searchTokens: tokenize(name, CATEGORY_NAME.get(cat) ?? cat),
   images: [],
+  variants: opts.variants,
 });
 
 export const PRODUCTS: Product[] = [
@@ -225,6 +227,30 @@ export const PRODUCTS: Product[] = [
     rating: 4.7,
     reviews: 860,
     desc: 'Premium aged long-grain basmati — fluffy, aromatic, non-sticky.',
+    variants: [
+      {
+        id: '1776927512698',
+        label: '5 kg',
+        price: 560,
+        mrp: 580,
+        stock: true,
+        inventory: 100,
+        weight: 5,
+        unit: 'kg',
+        pieces: 1
+      },
+      {
+        id: '1776927533234',
+        label: '10 kg',
+        price: 1000,
+        mrp: 1100,
+        stock: true,
+        inventory: 100,
+        weight: 10,
+        unit: 'kg',
+        pieces: 1
+      }
+    ]
   }),
   P('staples', 'Toor Dal', 158, '1 kg', { rating: 4.5 }),
   P('staples', 'Whole Wheat Atta', 285, '5 kg', { mrp: 320, rating: 4.6 }),

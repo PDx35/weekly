@@ -204,7 +204,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     () => {
       const list = products.length ? products : MOCK_PRODUCTS;
       return Object.entries(cart)
-        .map(([id, qty]) => ({ product: list.find((p) => p.id === id), qty }))
+        .map(([id, qty]) => {
+          let found = list.find((p) => p.id === id);
+          if (!found) {
+            const parent = list.find((p) => p.variants?.some((v) => v.id === id));
+            if (parent) {
+              const variant = parent.variants?.find((v) => v.id === id)!;
+              found = {
+                ...parent,
+                id: variant.id,
+                name: `${parent.name} - ${variant.label}`,
+                price: variant.price,
+                mrp: variant.mrp,
+                unit: variant.label,
+                stock: variant.stock,
+                inventory: variant.inventory,
+              };
+            }
+          }
+          return { product: found!, qty };
+        })
         .filter((x): x is CartItem => Boolean(x.product));
     },
     [cart, products],

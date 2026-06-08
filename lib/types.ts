@@ -24,6 +24,18 @@ export interface Category {
   iconUrl?: string | null;
 }
 
+export interface ProductVariant {
+  id: string;
+  label: string;
+  price: number;
+  mrp: number | null;
+  stock: boolean;
+  inventory: number;
+  weight?: number;
+  unit?: string;
+  pieces?: number;
+}
+
 /** A catalogue product. */
 export interface Product {
   id: string;
@@ -52,6 +64,7 @@ export interface Product {
   searchTokens: string[];
   /** Product image URLs (empty → render a tinted placeholder tile). */
   images: string[];
+  variants?: ProductVariant[];
 }
 
 /** A saved delivery address. */

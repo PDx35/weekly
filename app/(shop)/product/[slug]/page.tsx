@@ -5,8 +5,6 @@ import { ProductGallery } from '@/components/catalogue/ProductGallery';
 import { Rail } from '@/components/catalogue/Rail';
 import { Crumbs } from '@/components/ui/Crumbs';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { Price } from '@/components/ui/Price';
-import { Rating } from '@/components/ui/Rating';
 import {
   getAllProductSlugs,
   getCategoryBySlug,
@@ -101,23 +99,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ProductGallery product={product} />
 
         <div className="pd-info">
-          <div className="pd-unit">{product.unit}</div>
           <h1>{product.name}</h1>
-          <div className="pd-rate">
-            <Rating value={product.rating} reviews={product.reviews} size={16} />
-            <span className="pd-instock">
-              <Icon name="check" size={14} /> In stock
-            </span>
-          </div>
-          <Price value={product.price} mrp={product.mrp} size="lg" />
-          <p className="pd-tax">Inclusive of all taxes</p>
 
-          <p className="pd-desc">
+          <ProductBuy product={product} />
+
+          <p className="pd-desc" style={{ marginTop: '16px' }}>
             {product.desc ??
               'Fresh, high-quality produce handpicked for your daily needs. Stored and delivered with care to preserve taste and nutrition.'}
           </p>
-
-          <ProductBuy product={product} />
 
           <div className="pd-highlights">
             {HIGHLIGHTS.map((h) => (

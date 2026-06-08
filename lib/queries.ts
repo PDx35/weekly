@@ -21,7 +21,7 @@ import {
 } from './data';
 import { db } from './firebase/client';
 import { WEEKLY_MARKET } from './market';
-import type { Category, MarketDay, Product, Banner } from './types';
+import type { Category, MarketDay, Product, Banner, ProductVariant } from './types';
 
 // Tints for category tiles (the DB has no colours), assigned by display order.
 const TINTS: [string, string][] = [
@@ -71,6 +71,28 @@ function mapProduct(id: string, d: Doc, catName: string): Product {
   const name = str(d.name);
   const imageUrls = Array.isArray(d.imageUrls) ? (d.imageUrls.filter(Boolean) as string[]) : [];
   const images = imageUrls.length ? imageUrls : str(d.imageUrl) ? [str(d.imageUrl)] : [];
+  
+  // Map variants if present in Firestore document
+  let variants: ProductVariant[] | undefined = undefined;
+  if (Array.isArray(d.variants)) {
+    variants = d.variants.map((v: any) => {
+      const vPrice = num(v.price);
+      const vDiscount = num(v.discountPrice);
+      const vOnOffer = vDiscount > 0 && vDiscount < vPrice;
+      return {
+        id: str(v.id),
+        label: str(v.label),
+        price: vOnOffer ? vDiscount : vPrice,
+        mrp: vOnOffer ? vPrice : null,
+        stock: v.isAvailable !== false && num(v.stock) > 0,
+        inventory: v.isAvailable === false ? 0 : (num(v.stock) !== undefined && num(v.stock) !== null ? num(v.stock) : 10),
+        weight: num(v.weight),
+        unit: str(v.unit),
+        pieces: num(v.pieces),
+      };
+    });
+  }
+
   return {
     id,
     slug: id,
@@ -87,6 +109,7 @@ function mapProduct(id: string, d: Doc, catName: string): Product {
     inventory: d.isAvailable === false ? 0 : (num(d.stock) !== undefined && num(d.stock) !== null ? num(d.stock) : 10),
     searchTokens: tokenize(name, catName),
     images,
+    variants,
   };
 }
 
@@ -145,9 +168,31 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return (await getProductsRaw()).find((p) => p.slug === slug) ?? null;
 }
 
-/** A single product by id, or `null`. Used by checkout. */
+/** A single product by id, or `null`. Used by checkout. Supports resolving variant IDs to virtual products. */
 export async function getProductById(id: string): Promise<Product | null> {
-  return (await getProductsRaw()).find((p) => p.id === id) ?? null;
+  const products = await getProductsRaw();
+  const found = products.find((p) => p.id === id);
+  if (found) return found;
+
+  // Search variants
+  for (const p of products) {
+    if (p.variants) {
+      const v = p.variants.find((variant) => variant.id === id);
+      if (v) {
+        return {
+          ...p,
+          id: v.id,
+          name: `${p.name} - ${v.label}`,
+          price: v.price,
+          mrp: v.mrp,
+          unit: v.label,
+          stock: v.stock,
+          inventory: v.inventory,
+        };
+      }
+    }
+  }
+  return null;
 }
 
 /**
