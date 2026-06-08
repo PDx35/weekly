@@ -13,13 +13,13 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'FreshMart — Farm-fresh groceries in 30 minutes',
-    template: '%s · FreshMart',
+    default: 'Weekly Market — Farm-fresh groceries in 30 minutes',
+    template: '%s · Weekly Market',
   },
   description:
-    'FreshMart delivers farm-fresh fruits, vegetables, dairy, and daily essentials to your door in 30 minutes.',
+    'Weekly Market delivers farm-fresh fruits, vegetables, dairy, and daily essentials to your door in 30 minutes.',
   openGraph: {
-    siteName: 'FreshMart',
+    siteName: 'Weekly Market',
     type: 'website',
     locale: 'en_IN',
   },
