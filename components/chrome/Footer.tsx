@@ -47,7 +47,7 @@ export function Footer() {
           <div className="space-y-4">
             <Logo />
             <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
-              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
+              Weekly Market is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
             </p>
           </div>
 
@@ -79,7 +79,7 @@ export function Footer() {
             <p className="text-xs text-neutral-500 leading-relaxed">
               Have questions? Reach out at:
               <br />
-              <strong className="text-neutral-800">support@growexy.com</strong>
+              <strong className="text-neutral-800">support@weeklymarket.com</strong>
             </p>
             <div className="flex gap-2">
               <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">

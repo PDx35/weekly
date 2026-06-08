@@ -241,7 +241,7 @@ export function AuthScreen() {
             <span className="inline-block rounded-full bg-emerald-800/60 border border-emerald-700/50 px-4 py-1 text-xs font-bold tracking-wider text-emerald-250 uppercase">
               15 MINUTE DELIVERY
             </span>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase !text-white">
               DELICIOUS &amp; FRESH GROCERIES AT YOUR DOOR.
             </h2>
             <p className="text-emerald-100 text-sm leading-relaxed max-w-md">
