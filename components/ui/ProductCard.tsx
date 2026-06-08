@@ -145,7 +145,7 @@ export function ProductCardCompact({ product }: { product: Product }) {
   };
 
   return (
-    <article className="w-[140px] md:w-[170px] flex-shrink-0 bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-2.5 relative group" onClick={() => router.push(routes.product(product.slug))}>
+    <article className="w-full h-full bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-2.5 relative group" onClick={() => router.push(routes.product(product.slug))}>
       <div className="relative aspect-square w-full bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center">
         <Img product={product} radius="12px" />
         
@@ -237,7 +237,7 @@ export function ProductCardOffer({ product }: { product: Product }) {
   const discountPercent = product.mrp ? Math.round((1 - product.price / product.mrp) * 100) : 0;
 
   return (
-    <article className="w-[150px] md:w-[180px] flex-shrink-0 bg-gradient-to-b from-amber-50/30 to-white border border-amber-200/80 rounded-[1.5rem] overflow-hidden hover:shadow-lg hover:border-amber-300 hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-3 relative group" onClick={() => router.push(routes.product(product.slug))}>
+    <article className="w-full h-full bg-gradient-to-b from-amber-50/30 to-white border border-amber-200/80 rounded-[1.5rem] overflow-hidden hover:shadow-lg hover:border-amber-300 hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-3 relative group" onClick={() => router.push(routes.product(product.slug))}>
       {/* Discount Tag Top Left */}
       {discountPercent > 0 && (
         <span className="absolute top-0 left-3 z-10 bg-gradient-to-r from-red-600 to-amber-500 text-white font-extrabold text-[9px] px-2 py-0.5 rounded-b-md shadow-sm uppercase tracking-wide">

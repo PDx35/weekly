@@ -8,6 +8,7 @@ import { useAuth } from '@/store/auth';
 import { useServiceability } from '@/store/serviceability';
 import { routes } from '@/lib/routes';
 import { ProductCard, ProductCardCompact, ProductCardOffer } from '@/components/ui/ProductCard';
+import { Logo } from '@/components/chrome/Logo';
 
 // Fallback image helper based on product names
 const getProductImage = (p: any): string => {
@@ -141,71 +142,79 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-4">
+    <section className="mx-auto max-w-7xl px-6 py-6 md:py-8">
       <div
-        className="relative overflow-hidden rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4 border border-neutral-100 shadow-sm transition-all duration-500 ease-in-out min-h-[160px] sm:min-h-[180px]"
-        style={{ backgroundColor: current.bgColor || '#f0fdf4' }}
+        className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:py-12 sm:px-20 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12 border border-white/50 transition-all duration-700 ease-out min-h-[220px] sm:min-h-[260px] group hover:shadow-2xl"
+        style={{ 
+          background: `linear-gradient(135deg, ${current.bgColor || '#f0fdf4'} 0%, #ffffff 100%)`,
+          boxShadow: `0 20px 40px -15px ${current.bgColor || '#f0fdf4'}80`
+        }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
+        {/* Subtle decorative background blur elements */}
+        <div className="absolute -top-32 -right-32 w-80 h-80 bg-white/40 blur-3xl rounded-full mix-blend-overlay pointer-events-none transition-transform duration-1000 group-hover:scale-125"></div>
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-white/40 blur-3xl rounded-full mix-blend-overlay pointer-events-none transition-transform duration-1000 group-hover:scale-125"></div>
+
         {/* Navigation Arrows */}
         {list.length > 1 && (
           <>
             <button
               onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-xs text-neutral-800 shadow-xs hover:bg-white transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-neutral-900 shadow-md border border-white hover:bg-white hover:scale-110 transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
               aria-label="Previous Banner"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
             </button>
             <button
               onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-xs text-neutral-800 shadow-xs hover:bg-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-neutral-900 shadow-md border border-white hover:bg-white hover:scale-110 transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
               aria-label="Next Banner"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
             </button>
           </>
         )}
 
         {/* Text Area */}
-        <div className="flex-1 space-y-2 max-w-md z-10 text-left">
+        <div className="flex-1 space-y-3 sm:space-y-4 w-full max-w-lg z-20 text-left relative mt-2 sm:mt-0">
           {current.subtitle && (
-            <span className="inline-block rounded-full bg-black/10 px-3 py-0.5 text-[9px] font-black uppercase tracking-wider text-neutral-800 leading-none">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-md border border-white/60 px-3 py-1 sm:px-4 sm:py-1.5 text-[9px] sm:text-xs font-black uppercase tracking-[0.2em] text-neutral-800 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               {current.subtitle}
             </span>
           )}
-          <h3 className="text-xl sm:text-2xl font-black text-neutral-900 leading-tight uppercase">
+          <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-900 leading-[1.15] uppercase tracking-tight drop-shadow-sm">
             {current.title}
           </h3>
           <button
             onClick={() => current.id ? onBannerClick(current) : null}
-            className="inline-flex items-center justify-center rounded-lg bg-neutral-950 text-white font-extrabold text-[9px] px-3.5 py-1.5 mt-1 transition-transform hover:scale-105 active:scale-95 leading-none"
-            style={{ color: current.ctaColor || '#ffffff' }}
+            className="inline-flex items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-xs sm:text-sm px-6 py-3.5 mt-2 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-neutral-900/20 active:scale-95 leading-none gap-2 group/btn"
           >
             {current.ctaText || current.cta || 'Shop Now'}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover/btn:translate-x-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
         </div>
 
         {/* Image Area */}
-        <div className="relative w-full max-w-xs md:max-w-sm z-10 flex justify-center md:justify-end">
+        <div className="relative w-full max-w-[200px] sm:max-w-xs md:max-w-md z-20 flex justify-center md:justify-end pb-4 sm:pb-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={current.imageUrlDesktop || current.imageUrl || current.imageUrlMobile}
             alt={current.title}
-            className="w-full max-h-[140px] object-contain rounded-xl transition-all duration-300 hover:scale-102"
+            className="w-full max-h-[140px] sm:max-h-[240px] object-contain rounded-[2rem] transition-all duration-700 hover:scale-110 hover:-rotate-3 drop-shadow-2xl"
             loading="lazy"
           />
         </div>
 
         {/* Indicators */}
         {list.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-white/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/60 shadow-sm">
             {list.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`h-1.5 rounded-full transition-all ${currentIndex === idx ? 'bg-neutral-800 w-3' : 'bg-neutral-800/20'
+                className={`h-2 rounded-full transition-all duration-300 ${currentIndex === idx ? 'bg-neutral-900 w-6 shadow-sm' : 'bg-neutral-900/30 w-2 hover:bg-neutral-900/50'
                   }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
@@ -384,6 +393,15 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isCategoriesStuck, setIsCategoriesStuck] = useState(false);
 
+  const handleCategoryClick = (catId: string) => {
+    setActiveTab(catId);
+    const section = document.getElementById('products-grid-section');
+    if (section) {
+      const y = section.getBoundingClientRect().top + window.scrollY - 180;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const trigger = document.getElementById('categories-scroll-trigger');
@@ -468,7 +486,11 @@ export default function HomePage() {
 
   // Best Sellers (Style 1)
   const bestSellers = useMemo(() => {
-    return products.filter((p) => p.rating >= 4.5).slice(0, 8);
+    const highlyRated = products.filter((p) => p.rating >= 4.5);
+    if (highlyRated.length >= 5) return highlyRated;
+    
+    const others = products.filter((p) => p.rating < 4.5);
+    return [...highlyRated, ...others];
   }, [products]);
 
   // Flash Sale products (Style 5)
@@ -502,17 +524,20 @@ export default function HomePage() {
 
   // Recommended products (Style 7)
   const recommendedProducts = useMemo(() => {
-    return products.filter((p) => p.rating >= 4.4).slice(2, 10);
+    const list = products.filter((p) => p.rating >= 4.4);
+    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
   }, [products]);
 
   // Frequently Bought (Style 1: dynamic simulation using ratings and presence in categories)
   const frequentlyBought = useMemo(() => {
-    return products.filter((p) => p.rating >= 4.6).slice(0, 8);
+    const list = products.filter((p) => p.rating >= 4.6);
+    return list.length >= 4 ? list : [...list, ...products].reverse().slice(0, 8);
   }, [products]);
 
   // Trending Near You (Style 3: simulated area-popularity)
   const trendingNear = useMemo(() => {
-    return [...products].reverse().filter((p) => p.rating >= 4.3).slice(0, 8);
+    const list = [...products].reverse().filter((p) => p.rating >= 4.3);
+    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
   }, [products]);
 
   // Daily Essentials (Everyday groceries)
@@ -522,7 +547,8 @@ export default function HomePage() {
 
   // Top Rated (Style 2: Premium 5-star ratings or close)
   const topRated = useMemo(() => {
-    return products.filter((p) => p.rating >= 4.8).slice(0, 8);
+    const list = products.filter((p) => p.rating >= 4.8);
+    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
   }, [products]);
 
   // Budget Deals (Deepest discounts simulated by mrp - price diff)
@@ -625,9 +651,9 @@ export default function HomePage() {
           ) : (
             <div className="flex gap-4 md:gap-6 overflow-x-auto no-scrollbar flex-nowrap justify-start md:justify-center px-2 md:px-0">
               {categories.map((cat) => (
-                <Link
+                <button
                   key={cat.id}
-                  href={routes.category(cat.id)}
+                  onClick={() => handleCategoryClick(cat.id)}
                   className="flex flex-col items-center justify-center flex-shrink-0 w-16 md:w-20 group transition-all"
                 >
                   <div className="flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl bg-neutral-50 hover:bg-emerald-50/50 hover:scale-105 active:scale-95 duration-200 ease-out transition-all select-none border border-neutral-100 shadow-sm">
@@ -641,7 +667,7 @@ export default function HomePage() {
                     )}
                   </div>
                   <span className="mt-1.5 md:mt-2 font-bold text-neutral-800 text-[10px] md:text-[11px] tracking-tight capitalize truncate w-full text-center group-hover:text-emerald-600 transition-colors leading-tight">{cat.name}</span>
-                </Link>
+                </button>
               ))}
             </div>
           )}
@@ -649,21 +675,21 @@ export default function HomePage() {
       </div>
 
       {/* STYLE 1: COMPACT HORIZONTAL SCROLL - BEST SELLERS */}
-      <section className="items-center flex flex-col">
-          <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 uppercase">
-            Our Seasonal Offers
-          </h2>
+      <section className="mx-auto max-w-7xl px-6 flex flex-col w-full mt-4">
+        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 uppercase text-center mb-6">
+          Our Seasonal Offers
+        </h2>
 
         {loading ? (
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
-            {[...Array(6)].map((_, idx) => (
-              <div key={idx} className="h-56 w-36 md:w-44 flex-shrink-0 rounded-2xl bg-neutral-100 animate-pulse" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+            {[...Array(5)].map((_, idx) => (
+              <div key={idx} className="h-[300px] w-full rounded-2xl bg-neutral-100 animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth">
-            {bestSellers.map((p) => (
-              <ProductCardCompact key={p.id} product={p} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+            {bestSellers.slice(0, 5).map((p) => (
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         )}
@@ -760,7 +786,7 @@ export default function HomePage() {
       </section>
 
       {/* DYNAMIC BEST SELLING PRODUCT */}
-      <section className="mx-auto max-w-7xl px-6 py-16 space-y-10 text-center">
+      <section id="products-grid-section" className="mx-auto max-w-7xl px-6 py-16 space-y-10 text-center">
         <div className="space-y-3 items-center flex flex-col">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
             Our Best Selling Product
@@ -771,7 +797,7 @@ export default function HomePage() {
         </div>
 
         {/* Tabs Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+        <div className="flex items-center justify-start gap-2 md:gap-3 overflow-x-auto no-scrollbar flex-nowrap w-full pb-4 px-2">
           <button
             onClick={() => setActiveTab('all')}
             className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === 'all'
@@ -805,7 +831,7 @@ export default function HomePage() {
         ) : filteredProducts.length === 0 ? (
           <p className="text-neutral-500 py-10 font-medium">No products found in this category.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {filteredProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -819,32 +845,46 @@ export default function HomePage() {
           Our Weekly Hot Deals
         </h2>
 
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#f2e6ff] via-[#f7f0ff] to-white p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-4 max-w-md z-10 text-left">
-            <span className="inline-block rounded-full bg-purple-600 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
-              Fresh, Premium Drinks
-            </span>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-neutral-900 leading-tight uppercase">
-              Fresh, Premium Drinks From The Farm.
-            </h3>
-            <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-amber-400 font-black text-neutral-950 text-sm shadow-lg shadow-amber-100 flex-col leading-none">
-              <span>30%</span>
-              <span className="text-[10px] tracking-wider uppercase mt-0.5">Off</span>
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-purple-50 to-fuchsia-50 text-neutral-900 flex flex-col md:flex-row group shadow-lg shadow-purple-100/50 border border-purple-100">
+          {/* Background Ambient Glow */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-300/30 blur-3xl rounded-full pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
+          <div className="absolute -bottom-20 left-10 w-72 h-72 bg-fuchsia-200/40 blur-3xl rounded-full pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
+          
+          <div className="relative z-10 flex flex-1 flex-row items-center gap-4 sm:gap-6 p-6 md:p-8 lg:p-10">
+            {/* Minimalist Compact Badge */}
+            <div className="flex flex-col items-center justify-center shrink-0 bg-gradient-to-tr from-amber-400 to-yellow-300 text-neutral-950 rounded-2xl h-16 w-16 sm:h-20 sm:w-20 shadow-lg shadow-amber-200/50 transform -rotate-3 group-hover:rotate-0 group-hover:scale-105 transition-transform duration-500 border-2 border-white">
+              <span className="text-xl sm:text-2xl md:text-3xl font-black leading-none">30%</span>
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest mt-0.5 opacity-90">Off</span>
+            </div>
+            
+            {/* Text Content */}
+            <div className="space-y-1.5 flex-1">
+              <span className="inline-block text-purple-700 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] bg-white/60 px-2 py-0.5 rounded-full backdrop-blur-sm shadow-sm border border-white">
+                Weekly Hot Deal
+              </span>
+              <h3 className="text-lg sm:text-xl md:text-3xl font-black uppercase tracking-tight leading-tight max-w-[200px] sm:max-w-xs md:max-w-md text-neutral-900 drop-shadow-sm">
+                Fresh, Premium Drinks From The Farm.
+              </h3>
+              <button className="inline-flex items-center text-purple-700 text-[10px] sm:text-xs font-bold hover:text-purple-500 transition-colors uppercase tracking-wider group/btn pt-2">
+                Shop Deal <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-1 transition-transform group-hover/btn:translate-x-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
             </div>
           </div>
-          <div className="relative w-full max-w-sm md:max-w-md z-10 flex justify-center">
+          
+          {/* Compact Image Area */}
+          <div className="relative w-full md:w-1/3 min-h-[120px] sm:min-h-[140px] md:min-h-0 z-10 pointer-events-none">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/growexy_almonds_bowl.png"
-              alt="Premium raw almonds bowl"
-              className="w-full max-h-56 object-contain rounded-2xl"
+            <img 
+              src="/growexy_almonds_bowl.png" 
+              alt="Premium Drinks" 
+              className="absolute right-0 sm:right-6 md:right-8 lg:right-12 bottom-0 max-h-36 sm:max-h-44 md:max-h-48 object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-translate-x-2 origin-bottom" 
             />
           </div>
         </div>
 
         {/* Small deal grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {[...Array(4)].map((_, idx) => (
               <div key={idx} className="h-80 rounded-3xl bg-neutral-100 animate-pulse"></div>
             ))}
@@ -852,7 +892,7 @@ export default function HomePage() {
         ) : dealProducts.length === 0 ? (
           <p className="text-neutral-500 py-6 text-center font-medium">No active discounted deals at the moment.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 pt-2">
             {dealProducts.map((p) => {
               const hasDiscount = p.mrp && p.mrp > p.price;
               const discountPercent = hasDiscount ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
@@ -921,16 +961,16 @@ export default function HomePage() {
             </div>
           </div>
           {loading ? (
-            <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
+            <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible no-scrollbar pb-4 -mx-6 px-6 sm:mx-0 sm:px-0">
               {[...Array(4)].map((_, idx) => (
-                <div key={idx} className="h-80 w-64 flex-shrink-0 rounded-3xl bg-white/60 border border-purple-100 shadow-sm animate-pulse" />
+                <div key={idx} className="w-[240px] sm:w-auto flex-shrink-0 h-80 rounded-3xl bg-white/60 border border-purple-100 shadow-sm animate-pulse" />
               ))}
             </div>
           ) : recentlyAdded.length === 0 ? null : (
-            <div className="flex gap-6 overflow-x-auto pb-8 pt-2 no-scrollbar flex-nowrap scroll-smooth px-2">
-              {recentlyAdded.map((p) => (
-                <div key={p.id} className="w-[240px] flex-shrink-0 transition-transform duration-300 hover:-translate-y-2">
-                  <ProductCard product={p} className="shadow-xl shadow-purple-900/5 border border-purple-100/50 bg-white/80 backdrop-blur-sm" />
+            <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 pt-2 overflow-x-auto sm:overflow-visible no-scrollbar flex-nowrap pb-6 -mx-6 px-6 sm:mx-0 sm:px-0">
+              {recentlyAdded.slice(0, 8).map((p) => (
+                <div key={p.id} className="w-[240px] sm:w-auto flex-shrink-0 transition-transform duration-300 hover:-translate-y-2">
+                  <ProductCard product={p} className="shadow-xl shadow-purple-900/5 border border-purple-100/50 bg-white/80 backdrop-blur-sm h-full" />
                 </div>
               ))}
             </div>
@@ -942,7 +982,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-6 py-10 my-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           {/* Recommended Block */}
-          <div className="space-y-8 bg-neutral-50/50 p-6 md:p-8 rounded-[2.5rem] border border-neutral-100">
+          <div className="space-y-6 sm:space-y-8 bg-neutral-50/50 p-4 sm:p-6 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-neutral-100">
             <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
               <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -951,14 +991,14 @@ export default function HomePage() {
                 Recommended
               </h2>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {recommendedProducts.slice(0, 4).map((p) => (
                 <ProductCardCompact key={p.id} product={p} />
               ))}
             </div>
           </div>
           {/* Frequently Bought Block */}
-          <div className="space-y-8 bg-neutral-50/50 p-6 md:p-8 rounded-[2.5rem] border border-neutral-100">
+          <div className="space-y-6 sm:space-y-8 bg-neutral-50/50 p-4 sm:p-6 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-neutral-100">
             <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
               <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -967,7 +1007,7 @@ export default function HomePage() {
                 Frequently Bought
               </h2>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {frequentlyBought.slice(0, 4).map((p) => (
                 <ProductCardCompact key={p.id} product={p} />
               ))}
@@ -981,7 +1021,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           
           {/* Trending Near You (Col span 7) */}
-          <div className="md:col-span-7 bg-indigo-50 rounded-[2.5rem] p-6 md:p-10 flex flex-col border border-indigo-100 shadow-sm">
+          <div className="md:col-span-7 bg-indigo-50 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 md:p-10 flex flex-col border border-indigo-100 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
@@ -993,15 +1033,15 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth flex-1 items-center">
-              {trendingNear.slice(0, 4).map((p) => (
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+              {trendingNear.slice(0, 6).map((p) => (
                 <ProductCardCompact key={p.id} product={p} />
               ))}
             </div>
           </div>
 
           {/* Under 99 (Col span 5) */}
-          <div className="md:col-span-5 bg-teal-50 rounded-[2.5rem] p-6 md:p-10 flex flex-col border border-teal-100 shadow-sm">
+          <div className="md:col-span-5 bg-teal-50 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 md:p-10 flex flex-col border border-teal-100 shadow-sm">
             <div className="flex items-center gap-3 mb-8">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -1011,7 +1051,7 @@ export default function HomePage() {
                 <p className="text-teal-800/70 text-xs font-bold uppercase tracking-wider">Affordable Picks</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {under99.slice(0, 4).map((p) => (
                 <ProductCardCompact key={p.id} product={p} />
               ))}
@@ -1022,18 +1062,20 @@ export default function HomePage() {
       </section>
 
       {/* UNIQUE SECTION 7: Top Rated Premium (Gold Theme) */}
-      <section className="mx-auto max-w-7xl px-6 py-16 my-16 bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 rounded-br-[5rem] rounded-tl-[5rem] border-2 border-amber-200/50 shadow-inner relative">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-16 my-10 sm:my-16 bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 rounded-[2.5rem] sm:rounded-br-[5rem] sm:rounded-tl-[5rem] border-2 border-amber-200/50 shadow-inner relative">
         <div className="absolute top-0 right-10 w-32 h-32 bg-amber-300/30 rounded-full blur-2xl"></div>
-        <div className="text-center space-y-4 mb-12 relative z-10">
-          <span className="inline-block px-5 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-xs font-black uppercase rounded-full shadow-md shadow-amber-200 tracking-widest">Premium Choice</span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-neutral-900 uppercase">
+        <div className="text-center space-y-3 sm:space-y-4 mb-8 sm:mb-12 relative z-10">
+          <span className="inline-block px-4 py-1 sm:px-5 sm:py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-[10px] sm:text-xs font-black uppercase rounded-full shadow-md shadow-amber-200 tracking-widest">Premium Choice</span>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-neutral-900 uppercase">
             Top Rated Products
           </h2>
-          <p className="text-amber-800 font-medium">The highest quality items, chosen by our customers.</p>
+          <p className="text-amber-800 text-xs sm:text-base font-medium">The highest quality items, chosen by our customers.</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 relative z-10">
+        <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 relative z-10 overflow-x-auto sm:overflow-visible no-scrollbar flex-nowrap pb-4 sm:pb-0 px-2 sm:px-0 -mx-2 sm:mx-0">
           {topRated.map((p) => (
-            <ProductCard key={p.id} product={p} className="border-amber-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:shadow-amber-200/50" />
+            <div key={p.id} className="w-[240px] sm:w-auto flex-shrink-0">
+              <ProductCard product={p} className="border-amber-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:shadow-amber-200/50 h-full" />
+            </div>
           ))}
         </div>
       </section>
@@ -1054,34 +1096,40 @@ export default function HomePage() {
 
       {/* UNIQUE SECTION 12: Budget Deals (using ProductCardOffer) */}
       <section className="mx-auto max-w-7xl px-6 py-12 space-y-8 bg-rose-50/70 rounded-[3rem] border border-rose-100/80 my-16">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
-          <div className="flex items-center gap-5">
-            <div className="h-16 w-16 bg-neutral-900 rounded-2xl flex items-center justify-center text-white shadow-sm rotate-12">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 px-4">
+          <div className="flex items-center gap-4 md:gap-5">
+            <div className="h-12 w-12 md:h-16 md:w-16 bg-neutral-900 rounded-2xl flex items-center justify-center text-white shadow-sm rotate-12 flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-[28px] md:h-[28px]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             </div>
             <div className="text-left">
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-red-950 uppercase">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-red-950 uppercase">
                 Budget Deals
               </h2>
-              <p className="text-red-700 text-sm font-bold tracking-widest uppercase mt-1">Unbeatable prices</p>
+              <p className="text-red-700 text-[10px] sm:text-sm font-bold tracking-widest uppercase mt-0.5 md:mt-1">Unbeatable prices</p>
             </div>
           </div>
-          <Link href={routes.browse()} className="bg-white text-red-600 border border-red-200 font-black px-8 py-3.5 rounded-full hover:bg-red-50 transition-colors text-sm shadow-sm">
-            View All Deals
-          </Link>
         </div>
         
         {loading ? (
-          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6 px-4">
             {[...Array(6)].map((_, idx) => (
-              <div key={idx} className="h-64 w-40 flex-shrink-0 rounded-3xl bg-red-100/50 animate-pulse" />
+              <div key={idx} className="h-64 rounded-3xl bg-red-100/50 animate-pulse" />
             ))}
           </div>
         ) : budgetDeals.length === 0 ? null : (
-          <div className="flex gap-6 overflow-x-auto pb-6 pt-4 no-scrollbar flex-nowrap scroll-smooth px-4">
-            {budgetDeals.map((p) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6 px-4">
+            {budgetDeals.slice(0, 6).map((p) => (
               <ProductCardOffer key={p.id} product={p} />
             ))}
+          </div>
+        )}
+
+        {/* View All Deals Button (Moved to bottom) */}
+        {!loading && budgetDeals.length > 0 && (
+          <div className="flex justify-center mt-8 px-4">
+            <Link href={routes.browse()} className="w-full sm:w-auto text-center bg-white text-red-600 border border-red-200 font-black px-10 py-4 rounded-full hover:bg-red-50 transition-all hover:scale-105 active:scale-95 text-sm shadow-md">
+              View All Deals
+            </Link>
           </div>
         )}
       </section>
@@ -1125,14 +1173,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
           {/* Logo & Description */}
           <div className="space-y-4">
-            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              </span>
-              <span>
-                Grow<span className="text-emerald-600 font-extrabold">exy</span>
-              </span>
-            </Link>
+            <Logo />
             <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
               Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
             </p>
