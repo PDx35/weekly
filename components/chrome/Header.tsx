@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { CATEGORIES as FALLBACK_CATEGORIES } from '@/lib/data';
 import { routes } from '@/lib/routes';
@@ -17,6 +17,8 @@ import Link from 'next/link';
 /** Desktop header: logo, location, search, account/orders/cart, category bar. */
 export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
   const { user, addresses, selectedAddr } = useAuth();
   const { cartCount } = useCart();
   const { pincode, serviceability, detect, locationName } = useServiceability();
@@ -46,11 +48,24 @@ export function Header() {
       : locationName || pincode || 'Set location');
 
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isScrolled, setIsScrolled] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = document.getElementById('our-categories-section');
+      if (section) {
+        setIsScrolled(section.getBoundingClientRect().bottom < 80);
+      } else {
+        setIsScrolled(window.scrollY > 150);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <header className="hidden md:flex sticky top-0 z-50 bg-white/95 backdrop-blur-md flex-col">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 border-b border-neutral-100">
         {/* Logo & Location */}
         <div className="flex items-center gap-4">
           <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">

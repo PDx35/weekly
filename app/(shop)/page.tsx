@@ -382,6 +382,19 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isCategoriesStuck, setIsCategoriesStuck] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const trigger = document.getElementById('categories-scroll-trigger');
+      if (trigger) {
+        const stickyOffset = window.innerWidth < 768 ? 92 : 73;
+        setIsCategoriesStuck(trigger.getBoundingClientRect().bottom <= stickyOffset);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -595,40 +608,45 @@ export default function HomePage() {
       </section>
 
       {/* DYNAMIC POPULAR CATEGORIES */}
-      <section className="mx-auto max-w-7xl px-6 py-16 text-center space-y-10">
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase pb-4">
-          Our Categories
-        </h2>
-        {loading ? (
-          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
-            {[...Array(7)].map((_, idx) => (
-              <div key={idx} className="h-24 w-20 flex-shrink-0 rounded-2xl bg-neutral-100 animate-pulse"></div>
-            ))}
+      <div id="categories-scroll-trigger" className="w-full h-px pointer-events-none" aria-hidden="true" />
+      <div id="our-categories-sticky-wrapper" className={`sticky top-[92px] md:top-[73px] z-30 transition-all duration-300 ${isCategoriesStuck ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-100 pb-2 pt-2 mb-10' : 'bg-white shadow-sm md:shadow-none md:bg-transparent border-b border-neutral-100 md:border-transparent pb-4 pt-4 md:pt-6 mb-10'}`}>
+        <section id="our-categories-section" className="mx-auto max-w-7xl px-0 md:px-6 text-center">
+          <div className={`transition-all duration-300 overflow-hidden origin-top ${isCategoriesStuck ? 'max-h-0 h-0 opacity-0 scale-y-0 mb-0 invisible' : 'max-h-[100px] h-auto opacity-100 scale-y-100 mb-6 visible'}`}>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 uppercase m-0 p-0">
+              Our Categories
+            </h2>
           </div>
-        ) : (
-          <div className="flex gap-6 overflow-x-auto no-scrollbar flex-nowrap justify-center">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={routes.category(cat.id)}
-                className="flex flex-col items-center justify-center flex-shrink-0 w-20 group transition-all"
-              >
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-50 hover:bg-emerald-50/50 hover:scale-105 active:scale-95 duration-200 ease-out transition-all select-none border border-neutral-100 shadow-sm">
-                  {cat.iconUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={cat.iconUrl} alt={cat.name} className="h-12 w-12 object-contain" />
-                  ) : (
-                    <span className="text-neutral-900">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    </span>
-                  )}
-                </div>
-                <span className="mt-2 font-bold text-neutral-800 text-[11px] tracking-tight capitalize truncate w-full text-center group-hover:text-emerald-600 transition-colors leading-tight">{cat.name}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+          {loading ? (
+            <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap justify-start md:justify-center px-2 md:px-0">
+              {[...Array(7)].map((_, idx) => (
+                <div key={idx} className="h-20 w-16 md:h-24 md:w-20 flex-shrink-0 rounded-2xl bg-neutral-100 animate-pulse"></div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex gap-4 md:gap-6 overflow-x-auto no-scrollbar flex-nowrap justify-start md:justify-center px-2 md:px-0">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={routes.category(cat.id)}
+                  className="flex flex-col items-center justify-center flex-shrink-0 w-16 md:w-20 group transition-all"
+                >
+                  <div className="flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl bg-neutral-50 hover:bg-emerald-50/50 hover:scale-105 active:scale-95 duration-200 ease-out transition-all select-none border border-neutral-100 shadow-sm">
+                    {cat.iconUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={cat.iconUrl} alt={cat.name} className="h-8 w-8 md:h-12 md:w-12 object-contain" />
+                    ) : (
+                      <span className="text-neutral-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" className="md:w-[28px] md:h-[28px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                      </span>
+                    )}
+                  </div>
+                  <span className="mt-1.5 md:mt-2 font-bold text-neutral-800 text-[10px] md:text-[11px] tracking-tight capitalize truncate w-full text-center group-hover:text-emerald-600 transition-colors leading-tight">{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
 
       {/* STYLE 1: COMPACT HORIZONTAL SCROLL - BEST SELLERS */}
       <section className="items-center flex flex-col">
@@ -1020,22 +1038,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* UNIQUE SECTION 9: Daily Essentials (Offset/Staggered Grid) */}
-      <section className="mx-auto max-w-7xl px-6 py-16 my-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 uppercase">
-            Daily Essentials
-          </h2>
-          <p className="text-neutral-500 font-medium mt-2">Everything you need for your day-to-day.</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
-          {dailyEssentials.slice(0, 8).map((p, idx) => (
-            <div key={p.id} className={`transition-all duration-300 ${idx % 2 === 1 ? 'lg:translate-y-8' : ''}`}>
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* UNIQUE SECTION 10: Promo Banners */}
       <div className="my-16 lg:mt-24">
