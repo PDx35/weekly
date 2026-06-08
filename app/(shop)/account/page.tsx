@@ -71,24 +71,24 @@ function AccountContent() {
     }
   }, [pincode, activeAddr, detect]);
 
-  const locationLabel = activeAddr?.label 
-    || (locationName && pincode 
-        ? `${locationName} (${pincode})` 
-        : locationName || pincode || 'Set location');
+  const locationLabel = activeAddr?.label
+    || (locationName && pincode
+      ? `${locationName} (${pincode})`
+      : locationName || pincode || 'Set location');
 
   // Loading states
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
-  
+
   // Shared navigation states
   const [activeTab, setActiveTab] = useState<string>('orders'); // Desktop
   const [mobileView, setMobileView] = useState<string | null>(null); // Mobile sub-screen view
-  
+
   // Wallet states
   const [walletBalance, setWalletBalance] = useState<number>(350);
   const [isAddMoneyOpen, setIsAddMoneyOpen] = useState(false);
   const [addAmount, setAddAmount] = useState('');
-  
+
   // Edit profile states
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [editName, setEditName] = useState('');
@@ -282,7 +282,7 @@ function AccountContent() {
       } else if (lower.includes('address') || lower.includes('location')) {
         replyText = "You can manage your saved delivery locations inside the 'Saved Addresses' section of your profile dashboard.";
       }
-      
+
       setChatMessages(prev => [...prev, {
         sender: 'bot' as const,
         text: replyText,
@@ -366,7 +366,7 @@ function AccountContent() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button 
+              <button
                 onClick={handleEditProfile}
                 className="flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-200 font-bold px-5 py-2.5 text-xs tracking-tight shadow-sm transition-all"
               >
@@ -383,6 +383,7 @@ function AccountContent() {
             </div>
           </div>
         </section>
+
 
         {/* Quick Actions Grid */}
         <section className="mb-8">
@@ -423,7 +424,7 @@ function AccountContent() {
                     <span className="text-lg font-black text-neutral-900 leading-none">₹{walletBalance.toFixed(2)}</span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsAddMoneyOpen(true)}
                   className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3.5 py-1.5 text-xs font-bold transition-all"
                 >
@@ -453,11 +454,10 @@ function AccountContent() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${
-                    activeTab === tab.id
+                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${activeTab === tab.id
                       ? 'bg-emerald-600 text-white shadow-md shadow-emerald-100'
                       : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon name={tab.icon} size={18} />
@@ -490,11 +490,11 @@ function AccountContent() {
 
       {/* ==================== MOBILE LAYOUT (Blinkit-Style) ==================== */}
       <main className="block lg:hidden min-h-screen pb-20">
-        
+
         {mobileView === null ? (
           /* MAIN SCROLLABLE MOBILE PROFILE FEED */
           <div className="space-y-4 px-4 pt-4">
-            
+
             {/* Sticky/Top Mobile Profile Header */}
             <div className="p-4 rounded-3xl bg-white border border-neutral-100 shadow-sm flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -510,8 +510,8 @@ function AccountContent() {
                   <p className="text-[10px] text-neutral-400 font-medium leading-none truncate max-w-[160px]">{user.email}</p>
                 </div>
               </div>
-              
-              <button 
+
+              <button
                 onClick={handleEditProfile}
                 className="flex items-center justify-center h-8 w-8 rounded-full bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border border-neutral-200/50"
               >
@@ -556,7 +556,7 @@ function AccountContent() {
 
             {/* Active Delivery Highlight sticky header */}
             {activeDeliveries.length > 0 && (
-              <div 
+              <div
                 onClick={() => handleItemClick('track')}
                 className="p-3.5 rounded-2xl bg-emerald-600 text-white flex items-center justify-between shadow-md active:scale-98 transition-all cursor-pointer animate-pulse"
               >
@@ -575,11 +575,11 @@ function AccountContent() {
 
             {/* BLINKIT-STYLE GROUPED MENU CARDS */}
             <div className="space-y-4">
-              
+
               {/* Group 1: Orders & Shopping */}
               <div className="rounded-3xl bg-white border border-neutral-100 shadow-sm overflow-hidden p-1.5">
                 <div className="px-3 py-2 text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest border-b border-neutral-50">Orders & Shopping</div>
-                
+
                 {[
                   { label: 'Active Orders', val: activeDeliveries.length > 0 ? `${activeDeliveries.length} Active` : 'None', icon: 'truck' as IconName, click: 'track' },
                   { label: 'Order History', val: `${pastOrders.length} Completed`, icon: 'receipt' as IconName, click: 'orders' },
@@ -607,7 +607,7 @@ function AccountContent() {
               {/* Group 2: Addresses & Payments */}
               <div className="rounded-3xl bg-white border border-neutral-100 shadow-sm overflow-hidden p-1.5">
                 <div className="px-3 py-2 text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest border-b border-neutral-50">Addresses & Payments</div>
-                
+
                 {[
                   { label: 'Saved Addresses', val: `${addresses.length} Locations`, icon: 'pin' as IconName, click: 'addresses' },
                   { label: 'Wallet Balance', val: `₹${walletBalance.toFixed(2)}`, icon: 'wallet' as IconName, click: 'wallet' },
@@ -634,7 +634,7 @@ function AccountContent() {
               {/* Group 3: Rewards & Offers */}
               <div className="rounded-3xl bg-white border border-neutral-100 shadow-sm overflow-hidden p-1.5">
                 <div className="px-3 py-2 text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest border-b border-neutral-50">Rewards & Offers</div>
-                
+
                 {[
                   { label: 'Coupons & Promo Codes', val: `${coupons.length} Active`, icon: 'tag' as IconName, click: 'coupons' },
                   { label: 'Loyalty Rewards', val: '750 Coins', icon: 'spark' as IconName, click: 'rewards' },
@@ -660,7 +660,7 @@ function AccountContent() {
               {/* Group 4: Support */}
               <div className="rounded-3xl bg-white border border-neutral-100 shadow-sm overflow-hidden p-1.5">
                 <div className="px-3 py-2 text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest border-b border-neutral-50">Customer Support</div>
-                
+
                 {[
                   { label: 'Help Center & FAQs', icon: 'info' as IconName, click: 'faq' },
                   { label: 'Start Live Support Chat', icon: 'phone' as IconName, click: 'chat' }
@@ -682,22 +682,20 @@ function AccountContent() {
               {/* Group 5: Settings */}
               <div className="rounded-3xl bg-white border border-neutral-100 shadow-sm overflow-hidden p-1.5">
                 <div className="px-3 py-2 text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest border-b border-neutral-50">App Settings</div>
-                
+
                 {/* Inline Push Toggle */}
                 <div className="flex items-center justify-between p-3.5 border-b border-neutral-50/55">
                   <div className="flex items-center gap-3">
                     <span className="text-neutral-500"><Icon name="bolt" size={16} /></span>
                     <span className="text-xs font-bold text-neutral-800">Push Notifications</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => { setNotifications(!notifications); showToast('Notifications toggled'); }}
-                    className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${
-                      notifications ? 'bg-emerald-600' : 'bg-neutral-200'
-                    }`}
+                    className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${notifications ? 'bg-emerald-600' : 'bg-neutral-200'
+                      }`}
                   >
-                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      notifications ? 'translate-x-5' : 'translate-x-0'
-                    }`} />
+                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${notifications ? 'translate-x-5' : 'translate-x-0'
+                      }`} />
                   </button>
                 </div>
 
@@ -730,7 +728,7 @@ function AccountContent() {
           <div className="fixed inset-0 z-50 bg-[#f4f6fb] flex flex-col h-full overflow-hidden">
             {/* Slide up screen header */}
             <div className="bg-white px-4 py-4 border-b border-neutral-100 flex items-center gap-3 shrink-0">
-              <button 
+              <button
                 onClick={() => setMobileView(null)}
                 className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-50 border border-neutral-200"
               >
@@ -748,7 +746,7 @@ function AccountContent() {
               {(mobileView === 'coupons' || mobileView === 'rewards' || mobileView === 'refer') && <RewardsTabContent />}
               {(mobileView === 'chat' || mobileView === 'faq') && <SupportTabContent />}
               {(mobileView === 'settings') && <SettingsTabContent />}
-              
+
               {/* Fallback for undeveloped items */}
               {['favorites', 'scheduled'].includes(mobileView) && (
                 <div className="text-center py-16 bg-white rounded-3xl border border-neutral-100 space-y-3">
@@ -770,7 +768,7 @@ function AccountContent() {
           <div className="space-y-4">
             <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
               </span>
               <span>
                 Weekly <span className="text-emerald-600 font-extrabold">Market</span>
@@ -821,7 +819,7 @@ function AccountContent() {
       {isEditProfileOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative border border-neutral-100">
-            <button 
+            <button
               onClick={() => setIsEditProfileOpen(false)}
               className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 text-lg font-black animate-none"
             >
@@ -831,7 +829,7 @@ function AccountContent() {
               <h3 className="text-xl font-black text-neutral-900 tracking-tight">Edit Profile</h3>
               <p className="text-xs text-neutral-455 font-medium">Update your account name and mobile details</p>
             </div>
-            
+
             <form onSubmit={saveProfile} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Full Name</label>
@@ -873,7 +871,7 @@ function AccountContent() {
       {isAddMoneyOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative border border-neutral-100">
-            <button 
+            <button
               onClick={() => setIsAddMoneyOpen(false)}
               className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 text-lg font-black animate-none"
             >
@@ -883,7 +881,7 @@ function AccountContent() {
               <h3 className="text-xl font-black text-neutral-900 tracking-tight">Add Money to Wallet</h3>
               <p className="text-xs text-neutral-400 font-medium">Use wallet balance for lightning-fast checkouts</p>
             </div>
-            
+
             <form onSubmit={handleAddMoney} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Top-up Amount (₹)</label>
@@ -947,7 +945,7 @@ function AccountContent() {
           </div>
         ) : (
           <div className="space-y-6">
-            
+
             {/* Active Deliveries / Ongoing Tracking */}
             {activeDeliveries.length > 0 && (
               <div className="space-y-3">
@@ -967,7 +965,7 @@ function AccountContent() {
                         </div>
                         <span className="text-xs font-semibold text-neutral-400">{timeAgo(o.placedAt)}</span>
                       </div>
-                      
+
                       <div className="space-y-1">
                         <div className="flex justify-between text-[10px] font-bold text-neutral-500">
                           <span>Packed & Ready</span>
@@ -982,8 +980,8 @@ function AccountContent() {
                         <span className="text-xs font-bold text-neutral-500">
                           {o.items.reduce((a, b) => a + b.qty, 0)} items • {rupee(o.totals.grand)}
                         </span>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           iconRight="arrowR"
                           onClick={() => router.push(routes.confirm(o.id))}
                         >
@@ -1107,7 +1105,7 @@ function AccountContent() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest block">Saved Addresses</span>
-            <button 
+            <button
               onClick={() => router.push(routes.addresses())}
               className="text-xs text-emerald-600 hover:text-emerald-700 font-extrabold"
             >
@@ -1121,14 +1119,13 @@ function AccountContent() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {addresses.map((addr: Address) => (
-                <div 
+                <div
                   key={addr.id}
                   onClick={() => { setSelectedAddr(addr.id); showToast(`Default address set to ${addr.label}`); }}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${
-                    selectedAddr === addr.id
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${selectedAddr === addr.id
                       ? 'border-emerald-500 bg-emerald-50/10 shadow-sm'
                       : 'border-neutral-100 bg-white hover:border-neutral-200'
-                  }`}
+                    }`}
                 >
                   {selectedAddr === addr.id && (
                     <span className="absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px] font-bold">
@@ -1155,7 +1152,7 @@ function AccountContent() {
         <div className="space-y-4 pt-4 border-t border-neutral-100">
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest block">Saved Credit/Debit Cards</span>
-            <button 
+            <button
               onClick={() => setIsAddingCard(!isAddingCard)}
               className="text-xs text-emerald-600 hover:text-emerald-700 font-extrabold"
             >
@@ -1209,7 +1206,7 @@ function AccountContent() {
                   <span className="absolute -right-6 -bottom-6 w-20 h-20 bg-white/5 rounded-full"></span>
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/60">{card.brand}</span>
-                    <button 
+                    <button
                       onClick={() => { setSavedCards(prev => prev.filter(c => c.id !== card.id)); showToast('Card removed'); }}
                       className="text-white/40 hover:text-white transition-colors text-xs font-black"
                     >
@@ -1231,7 +1228,7 @@ function AccountContent() {
         <div className="space-y-4 pt-4 border-t border-neutral-100">
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest block">Linked UPI Accounts</span>
-            <button 
+            <button
               onClick={() => setIsAddingUpi(!isAddingUpi)}
               className="text-xs text-emerald-600 hover:text-emerald-700 font-extrabold"
             >
@@ -1269,7 +1266,7 @@ function AccountContent() {
                   {upi.isPrimary ? (
                     <span className="text-[9px] text-emerald-700 bg-emerald-100/50 font-bold px-2 py-0.5 rounded">Primary</span>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => {
                         setUpiAccounts(prev => prev.map(u => ({ ...u, isPrimary: u.id === upi.id })));
                         showToast('Primary UPI ID updated');
@@ -1279,7 +1276,7 @@ function AccountContent() {
                       Set Primary
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => { setUpiAccounts(prev => prev.filter(u => u.id !== upi.id)); showToast('UPI account unlinked'); }}
                     className="text-neutral-350 hover:text-rose-500 font-extrabold text-xs px-1"
                   >
@@ -1312,7 +1309,7 @@ function AccountContent() {
             <h3 className="text-lg font-black uppercase leading-tight">Get ₹150 Free Discount</h3>
             <p className="text-[10px] text-white/70 font-semibold">Share your referral link. When your friend places their first organic grocery order of ₹499+, you both get ₹150 instantly!</p>
           </div>
-          <button 
+          <button
             onClick={() => { navigator.clipboard.writeText('https://growexy.com/invite?code=VIPGOLD'); showToast('Invite link copied!'); }}
             className="bg-amber-400 hover:bg-amber-500 text-neutral-950 font-black text-xs px-5 py-2.5 rounded-full shadow-md shadow-amber-200 transition-all grow-0 shrink-0"
           >
@@ -1332,7 +1329,7 @@ function AccountContent() {
                     <span className="text-xs font-black text-emerald-700 block">{cp.discount}</span>
                     <span className="text-[10px] text-neutral-400 font-semibold">{cp.desc}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleCopyCoupon(cp.code)}
                     className="text-[10px] text-emerald-600 bg-emerald-50 hover:bg-emerald-100 font-extrabold px-3 py-1 rounded-full transition-colors"
                   >
@@ -1387,7 +1384,7 @@ function AccountContent() {
                 <span className="text-[9px] font-semibold text-emerald-100">Usually replies instantly</span>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => { setChatMessages([{ sender: 'bot', text: 'Hi! How can I help you today?', time: 'Just now' }]); }}
               className="text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider"
             >
@@ -1398,11 +1395,10 @@ function AccountContent() {
           <div className="grow p-4 overflow-y-auto space-y-3.5 bg-neutral-50 no-scrollbar">
             {chatMessages.map((msg, i) => (
               <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] p-3 rounded-2xl text-xs font-medium relative ${
-                  msg.sender === 'user'
+                <div className={`max-w-[80%] p-3 rounded-2xl text-xs font-medium relative ${msg.sender === 'user'
                     ? 'bg-emerald-600 text-white rounded-tr-none'
                     : 'bg-white text-neutral-800 border border-neutral-100 shadow-sm rounded-tl-none'
-                }`}>
+                  }`}>
                   <p className="leading-relaxed">{msg.text}</p>
                   <span className={`block text-[8px] mt-1.5 text-right ${msg.sender === 'user' ? 'text-emerald-200' : 'text-neutral-400'}`}>
                     {msg.time}
@@ -1438,7 +1434,7 @@ function AccountContent() {
               onKeyDown={(e) => e.key === 'Enter' && sendChatMessage()}
               className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white transition-all grow"
             />
-            <button 
+            <button
               onClick={() => sendChatMessage()}
               className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-8 w-8 flex items-center justify-center transition-colors shrink-0"
             >
@@ -1482,21 +1478,19 @@ function AccountContent() {
 
         <div className="rounded-2xl border border-neutral-100 bg-white p-5 space-y-4">
           <span className="text-[10px] text-neutral-400 font-extrabold uppercase tracking-widest block">Alert Preferences</span>
-          
+
           <div className="flex items-center justify-between py-1 border-b border-neutral-50">
             <div>
               <span className="text-xs font-extrabold text-neutral-800 block">Push Notifications</span>
               <span className="text-[10px] text-neutral-400 font-medium">Order delivery updates & arrival alerts</span>
             </div>
-            <button 
+            <button
               onClick={() => { setNotifications(!notifications); showToast('Preferences updated'); }}
-              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${
-                notifications ? 'bg-emerald-600' : 'bg-neutral-200'
-              }`}
+              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${notifications ? 'bg-emerald-600' : 'bg-neutral-200'
+                }`}
             >
-              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                notifications ? 'translate-x-5' : 'translate-x-0'
-              }`} />
+              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${notifications ? 'translate-x-5' : 'translate-x-0'
+                }`} />
             </button>
           </div>
 
@@ -1505,15 +1499,13 @@ function AccountContent() {
               <span className="text-xs font-extrabold text-neutral-800 block">Email Promo Vouchers</span>
               <span className="text-[10px] text-neutral-400 font-medium">Weekly discount vouchers and hot organic deals</span>
             </div>
-            <button 
+            <button
               onClick={() => { setEmailPromo(!emailPromo); showToast('Preferences updated'); }}
-              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${
-                emailPromo ? 'bg-emerald-600' : 'bg-neutral-200'
-              }`}
+              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${emailPromo ? 'bg-emerald-600' : 'bg-neutral-200'
+                }`}
             >
-              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                emailPromo ? 'translate-x-5' : 'translate-x-0'
-              }`} />
+              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${emailPromo ? 'translate-x-5' : 'translate-x-0'
+                }`} />
             </button>
           </div>
 
@@ -1522,15 +1514,13 @@ function AccountContent() {
               <span className="text-xs font-extrabold text-neutral-800 block">WhatsApp / SMS updates</span>
               <span className="text-[10px] text-neutral-400 font-medium">Quick bills & checkout payment confirmations</span>
             </div>
-            <button 
+            <button
               onClick={() => { setSmsPromo(!smsPromo); showToast('Preferences updated'); }}
-              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${
-                smsPromo ? 'bg-emerald-600' : 'bg-neutral-200'
-              }`}
+              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${smsPromo ? 'bg-emerald-600' : 'bg-neutral-200'
+                }`}
             >
-              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                smsPromo ? 'translate-x-5' : 'translate-x-0'
-              }`} />
+              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${smsPromo ? 'translate-x-5' : 'translate-x-0'
+                }`} />
             </button>
           </div>
         </div>
@@ -1542,11 +1532,10 @@ function AccountContent() {
               <button
                 key={lang}
                 onClick={() => { setLanguage(lang); showToast(`Language changed to ${lang}`); }}
-                className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all ${
-                  language === lang
+                className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all ${language === lang
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
-                }`}
+                  }`}
               >
                 {lang}
               </button>
