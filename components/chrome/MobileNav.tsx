@@ -39,6 +39,7 @@ export function MobileNav() {
   ];
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  const isProductPage = pathname.startsWith('/product/');
 
   const activeIndex = items.findIndex(it => isActive(it.href));
 
@@ -153,6 +154,7 @@ export function MobileNav() {
             ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
             : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
         }`}
+        style={isProductPage ? { bottom: '24px' } : undefined}
       >
         <button
           onClick={() => router.push(routes.cart())}
@@ -177,38 +179,40 @@ export function MobileNav() {
       </div>
 
       {/* Glassmorphic Floating Navigation Dock */}
-      <nav className="mnav">
-        {/* Animated Sliding Background Indicator */}
-        {activeIndex !== -1 && (
-          <div 
-            className="absolute top-[6px] bottom-[6px] rounded-full bg-emerald-600/10 border border-emerald-600/5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
-            style={{
-              width: 'calc((100% - 12px) / 3)',
-              left: '6px',
-              transform: `translateX(calc(${activeIndex} * 100%))`,
-            }}
-          />
-        )}
+      {!isProductPage && (
+        <nav className="mnav">
+          {/* Animated Sliding Background Indicator */}
+          {activeIndex !== -1 && (
+            <div 
+              className="absolute top-[6px] bottom-[6px] rounded-full bg-emerald-600/10 border border-emerald-600/5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
+              style={{
+                width: 'calc((100% - 12px) / 3)',
+                left: '6px',
+                transform: `translateX(calc(${activeIndex} * 100%))`,
+              }}
+            />
+          )}
 
-        {items.map((it) => {
-          const active = isActive(it.href);
-          return (
-            <button
-              key={it.label}
-              className={`mnav-i-custom ${active ? 'active' : ''}`}
-              onClick={() => router.push(it.href)}
-              style={{ zIndex: 10 }}
-            >
-              <Icon
-                name={it.icon}
-                size={22}
-                className={`transition-transform duration-300 ${active ? 'scale-110 text-emerald-700' : 'scale-100 text-zinc-500'}`}
-              />
-              <span className="mt-1 text-[10px] tracking-tight">{it.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+          {items.map((it) => {
+            const active = isActive(it.href);
+            return (
+              <button
+                key={it.label}
+                className={`mnav-i-custom ${active ? 'active' : ''}`}
+                onClick={() => router.push(it.href)}
+                style={{ zIndex: 10 }}
+              >
+                <Icon
+                  name={it.icon}
+                  size={22}
+                  className={`transition-transform duration-300 ${active ? 'scale-110 text-emerald-700' : 'scale-100 text-zinc-500'}`}
+                />
+                <span className="mt-1 text-[10px] tracking-tight">{it.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
     </>
   );
 }
