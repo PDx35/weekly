@@ -618,7 +618,9 @@ export default function HomePage() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={cat.iconUrl} alt={cat.name} className="h-12 w-12 object-contain" />
                   ) : (
-                    <span className="text-3xl">{getCategoryEmoji(cat.id, cat.name)}</span>
+                    <span className="text-neutral-900">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </span>
                   )}
                 </div>
                 <span className="mt-2 font-bold text-neutral-800 text-[11px] tracking-tight capitalize truncate w-full text-center group-hover:text-emerald-600 transition-colors leading-tight">{cat.name}</span>
@@ -688,7 +690,9 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-6 py-6 bg-rose-50/40 rounded-[2.5rem] border border-rose-100/50 my-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white shadow-sm text-sm">🔥</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white shadow-sm text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            </span>
             <div className="text-left">
               <h2 className="text-lg md:text-xl font-black text-neutral-900 uppercase">Flash Sale</h2>
               <p className="text-[10px] md:text-xs font-semibold text-red-500">Super savings! Limited time offers only</p>
@@ -743,7 +747,7 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase">
             Our Best Selling Product
           </h2>
-          <p className="text-neutral-500 text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-neutral-500 text-sm max-w-xl mx-auto text-center leading-relaxed">
             Discover our fresh organic selections, sourced directly from local eco-farms to provide the highest nutritional quality.
           </p>
         </div>
@@ -883,6 +887,302 @@ export default function HomePage() {
           </div>
         )}
       </section>
+      {/* UNIQUE SECTION 4: Recently Added (Light Premium Layout) */}
+      <section className="relative py-16 my-16 bg-gradient-to-br from-purple-50/50 via-white to-pink-50/50 border-y border-purple-100 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-200/30 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+        
+        <div className="mx-auto max-w-7xl px-6 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-purple-200/50 pb-6 mb-10 gap-4">
+            <div className="space-y-2 text-left">
+              <span className="text-purple-600 font-black tracking-widest text-xs uppercase bg-purple-100/50 px-3 py-1 rounded-full border border-purple-200 inline-block mb-1">Hot Drops</span>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-pink-600">
+                New Arrivals
+              </h2>
+              <p className="text-neutral-500 text-sm md:text-base font-bold">Be the first to try the latest additions to our shelves.</p>
+            </div>
+          </div>
+          {loading ? (
+            <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
+              {[...Array(4)].map((_, idx) => (
+                <div key={idx} className="h-80 w-64 flex-shrink-0 rounded-3xl bg-white/60 border border-purple-100 shadow-sm animate-pulse" />
+              ))}
+            </div>
+          ) : recentlyAdded.length === 0 ? null : (
+            <div className="flex gap-6 overflow-x-auto pb-8 pt-2 no-scrollbar flex-nowrap scroll-smooth px-2">
+              {recentlyAdded.map((p) => (
+                <div key={p.id} className="w-[240px] flex-shrink-0 transition-transform duration-300 hover:-translate-y-2">
+                  <ProductCard product={p} className="shadow-xl shadow-purple-900/5 border border-purple-100/50 bg-white/80 backdrop-blur-sm" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* UNIQUE SECTION 5 & 6: Recommended & Frequently Bought (Side by side comparison layout) */}
+      <section className="mx-auto max-w-7xl px-6 py-10 my-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+          {/* Recommended Block */}
+          <div className="space-y-8 bg-neutral-50/50 p-6 md:p-8 rounded-[2.5rem] border border-neutral-100">
+            <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
+              <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 uppercase">
+                Recommended
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {recommendedProducts.slice(0, 4).map((p) => (
+                <ProductCardCompact key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+          {/* Frequently Bought Block */}
+          <div className="space-y-8 bg-neutral-50/50 p-6 md:p-8 rounded-[2.5rem] border border-neutral-100">
+            <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
+              <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 uppercase">
+                Frequently Bought
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {frequentlyBought.slice(0, 4).map((p) => (
+                <ProductCardCompact key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* UNIQUE SECTION 8 & 11: Under 99 and Trending Near You (Bento Box style) */}
+      <section className="mx-auto max-w-7xl px-6 py-10 my-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          {/* Trending Near You (Col span 7) */}
+          <div className="md:col-span-7 bg-indigo-50 rounded-[2.5rem] p-6 md:p-10 flex flex-col border border-indigo-100 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </span>
+                <div>
+                  <h2 className="text-2xl font-black text-indigo-950 uppercase">Trending Near You</h2>
+                  <p className="text-indigo-800/70 text-xs font-bold uppercase tracking-wider">Local Favorites</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap scroll-smooth flex-1 items-center">
+              {trendingNear.slice(0, 4).map((p) => (
+                <ProductCardCompact key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+
+          {/* Under 99 (Col span 5) */}
+          <div className="md:col-span-5 bg-teal-50 rounded-[2.5rem] p-6 md:p-10 flex flex-col border border-teal-100 shadow-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
+              <div>
+                <h2 className="text-2xl font-black text-teal-950 uppercase">Under ₹99</h2>
+                <p className="text-teal-800/70 text-xs font-bold uppercase tracking-wider">Affordable Picks</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {under99.slice(0, 4).map((p) => (
+                <ProductCardCompact key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* UNIQUE SECTION 7: Top Rated Premium (Gold Theme) */}
+      <section className="mx-auto max-w-7xl px-6 py-16 my-16 bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 rounded-br-[5rem] rounded-tl-[5rem] border-2 border-amber-200/50 shadow-inner relative">
+        <div className="absolute top-0 right-10 w-32 h-32 bg-amber-300/30 rounded-full blur-2xl"></div>
+        <div className="text-center space-y-4 mb-12 relative z-10">
+          <span className="inline-block px-5 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-xs font-black uppercase rounded-full shadow-md shadow-amber-200 tracking-widest">Premium Choice</span>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-neutral-900 uppercase">
+            Top Rated Products
+          </h2>
+          <p className="text-amber-800 font-medium">The highest quality items, chosen by our customers.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 relative z-10">
+          {topRated.map((p) => (
+            <ProductCard key={p.id} product={p} className="border-amber-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:shadow-amber-200/50" />
+          ))}
+        </div>
+      </section>
+
+      {/* UNIQUE SECTION 9: Daily Essentials (Offset/Staggered Grid) */}
+      <section className="mx-auto max-w-7xl px-6 py-16 my-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 uppercase">
+            Daily Essentials
+          </h2>
+          <p className="text-neutral-500 font-medium mt-2">Everything you need for your day-to-day.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
+          {dailyEssentials.slice(0, 8).map((p, idx) => (
+            <div key={p.id} className={`transition-all duration-300 ${idx % 2 === 1 ? 'lg:translate-y-8' : ''}`}>
+              <ProductCard product={p} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* UNIQUE SECTION 10: Promo Banners */}
+      <div className="my-16 lg:mt-24">
+        <PromoBannerRow 
+          banners={seasonalBanners} 
+          fallbackList={[
+            { bgColor: '#fff0f5', title: 'Fresh Berries Arrival', subtitle: 'Seasonal', imageUrl: '/growexy_fresh_fruits.png', ctaText: 'Shop Now' },
+            { bgColor: '#e0f7fa', title: 'Summer Hydration', subtitle: 'Drinks', imageUrl: '/growexy_carrots_basket.png', ctaText: 'Refresh' },
+            { bgColor: '#fff3e0', title: 'Morning Breakfast', subtitle: 'Bakery', imageUrl: '/growexy_almonds_bowl.png', ctaText: 'Grab Now' }
+          ]} 
+          onBannerClick={handleBannerClick} 
+        />
+      </div>
+
+      {/* UNIQUE SECTION 12: Budget Deals (using ProductCardOffer) */}
+      <section className="mx-auto max-w-7xl px-6 py-12 space-y-8 bg-rose-50/70 rounded-[3rem] border border-rose-100/80 my-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 bg-neutral-900 rounded-2xl flex items-center justify-center text-white shadow-sm rotate-12">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            </div>
+            <div className="text-left">
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-red-950 uppercase">
+                Budget Deals
+              </h2>
+              <p className="text-red-700 text-sm font-bold tracking-widest uppercase mt-1">Unbeatable prices</p>
+            </div>
+          </div>
+          <Link href={routes.browse()} className="bg-white text-red-600 border border-red-200 font-black px-8 py-3.5 rounded-full hover:bg-red-50 transition-colors text-sm shadow-sm">
+            View All Deals
+          </Link>
+        </div>
+        
+        {loading ? (
+          <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
+            {[...Array(6)].map((_, idx) => (
+              <div key={idx} className="h-64 w-40 flex-shrink-0 rounded-3xl bg-red-100/50 animate-pulse" />
+            ))}
+          </div>
+        ) : budgetDeals.length === 0 ? null : (
+          <div className="flex gap-6 overflow-x-auto pb-6 pt-4 no-scrollbar flex-nowrap scroll-smooth px-4">
+            {budgetDeals.map((p) => (
+              <ProductCardOffer key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* NEW SECTION 13: Features */}
+      <section className="mx-auto max-w-7xl px-6 py-16 mb-6 bg-white border-t border-neutral-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Free Delivery</h3>
+            <p className="text-xs text-neutral-500 max-w-[200px]">Get free delivery on all orders above ₹500 within your local area.</p>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </div>
+            <h3 className="font-extrabold text-neutral-900 uppercase text-sm">100% Organic</h3>
+            <p className="text-xs text-neutral-500 max-w-[200px]">Certified organic produce sourced straight from local eco-farms.</p>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Secure Payment</h3>
+            <p className="text-xs text-neutral-500 max-w-[200px]">100% secure payment gateways for a seamless checkout experience.</p>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </div>
+            <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Easy Returns</h3>
+            <p className="text-xs text-neutral-500 max-w-[200px]">Not satisfied? Get an easy refund or replacement within 24 hours.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
+          {/* Logo & Description */}
+          <div className="space-y-4">
+            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </span>
+              <span>
+                Grow<span className="text-emerald-600 font-extrabold">exy</span>
+              </span>
+            </Link>
+            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
+              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
+            </p>
+          </div>
+
+          {/* About Links */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Company</h4>
+            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
+              <li><Link href="#" className="hover:text-emerald-600">About Us</Link></li>
+              <li><Link href={routes.browse()} className="hover:text-emerald-600">Shop Catalog</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Our Brands</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Partner Program</Link></li>
+            </ul>
+          </div>
+
+          {/* Help Links */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Support</h4>
+            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
+              <li><Link href={routes.support()} className="hover:text-emerald-600">Help Center</Link></li>
+              <li><Link href={routes.addresses()} className="hover:text-emerald-600">Delivery Areas</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-emerald-600">Terms of Use</Link></li>
+            </ul>
+          </div>
+
+          {/* Newsletter / Contact */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Have questions? Reach out at:
+              <br />
+              <strong className="text-neutral-800">support@growexy.com</strong>
+            </p>
+            <div className="flex gap-2">
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                F
+              </span>
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                T
+              </span>
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
+                I
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
+          © {new Date().getFullYear()} Growexy. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }
