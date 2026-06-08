@@ -225,7 +225,7 @@ export function AuthScreen() {
         {/* Left Side branding and features banner (Desktop only) */}
         <section className="hidden lg:flex lg:col-span-6 bg-gradient-to-br from-emerald-900 via-emerald-950 to-emerald-900 text-white p-12 flex-col justify-between relative overflow-hidden rounded-[2rem]">
           {/* Subtle vectors */}
-          <span className="absolute -left-12 -top-12 w-48 h-48 rounded-full bg-white/5"></span>
+          <span className="absolute -left-12 -top-12 w-48 h-48 rounded-full bg-white/10"></span>
           <span className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-emerald-800/20"></span>
           
           <div 
