@@ -763,55 +763,7 @@ function AccountContent() {
       </main>
 
       {/* GROWEXY FOOTER (Shared) */}
-      <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left bg-white hidden lg:block">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
-          <div className="space-y-4">
-            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-              </span>
-              <span>
-                Weekly <span className="text-emerald-600 font-extrabold">Market</span>
-              </span>
-            </Link>
-            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
-              Weekly Market is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Company</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href="#" className="hover:text-emerald-600">About Us</Link></li>
-              <li><Link href={routes.browse()} className="hover:text-emerald-600">Shop Catalog</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Our Brands</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Partner Program</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Support</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href={routes.support()} className="hover:text-emerald-600">Help Center</Link></li>
-              <li><Link href={routes.addresses()} className="hover:text-emerald-600">Delivery Areas</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Terms of Use</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
-            <p className="text-xs text-neutral-500 leading-relaxed font-bold">
-              Have questions? Reach out at:
-              <br />
-              <strong className="text-neutral-850">support@weeklymarket.com</strong>
-            </p>
-          </div>
-        </div>
-        <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
-          © {new Date().getFullYear()} Weekly Market. All rights reserved.
-        </div>
-      </footer>
+      
 
       {/* ==================== MODAL SUB-COMPONENTS ==================== */}
 

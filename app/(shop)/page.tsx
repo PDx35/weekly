@@ -145,7 +145,7 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
     <section className="mx-auto max-w-7xl px-6 py-6 md:py-8">
       <div
         className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:py-12 sm:px-20 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12 border border-white/50 transition-all duration-700 ease-out min-h-[220px] sm:min-h-[260px] group hover:shadow-2xl"
-        style={{ 
+        style={{
           background: `linear-gradient(135deg, ${current.bgColor || '#f0fdf4'} 0%, #ffffff 100%)`,
           boxShadow: `0 20px 40px -15px ${current.bgColor || '#f0fdf4'}80`
         }}
@@ -488,7 +488,7 @@ export default function HomePage() {
   const bestSellers = useMemo(() => {
     const highlyRated = products.filter((p) => p.rating >= 4.5);
     if (highlyRated.length >= 5) return highlyRated;
-    
+
     const others = products.filter((p) => p.rating < 4.5);
     return [...highlyRated, ...others];
   }, [products]);
@@ -662,7 +662,7 @@ export default function HomePage() {
                       <img src={cat.iconUrl} alt={cat.name} className="h-8 w-8 md:h-12 md:w-12 object-contain" />
                     ) : (
                       <span className="text-neutral-900">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" className="md:w-[28px] md:h-[28px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" className="md:w-[28px] md:h-[28px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
                       </span>
                     )}
                   </div>
@@ -735,7 +735,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white shadow-sm text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
             </span>
             <div className="text-left">
               <h2 className="text-lg md:text-xl font-black text-neutral-900 uppercase">Flash Sale</h2>
@@ -801,8 +801,8 @@ export default function HomePage() {
           <button
             onClick={() => setActiveTab('all')}
             className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === 'all'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
+              ? 'bg-emerald-600 text-white shadow-md'
+              : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
               }`}
           >
             All
@@ -812,8 +812,8 @@ export default function HomePage() {
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
               className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === cat.id
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
                 }`}
             >
               {cat.name}
@@ -849,14 +849,14 @@ export default function HomePage() {
           {/* Background Ambient Glow */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-300/30 blur-3xl rounded-full pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
           <div className="absolute -bottom-20 left-10 w-72 h-72 bg-fuchsia-200/40 blur-3xl rounded-full pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
-          
+
           <div className="relative z-10 flex flex-1 flex-row items-center gap-4 sm:gap-6 p-6 md:p-8 lg:p-10">
             {/* Minimalist Compact Badge */}
             <div className="flex flex-col items-center justify-center shrink-0 bg-gradient-to-tr from-amber-400 to-yellow-300 text-neutral-950 rounded-2xl h-16 w-16 sm:h-20 sm:w-20 shadow-lg shadow-amber-200/50 transform -rotate-3 group-hover:rotate-0 group-hover:scale-105 transition-transform duration-500 border-2 border-white">
               <span className="text-xl sm:text-2xl md:text-3xl font-black leading-none">30%</span>
               <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest mt-0.5 opacity-90">Off</span>
             </div>
-            
+
             {/* Text Content */}
             <div className="space-y-1.5 flex-1">
               <span className="inline-block text-purple-700 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] bg-white/60 px-2 py-0.5 rounded-full backdrop-blur-sm shadow-sm border border-white">
@@ -870,14 +870,14 @@ export default function HomePage() {
               </button>
             </div>
           </div>
-          
+
           {/* Compact Image Area */}
           <div className="relative w-full md:w-1/3 min-h-[120px] sm:min-h-[140px] md:min-h-0 z-10 pointer-events-none">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src="/growexy_almonds_bowl.png" 
-              alt="Premium Drinks" 
-              className="absolute right-0 sm:right-6 md:right-8 lg:right-12 bottom-0 max-h-36 sm:max-h-44 md:max-h-48 object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-translate-x-2 origin-bottom" 
+            <img
+              src="/growexy_almonds_bowl.png"
+              alt="Premium Drinks"
+              className="absolute right-0 sm:right-6 md:right-8 lg:right-12 bottom-0 max-h-36 sm:max-h-44 md:max-h-48 object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-translate-x-2 origin-bottom"
             />
           </div>
         </div>
@@ -949,7 +949,7 @@ export default function HomePage() {
       <section className="relative py-16 my-16 bg-gradient-to-br from-purple-50/50 via-white to-pink-50/50 border-y border-purple-100 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-200/30 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
-        
+
         <div className="mx-auto max-w-7xl px-6 relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-purple-200/50 pb-6 mb-10 gap-4">
             <div className="space-y-2 text-left">
@@ -985,7 +985,7 @@ export default function HomePage() {
           <div className="space-y-6 sm:space-y-8 bg-neutral-50/50 p-4 sm:p-6 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-neutral-100">
             <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
               <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
               </div>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 uppercase">
                 Recommended
@@ -1001,7 +1001,7 @@ export default function HomePage() {
           <div className="space-y-6 sm:space-y-8 bg-neutral-50/50 p-4 sm:p-6 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-neutral-100">
             <div className="flex items-center gap-3 border-b border-neutral-200/60 pb-4">
               <div className="h-10 w-10 bg-neutral-100 text-neutral-900 rounded-xl flex items-center justify-center shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
               </div>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-neutral-900 uppercase">
                 Frequently Bought
@@ -1019,13 +1019,13 @@ export default function HomePage() {
       {/* UNIQUE SECTION 8 & 11: Under 99 and Trending Near You (Bento Box style) */}
       <section className="mx-auto max-w-7xl px-6 py-10 my-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          
+
           {/* Trending Near You (Col span 7) */}
           <div className="md:col-span-7 bg-indigo-50 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 md:p-10 flex flex-col border border-indigo-100 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
                 </span>
                 <div>
                   <h2 className="text-2xl font-black text-indigo-950 uppercase">Trending Near You</h2>
@@ -1044,7 +1044,7 @@ export default function HomePage() {
           <div className="md:col-span-5 bg-teal-50 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 md:p-10 flex flex-col border border-teal-100 shadow-sm">
             <div className="flex items-center gap-3 mb-8">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 text-white shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
               </span>
               <div>
                 <h2 className="text-2xl font-black text-teal-950 uppercase">Under ₹99</h2>
@@ -1083,14 +1083,14 @@ export default function HomePage() {
 
       {/* UNIQUE SECTION 10: Promo Banners */}
       <div className="my-16 lg:mt-24">
-        <PromoBannerRow 
-          banners={seasonalBanners} 
+        <PromoBannerRow
+          banners={seasonalBanners}
           fallbackList={[
             { bgColor: '#fff0f5', title: 'Fresh Berries Arrival', subtitle: 'Seasonal', imageUrl: '/growexy_fresh_fruits.png', ctaText: 'Shop Now' },
             { bgColor: '#e0f7fa', title: 'Summer Hydration', subtitle: 'Drinks', imageUrl: '/growexy_carrots_basket.png', ctaText: 'Refresh' },
             { bgColor: '#fff3e0', title: 'Morning Breakfast', subtitle: 'Bakery', imageUrl: '/growexy_almonds_bowl.png', ctaText: 'Grab Now' }
-          ]} 
-          onBannerClick={handleBannerClick} 
+          ]}
+          onBannerClick={handleBannerClick}
         />
       </div>
 
@@ -1099,7 +1099,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 px-4">
           <div className="flex items-center gap-4 md:gap-5">
             <div className="h-12 w-12 md:h-16 md:w-16 bg-neutral-900 rounded-2xl flex items-center justify-center text-white shadow-sm rotate-12 flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-[28px] md:h-[28px]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="md:w-[28px] md:h-[28px]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
             </div>
             <div className="text-left">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-red-950 uppercase">
@@ -1109,7 +1109,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        
+
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6 px-4">
             {[...Array(6)].map((_, idx) => (
@@ -1139,28 +1139,28 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
             </div>
             <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Free Delivery</h3>
             <p className="text-xs text-neutral-500 max-w-[200px]">Get free delivery on all orders above ₹500 within your local area.</p>
           </div>
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" /></svg>
             </div>
             <h3 className="font-extrabold text-neutral-900 uppercase text-sm">100% Organic</h3>
             <p className="text-xs text-neutral-500 max-w-[200px]">Certified organic produce sourced straight from local eco-farms.</p>
           </div>
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
             </div>
             <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Secure Payment</h3>
             <p className="text-xs text-neutral-500 max-w-[200px]">100% secure payment gateways for a seamless checkout experience.</p>
           </div>
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
             </div>
             <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Easy Returns</h3>
             <p className="text-xs text-neutral-500 max-w-[200px]">Not satisfied? Get an easy refund or replacement within 24 hours.</p>
@@ -1168,64 +1168,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="mx-auto max-w-7xl px-6 pt-16 mt-16 border-t border-neutral-100 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
-          {/* Logo & Description */}
-          <div className="space-y-4">
-            <Logo />
-            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
-              Growexy is your premier local green grocer, providing farm-fresh produce, natural dairy, and raw organics delivered directly to your doorstep.
-            </p>
-          </div>
-
-          {/* About Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Company</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href="#" className="hover:text-emerald-600">About Us</Link></li>
-              <li><Link href={routes.browse()} className="hover:text-emerald-600">Shop Catalog</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Our Brands</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Partner Program</Link></li>
-            </ul>
-          </div>
-
-          {/* Help Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Support</h4>
-            <ul className="space-y-2 text-xs text-neutral-500 font-medium">
-              <li><Link href={routes.support()} className="hover:text-emerald-600">Help Center</Link></li>
-              <li><Link href={routes.addresses()} className="hover:text-emerald-600">Delivery Areas</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-emerald-600">Terms of Use</Link></li>
-            </ul>
-          </div>
-
-          {/* Newsletter / Contact */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-800">Contact Us</h4>
-            <p className="text-xs text-neutral-500 leading-relaxed">
-              Have questions? Reach out at:
-              <br />
-              <strong className="text-neutral-800">support@growexy.com</strong>
-            </p>
-            <div className="flex gap-2">
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                F
-              </span>
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                T
-              </span>
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-600 cursor-pointer hover:bg-emerald-600 hover:text-white transition-colors">
-                I
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-neutral-100 py-6 text-center text-xs text-neutral-400 font-medium">
-          © {new Date().getFullYear()} Growexy. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 }
