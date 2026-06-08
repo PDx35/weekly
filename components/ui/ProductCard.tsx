@@ -20,7 +20,7 @@ export function useWishlist(productId: string) {
     try {
       const wishlist = JSON.parse(localStorage.getItem('freshmart_wishlist') || '[]');
       setIsWishlisted(wishlist.includes(productId));
-    } catch {}
+    } catch { }
   }, [productId]);
 
   const toggleWishlist = (e: React.MouseEvent) => {
@@ -35,7 +35,7 @@ export function useWishlist(productId: string) {
       }
       localStorage.setItem('freshmart_wishlist', JSON.stringify(nextWishlist));
       setIsWishlisted(nextWishlist.includes(productId));
-    } catch {}
+    } catch { }
   };
 
   return { isWishlisted, toggleWishlist };
@@ -43,7 +43,15 @@ export function useWishlist(productId: string) {
 
 /** Style 2: Standard/Premium Product Card.
  * Ideal for grids and standard catalog pages. */
-export function ProductCard({ product, className }: { product: Product; className?: string }) {
+export function ProductCard({
+  product,
+  className,
+  layout = 'vertical'
+}: {
+  product: Product;
+  className?: string;
+  layout?: 'vertical' | 'horizontal' | 'responsive';
+}) {
   const router = useRouter();
   const { cart, setQty, showToast } = useCart();
   const qty = cart[product.id] || 0;
@@ -59,29 +67,33 @@ export function ProductCard({ product, className }: { product: Product; classNam
     setQty(product.id, q);
   };
 
+  const layoutClass = layout === 'horizontal'
+    ? 'horizontal'
+    : layout === 'responsive'
+      ? 'responsive-horizontal'
+      : '';
+
   return (
-    <article className={`pcard relative group ${className || ''}`} onClick={() => router.push(routes.product(product.slug))}>
+    <article className={`pcard relative group ${layoutClass} ${className || ''}`} onClick={() => router.push(routes.product(product.slug))}>
       <div className="pcard-img relative overflow-hidden bg-neutral-50 flex items-center justify-center">
         <Img product={product} radius="calc(var(--radius-card) * 0.7)" />
-        
+
         {/* Wishlist Heart Icon */}
-        <button 
+        <button
           onClick={toggleWishlist}
           className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-neutral-400 hover:text-red-500 hover:bg-white shadow-sm border border-neutral-100 transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className={isWishlisted ? "text-red-500" : ""}>
-            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
           </svg>
         </button>
 
-        {/* Inventory / Stock Badges */}
-        {!isAvailable ? (
-          <span className="absolute top-3 left-3 z-10 rounded-lg bg-red-650 bg-red-600 text-white font-extrabold text-[10px] px-2.5 py-1 uppercase tracking-wider shadow-sm">
-            Out of Stock
-          </span>
-        ) : product.inventory < 5 ? (
-          <span className="absolute top-3 left-3 z-10 rounded-lg bg-amber-500 text-neutral-950 font-extrabold text-[10px] px-2.5 py-1 uppercase tracking-wider shadow-sm">
-            Only {product.inventory} Left
+        {/* Inventory / Stock Badges (out-of-stock state is shown via the
+            bottom action button, so no image badge for it). */}
+        {isAvailable && product.inventory < 5 ? (
+          <span className="pcard-badge-stock absolute top-3 left-3 z-10 rounded-lg bg-amber-500 text-neutral-950 font-extrabold text-[10px] px-2.5 py-1 uppercase tracking-wider shadow-sm">
+            <span className="stock-full">Only {product.inventory} Left</span>
+            <span className="stock-short">Low</span>
           </span>
         ) : product.tag ? (
           <span className="pcard-tag">{product.tag}</span>
@@ -89,15 +101,16 @@ export function ProductCard({ product, className }: { product: Product; classNam
 
         {/* Fast Delivery Badge */}
         {isAvailable && (
-          <span className="absolute bottom-3 right-3 z-10 bg-neutral-900/80 backdrop-blur-sm text-white font-bold text-[8.5px] px-2 py-0.5 rounded-md tracking-wider uppercase flex items-center gap-1">
+          <span className="pcard-badge-delivery absolute bottom-3 right-3 z-10 bg-neutral-900/80 backdrop-blur-sm text-white font-bold text-[8.5px] px-2 py-0.5 rounded-md tracking-wider uppercase flex items-center gap-1">
             ⚡ 15 MINS
           </span>
         )}
 
         {/* Quantity in Cart Badge Overlay */}
         {qty > 0 && (
-          <span className="absolute bottom-3 left-3 z-10 rounded-lg bg-emerald-600 text-white font-extrabold text-[10px] px-2.5 py-1 shadow-md border border-white/20 select-none">
-            {qty} in cart
+          <span className="pcard-cart-qty absolute bottom-3 left-3 z-10 rounded-lg bg-emerald-600 text-white font-extrabold text-[10px] px-2.5 py-1 shadow-md border border-white/20 select-none">
+            <span className="qty-count">{qty}</span>
+            <span className="qty-label"> in cart</span>
           </span>
         )}
 
@@ -114,8 +127,8 @@ export function ProductCard({ product, className }: { product: Product; classNam
         <div className="pcard-foot" onClick={(e) => e.stopPropagation()}>
           <Price value={product.price} mrp={product.mrp} size="sm" />
           {!isAvailable ? (
-            <button className="qty-add qty-sm bg-neutral-100 border-neutral-250 text-neutral-400 cursor-not-allowed font-bold text-xs" disabled>
-              Out of Stock
+            <button disabled className="qty-add qty-sm bg-neutral-100 border-neutral-250 text-neutral-400 cursor-not-allowed font-bold text-xs flex items-center justify-center" >
+              <span className="stock-full">Out of Stock</span>
             </button>
           ) : (
             <QtyStepper qty={qty} size="sm" onChange={handleQtyChange} />
@@ -148,14 +161,14 @@ export function ProductCardCompact({ product }: { product: Product }) {
     <article className="w-full h-full bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-2.5 relative group" onClick={() => router.push(routes.product(product.slug))}>
       <div className="relative aspect-square w-full bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center">
         <Img product={product} radius="12px" />
-        
+
         {/* Heart */}
-        <button 
+        <button
           onClick={toggleWishlist}
           className="absolute top-1.5 right-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-neutral-400 hover:text-red-500 hover:bg-white shadow-sm transition-colors border border-neutral-50"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className={isWishlisted ? "text-red-500" : ""}>
-            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
           </svg>
         </button>
 
@@ -248,14 +261,14 @@ export function ProductCardOffer({ product }: { product: Product }) {
       {/* Image box */}
       <div className="relative aspect-square w-full bg-white rounded-2xl overflow-hidden flex items-center justify-center mt-2 border border-neutral-50 shadow-inner">
         <Img product={product} radius="16px" />
-        
+
         {/* Heart */}
-        <button 
+        <button
           onClick={toggleWishlist}
           className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-neutral-400 hover:text-red-500 hover:bg-white shadow-sm border border-neutral-50"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className={isWishlisted ? "text-red-500" : ""}>
-            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
           </svg>
         </button>
 

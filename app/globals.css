@@ -613,6 +613,88 @@ s {
   padding-top: 6px
 }
 
+/* The card markup ships a `stock-short` variant alongside the full label; we
+   only ever show the full text, so hide the short one (this also collapses the
+   "Only N Left" + "Low" double-render in the low-stock badge). */
+.stock-short {
+  display: none
+}
+
+/* ---------- Mobile-optimised product card (≤640px) ----------
+   Two cards share a ~130px column on phones — far too narrow to fit the price
+   and the Add control on one row, so the foot stacks: price on its own line,
+   the full-width control (Add / stepper / Out-of-Stock) below it. */
+@media (max-width: 640px) {
+  .pcard-img {
+    padding: 8px 8px 0
+  }
+
+  .pcard-body {
+    padding: 9px 10px 11px;
+    gap: 4px
+  }
+
+  .pcard-unit {
+    font-size: 10.5px
+  }
+
+  .pcard-name {
+    font-size: 12.5px;
+    min-height: 2.5em
+  }
+
+  .price-sm {
+    gap: 4px
+  }
+
+  .price-sm b {
+    font-size: 14px
+  }
+
+  /* Stack the foot so the price and control never share (and overlap) a row. */
+  .pcard-foot {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 6px
+  }
+
+  .pcard-foot .price {
+    flex: 1 1 100%;
+    min-width: 0
+  }
+
+  /* Control drops to its own full-width line beneath the price. */
+  .pcard-foot > .qty-add,
+  .pcard-foot > .qty {
+    flex: 1 1 100%;
+    width: 100%
+  }
+
+  .qty-add.qty-sm {
+    height: 34px;
+    padding: 0 10px;
+    font-size: 13px
+  }
+
+  .qty.qty-sm {
+    height: 34px
+  }
+
+  /* Pull the discount / tag chips in to match the tighter image padding. */
+  .pcard-tag,
+  .pcard-save {
+    top: 14px
+  }
+
+  .pcard-tag {
+    left: 14px
+  }
+
+  .pcard-save {
+    right: 14px
+  }
+}
+
 /* ---------- Header (desktop) ---------- */
 .hdr {
   position: sticky;

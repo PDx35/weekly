@@ -91,7 +91,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         items={[
           { label: 'Home', href: routes.home() },
           ...(category ? [{ label: categoryName, href: routes.category(category.slug) }] : []),
-          { label: product.name },
         ]}
       />
 

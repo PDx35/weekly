@@ -71,17 +71,20 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
   return (
     <>
       <style dangerouslySetInnerHTML={{__html: `
-        /* Premium split view layout */
+        /* Premium split view layout.
+           Height fills the viewport minus the chrome above it: the sticky
+           mobile top bar (~88px) on phones, the desktop header (~60px) at
+           ≥901px. dvh keeps it stable as mobile browser UI bars collapse. */
         .split-browser {
           display: flex;
-          height: 100vh;
+          height: calc(100dvh - 88px);
           overflow: hidden;
           border-top: 1px solid #f1f5f9;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 901px) {
           .split-browser {
-            height: 100vh;
+            height: calc(100dvh - 60px);
           }
         }
 
@@ -100,12 +103,18 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 16px 0px 16px 0px;
+          padding: 12px 0px;
           text-align: center;
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           border-bottom: 1px solid rgba(241, 245, 249, 0.6);
           border-left: 4px solid transparent;
+        }
+
+        @media (min-width: 768px) {
+          .sidebar-btn {
+            padding: 16px 0px;
+          }
         }
 
         .sidebar-btn.active {
@@ -116,14 +125,21 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
         }
 
         .sidebar-img-container {
-          width: 48px;
-          height: 48px;
+          width: 36px;
+          height: 36px;
           border-radius: 99px;
           display: flex;
           align-items: center;
           justify-content: center;
           background: transparent;
           transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+          .sidebar-img-container {
+            width: 48px;
+            height: 48px;
+          }
         }
 
         .sidebar-btn.active .sidebar-img-container {
@@ -135,7 +151,7 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
         .split-grid {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 12px;
+          gap: 8px;
         }
 
         @media (min-width: 640px) {
@@ -160,9 +176,9 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
         }
       `}} />
 
-      <div className="split-browser pt-6 -4">
+      <div className="split-browser">
         {/* Left Side: Scrollable Categories Sidebar */}
-        <aside className="w-[90px] flex-shrink-0 overflow-y-auto no-scrollbar bg-white border-r border-[#e2e8f0] !rounded-r-xl">
+        <aside className="w-[72px] md:w-[90px] flex-shrink-0 overflow-y-auto no-scrollbar bg-white border-r border-[#e2e8f0] !rounded-r-xl pb-24 md:pb-6">
           {initialSections.map(({ category }, index) => {
             const active = index === activeIndex;
             return (
@@ -177,13 +193,13 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
                       src={category.iconUrl}
                       alt={category.name}
                       loading="lazy"
-                      className="w-10 h-10 object-contain transition-transform duration-200"
+                      className="w-8 h-8 md:w-10 md:h-10 object-contain transition-transform duration-200"
                     />
                   ) : (
                     <span className="text-xl">📦</span>
                   )}
                 </div>
-                <span className="text-[10px] sm:text-xs font-semibold mt-1.5 leading-tight tracking-tight break-words max-w-[80px]">
+                <span className="text-[9px] md:text-xs font-semibold mt-1 leading-tight tracking-tight break-words max-w-[64px] md:max-w-[80px]">
                   {category.name}
                 </span>
               </button>
@@ -192,7 +208,7 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
         </aside>
 
         {/* Right Side: Scrollable Products Grid */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar">
+        <main className="flex-1 overflow-y-auto p-2 sm:p-4 md:p-6 no-scrollbar !pb-28 md:!pb-10">
           <div className="mb-5 pb-3 border-b border-zinc-100">
             <h2 className="text-lg md:text-xl font-black text-zinc-900 leading-none">
               {selectedSection.category.name}
@@ -211,8 +227,8 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
             </div>
           ) : (
             <>
-              {/* Filters Bar: Stays in one line always, horizontally scrollable on mobile */}
-              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-3.5 mb-4 border-b border-zinc-100 -mx-4 px-4 sm:-mx-6 sm:px-6">
+              {/* Filters Bar: wraps onto multiple rows on narrow screens. */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 pb-3.5 mb-4 border-b border-zinc-100">
                 {/* Sort Dropdown */}
                 <div className="relative flex items-center gap-1.5 h-8 pl-2.5 pr-6 rounded-lg border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-[13px] font-semibold text-zinc-700 cursor-pointer flex-shrink-0 transition-colors">
                   <Icon name="filter" size={13} className="text-zinc-500" />
@@ -287,6 +303,7 @@ export function CategoryBrowser({ initialSections }: CategoryBrowserProps) {
                     <ProductCard
                       key={p.id}
                       product={p}
+                      layout="responsive"
                       className={filteredProducts.length === 1 ? 'max-w-[220px]' : ''}
                     />
                   ))}
