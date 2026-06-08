@@ -23,7 +23,7 @@ interface SelectableOption {
 /** Quantity stepper + add-to-cart / go-to-cart action for the product page. */
 export function ProductBuy({ product }: { product: Product }) {
   const router = useRouter();
-  const { cart, setQty, showToast } = useCart();
+  const { cart, setQty, showToast, setActiveVariant } = useCart();
 
   const options = useMemo<SelectableOption[]>(() => {
     const baseOption: SelectableOption = {
@@ -46,6 +46,21 @@ export function ProductBuy({ product }: { product: Product }) {
     setSelectedOption(options[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
+
+  useEffect(() => {
+    setActiveVariant({
+      id: selectedOption.id,
+      label: selectedOption.label,
+      price: selectedOption.price,
+      mrp: selectedOption.mrp,
+      stock: selectedOption.stock,
+      inventory: selectedOption.inventory,
+      name: selectedOption.id === product.id ? product.name : `${product.name} - ${selectedOption.label}`,
+    });
+    return () => {
+      setActiveVariant(null);
+    };
+  }, [selectedOption, product.name, product.id, setActiveVariant]);
 
   const qty = cart[selectedOption.id] || 0;
   const isAvailable = selectedOption.stock && selectedOption.inventory > 0;
@@ -135,4 +150,10 @@ export function ProductBuy({ product }: { product: Product }) {
       </div>
     </div>
   );
+}
+
+export function ProductUnit({ product }: { product: Product }) {
+  const { activeVariant } = useCart();
+  const label = activeVariant?.label || product.unit;
+  return <b>{label}</b>;
 }

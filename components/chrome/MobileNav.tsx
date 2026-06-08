@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { QtyStepper } from '@/components/ui/QtyStepper';
+import { PRODUCTS as MOCK_PRODUCTS } from '@/lib/data';
 import { routes } from '@/lib/routes';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
@@ -17,7 +19,7 @@ interface NavItem {
 export function MobileNav() {
   const router = useRouter();
   const pathname = usePathname();
-  const { cartCount, cartSubtotal } = useCart();
+  const { cart, setQty, showToast, cartCount, cartSubtotal, activeVariant } = useCart();
   const { user } = useAuth();
 
   const [shouldPulse, setShouldPulse] = useState(false);
@@ -40,6 +42,36 @@ export function MobileNav() {
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   const isProductPage = pathname.startsWith('/product/');
+
+  let activeItem = activeVariant;
+  if (!activeItem && isProductPage) {
+    const slug = pathname.split('/').filter(Boolean).pop();
+    if (slug) {
+      const currentProduct = MOCK_PRODUCTS.find((p) => p.slug === slug || p.id === slug);
+      if (currentProduct) {
+        activeItem = {
+          id: currentProduct.id,
+          label: currentProduct.unit,
+          price: currentProduct.price,
+          mrp: currentProduct.mrp,
+          stock: currentProduct.stock,
+          inventory: currentProduct.inventory,
+          name: currentProduct.name,
+        };
+      }
+    }
+  }
+
+  const qty = activeItem ? (cart[activeItem.id] || 0) : 0;
+
+  const handleQtyChange = (q: number) => {
+    if (!activeItem) return;
+    if (q > activeItem.inventory) {
+      showToast(`Only ${activeItem.inventory} units of ${activeItem.name} are available.`);
+      return;
+    }
+    setQty(activeItem.id, q);
+  };
 
   const activeIndex = items.findIndex(it => isActive(it.href));
 
@@ -123,6 +155,16 @@ export function MobileNav() {
           }
         }
 
+        /* Keep cart container visible and aligned above bottom bar on product details page */
+        .floating-cart-container.pd-page-cart {
+          bottom: 92px !important;
+        }
+        @media (min-width: 640px) {
+          .floating-cart-container.pd-page-cart {
+            bottom: 96px !important;
+          }
+        }
+
         /* Active Nav Item Custom Button */
         .mnav-i-custom {
           position: relative;
@@ -145,16 +187,74 @@ export function MobileNav() {
           color: #047857; /* text-emerald-700 */
           font-weight: 700;
         }
+
+        /* Bottom Purchase Bar (Product Page) */
+        .pbuy-bottom-bar {
+          display: none !important;
+        }
+
+        @media (max-width: 900px) {
+          .pbuy-bottom-bar {
+            display: flex !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            height: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+            background: #ffffff !important;
+            border-top: 1px solid #f4f4f5 !important;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.04) !important;
+            z-index: 100 !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)) 20px !important;
+          }
+
+          .pbuy-bottom-bar .qty {
+            background: #15803d !important;
+            border: none !important;
+            border-radius: 8px !important;
+            height: 44px !important;
+            width: 110px !important;
+          }
+          .pbuy-bottom-bar .qty button {
+            width: 36px !important;
+          }
+          .pbuy-bottom-bar .qty button span {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+          }
+          .pbuy-bottom-bar .qty span {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            min-width: 20px !important;
+          }
+
+          .pbuy-bottom-bar .qty-add {
+            background: #ffffff !important;
+            border: 1.5px solid #16a34a !important;
+            color: #16a34a !important;
+            border-radius: 8px !important;
+            height: 44px !important;
+            width: 110px !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+          }
+          .pbuy-bottom-bar .qty-add span {
+            color: #16a34a !important;
+            font-size: 16px !important;
+          }
+        }
       `}} />
 
       {/* Floating Dynamic Cart Button */}
       <div 
-        className={`floating-cart-container ${
+        className={`floating-cart-container ${isProductPage ? 'pd-page-cart' : ''} ${
           cartCount > 0 
             ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
             : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
         }`}
-        style={isProductPage ? { bottom: '24px' } : undefined}
       >
         <button
           onClick={() => router.push(routes.cart())}
@@ -212,6 +312,39 @@ export function MobileNav() {
             );
           })}
         </nav>
+      )}
+
+      {isProductPage && activeItem && (
+        <div className="pbuy-bottom-bar">
+          {/* Left Side: Unit/Label, Price/MRP, Taxes */}
+          <div className="flex flex-col items-start justify-center">
+            <span className="text-[15px] text-zinc-900 font-extrabold leading-none">
+              {activeItem.label}
+            </span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-[18px] font-black text-zinc-900 leading-none">
+                ₹{activeItem.price}
+              </span>
+              {activeItem.mrp && activeItem.mrp > activeItem.price && (
+                <span className="text-[11px] text-zinc-400 font-semibold leading-none">
+                  MRP <span className="line-through">₹{activeItem.mrp}</span>
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] text-zinc-400 font-semibold mt-1 leading-none">
+              Inclusive of all taxes
+            </span>
+          </div>
+
+          {/* Right Side: Stepper */}
+          <div className="flex items-center">
+            {activeItem.stock && activeItem.inventory > 0 ? (
+              <QtyStepper qty={qty} onChange={handleQtyChange} />
+            ) : (
+              <span style={{ color: '#c2410c', fontWeight: 700, fontSize: '13.5px' }}>Out of Stock</span>
+            )}
+          </div>
+        </div>
       )}
     </>
   );

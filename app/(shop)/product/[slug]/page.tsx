@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ProductBuy } from '@/components/catalogue/ProductBuy';
+import { ProductBuy, ProductUnit } from '@/components/catalogue/ProductBuy';
 import { ProductGallery } from '@/components/catalogue/ProductGallery';
 import { Rail } from '@/components/catalogue/Rail';
 import { Crumbs } from '@/components/ui/Crumbs';
@@ -129,7 +129,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </li>
                 <li>
                   <span>Net quantity</span>
-                  <b>{product.unit}</b>
+                  <ProductUnit product={product} />
                 </li>
                 <li>
                   <span>Shelf life</span>

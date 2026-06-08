@@ -67,6 +67,18 @@ interface CartContextValue {
   toast: ReactNode | null;
   /** Show a transient toast message. */
   showToast: (msg: ReactNode) => void;
+  activeVariant: ActiveVariantInfo | null;
+  setActiveVariant: (variant: ActiveVariantInfo | null) => void;
+}
+
+export interface ActiveVariantInfo {
+  id: string;
+  label: string;
+  price: number;
+  mrp: number | null;
+  stock: boolean;
+  inventory: number;
+  name: string;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -77,6 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ReactNode | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>([]);
+  const [activeVariant, setActiveVariant] = useState<ActiveVariantInfo | null>(null);
 
   const hydrated = useRef(false);
   const cartRef = useRef<CartMap>(cart);
@@ -246,6 +259,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartSubtotal,
       toast,
       showToast,
+      activeVariant,
+      setActiveVariant,
     }),
     [
       cart,
@@ -258,6 +273,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartSubtotal,
       toast,
       showToast,
+      activeVariant,
+      setActiveVariant,
     ],
   );
 
