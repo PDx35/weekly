@@ -142,7 +142,7 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-4">
-      <div 
+      <div
         className="relative overflow-hidden rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4 border border-neutral-100 shadow-sm transition-all duration-500 ease-in-out min-h-[160px] sm:min-h-[180px]"
         style={{ backgroundColor: current.bgColor || '#f0fdf4' }}
         onMouseEnter={() => setIsPaused(true)}
@@ -151,19 +151,19 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
         {/* Navigation Arrows */}
         {list.length > 1 && (
           <>
-            <button 
+            <button
               onClick={handlePrev}
               className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-xs text-neutral-800 shadow-xs hover:bg-white transition-colors"
               aria-label="Previous Banner"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
             </button>
-            <button 
+            <button
               onClick={handleNext}
               className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-xs text-neutral-800 shadow-xs hover:bg-white transition-colors"
               aria-label="Next Banner"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
             </button>
           </>
         )}
@@ -178,7 +178,7 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
           <h3 className="text-xl sm:text-2xl font-black text-neutral-900 leading-tight uppercase">
             {current.title}
           </h3>
-          <button 
+          <button
             onClick={() => current.id ? onBannerClick(current) : null}
             className="inline-flex items-center justify-center rounded-lg bg-neutral-950 text-white font-extrabold text-[9px] px-3.5 py-1.5 mt-1 transition-transform hover:scale-105 active:scale-95 leading-none"
             style={{ color: current.ctaColor || '#ffffff' }}
@@ -190,10 +190,10 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
         {/* Image Area */}
         <div className="relative w-full max-w-xs md:max-w-sm z-10 flex justify-center md:justify-end">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={current.imageUrlDesktop || current.imageUrl || current.imageUrlMobile} 
-            alt={current.title} 
-            className="w-full max-h-[140px] object-contain rounded-xl transition-all duration-300 hover:scale-102" 
+          <img
+            src={current.imageUrlDesktop || current.imageUrl || current.imageUrlMobile}
+            alt={current.title}
+            className="w-full max-h-[140px] object-contain rounded-xl transition-all duration-300 hover:scale-102"
             loading="lazy"
           />
         </div>
@@ -205,9 +205,8 @@ function AutoScrollingPromoCarousel({ banners, fallbackList, onBannerClick }: { 
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`h-1.5 rounded-full transition-all ${
-                  currentIndex === idx ? 'bg-neutral-800 w-3' : 'bg-neutral-800/20'
-                }`}
+                className={`h-1.5 rounded-full transition-all ${currentIndex === idx ? 'bg-neutral-800 w-3' : 'bg-neutral-800/20'
+                  }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
@@ -236,7 +235,7 @@ function PromoBannerRow({ banners, fallbackList, onBannerClick }: { banners: any
           const ctaCol = item.ctaColor || '#ffffff';
 
           return (
-            <div 
+            <div
               key={item.id || idx}
               onClick={() => isDbBanner ? onBannerClick(item) : null}
               className={`relative flex-shrink-0 w-[290px] sm:w-[340px] md:w-[380px] h-[150px] sm:h-[160px] rounded-2xl overflow-hidden p-5 flex items-center justify-between gap-3 border border-neutral-100 shadow-sm snap-start transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${isDbBanner ? 'cursor-pointer' : ''}`}
@@ -254,9 +253,9 @@ function PromoBannerRow({ banners, fallbackList, onBannerClick }: { banners: any
                     {title}
                   </h3>
                 </div>
-                
+
                 <div>
-                  <button 
+                  <button
                     className="inline-flex items-center justify-center rounded-lg bg-neutral-950 text-white font-extrabold text-[9px] px-3 py-1.5 transition-transform hover:scale-105 active:scale-95 leading-none"
                     style={{ color: ctaCol }}
                   >
@@ -268,10 +267,10 @@ function PromoBannerRow({ banners, fallbackList, onBannerClick }: { banners: any
               {/* Image Area */}
               <div className="relative w-[40%] h-full flex items-center justify-center z-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={img} 
-                  alt={title} 
-                  className="max-w-full max-h-[110px] object-contain rounded-lg hover:scale-105 transition-transform duration-300" 
+                <img
+                  src={img}
+                  alt={title}
+                  className="max-w-full max-h-[110px] object-contain rounded-lg hover:scale-105 transition-transform duration-300"
                   loading="lazy"
                 />
               </div>
@@ -314,19 +313,19 @@ function HeroCarousel({ banners, onBannerClick }: { banners: any[]; onBannerClic
           {current.title}
         </h1>
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <button 
+          <button
             onClick={() => onBannerClick(current)}
             className="flex items-center gap-3 rounded-full bg-amber-400 hover:bg-amber-500 text-neutral-950 font-bold px-6 py-3.5 shadow-lg shadow-amber-100 transition-all group"
             style={{ color: current.ctaColor || '#000000' }}
           >
             <span>{current.ctaText || 'Shop Now'}</span>
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:translate-x-1 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
             </span>
           </button>
         </div>
       </div>
-      
+
       <div className="relative flex-1 flex justify-center md:justify-end z-10 w-full max-w-md md:max-w-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -348,9 +347,8 @@ function HeroCarousel({ banners, onBannerClick }: { banners: any[]; onBannerClic
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-2 w-2 rounded-full transition-all ${
-                currentIndex === idx ? 'bg-neutral-800 w-4' : 'bg-neutral-800/25'
-              }`}
+              className={`h-2 w-2 rounded-full transition-all ${currentIndex === idx ? 'bg-neutral-800 w-4' : 'bg-neutral-800/25'
+                }`}
             />
           ))}
         </div>
@@ -399,7 +397,7 @@ export default function HomePage() {
       // Record banner impressions
       if (Array.isArray(bList)) {
         bList.forEach((b) => {
-          fetch(`/api/banners?id=${b.id}&action=view`, { method: 'POST' }).catch(() => {});
+          fetch(`/api/banners?id=${b.id}&action=view`, { method: 'POST' }).catch(() => { });
         });
       }
     }).catch((err) => {
@@ -410,7 +408,7 @@ export default function HomePage() {
 
   const handleBannerClick = (b: any) => {
     // Record click
-    fetch(`/api/banners?id=${b.id}&action=click`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/banners?id=${b.id}&action=click`, { method: 'POST' }).catch(() => { });
 
     // Redirection
     const val = b.targetValue;
@@ -574,7 +572,7 @@ export default function HomePage() {
               <Link href={routes.browse()} className="flex items-center gap-3 rounded-full bg-amber-400 hover:bg-amber-500 text-neutral-950 font-bold px-6 py-3.5 shadow-lg shadow-amber-100 transition-all group">
                 <span>Shop Now</span>
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:translate-x-1 transition-transform">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                 </span>
               </Link>
               <div className="text-sm text-neutral-600 font-semibold flex items-center gap-2">
@@ -583,13 +581,15 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="relative flex-1 flex justify-center md:justify-end z-10 w-full max-w-md md:max-w-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/growexy_hero_delivery_guy.png"
-              alt="Delivery Person holding vegetable basket"
-              className="w-full max-w-md md:max-w-lg object-contain rounded-2xl hover:scale-[1.02] transition-transform duration-300"
-            />
+          <div className='hidden sm:block'>
+            <div className="relative flex-1 flex justify-center md:justify-end z-10 w-full max-w-md md:max-w-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/growexy_hero_delivery_guy.png"
+                alt="Delivery Person holding vegetable basket"
+                className="w-full !max-w-lg object-contain rounded-2xl hover:scale-[1.02] transition-transform duration-300"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -597,7 +597,7 @@ export default function HomePage() {
       {/* DYNAMIC POPULAR CATEGORIES */}
       <section className="mx-auto max-w-7xl px-6 py-16 text-center space-y-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 uppercase pb-4">
-          Our Popular Categories
+          Our Categories
         </h2>
         {loading ? (
           <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
@@ -606,7 +606,7 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar flex-nowrap justify-center">
+          <div className="flex gap-6 overflow-x-auto no-scrollbar flex-nowrap justify-center">
             {categories.map((cat) => (
               <Link
                 key={cat.id}
@@ -629,18 +629,10 @@ export default function HomePage() {
       </section>
 
       {/* STYLE 1: COMPACT HORIZONTAL SCROLL - BEST SELLERS */}
-      <section className="mx-auto max-w-7xl px-6 py-4 space-y-4">
-        <div className="flex items-center justify-between">
+      <section className="items-center flex flex-col">
           <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 uppercase">
             Our Seasonal Offers
           </h2>
-          <Link href={routes.browse()} className="flex items-center gap-2 rounded-full border border-neutral-200 hover:border-neutral-900 px-5 py-2 text-xs font-bold tracking-tight text-neutral-950 transition-all group">
-            <span>Shop Now</span>
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white group-hover:translate-x-1 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </span>
-          </Link>
-        </div>
 
         {loading ? (
           <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar flex-nowrap">
@@ -663,8 +655,8 @@ export default function HomePage() {
           <div className="h-[160px] sm:h-[180px] w-full rounded-[2rem] bg-neutral-100 animate-pulse" />
         </section>
       ) : (
-        <AutoScrollingPromoCarousel 
-          banners={promoBanners.slice(0, 3)} 
+        <AutoScrollingPromoCarousel
+          banners={promoBanners.slice(0, 3)}
           fallbackList={[
             {
               bgColor: '#e0f4ff',
@@ -739,7 +731,7 @@ export default function HomePage() {
               <img src="/growexy_carrots_basket.png" alt="Carrots basket" className="w-full max-h-36 object-contain rounded-xl" />
             </div>
             <Link href={routes.category('dairy')} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-              View All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              View All <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
             </Link>
           </div>
         </div>
@@ -760,11 +752,10 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
           <button
             onClick={() => setActiveTab('all')}
-            className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
-              activeTab === 'all'
+            className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === 'all'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
-            }`}
+              }`}
           >
             All
           </button>
@@ -772,11 +763,10 @@ export default function HomePage() {
             <button
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
-              className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${
-                activeTab === cat.id
+              className={`rounded-full px-6 py-2.5 text-xs font-bold transition-all ${activeTab === cat.id
                   ? 'bg-emerald-600 text-white shadow-md'
                   : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
-              }`}
+                }`}
             >
               {cat.name}
             </button>
@@ -883,7 +873,7 @@ export default function HomePage() {
                         onClick={() => handleAddToCart(p.id)}
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
                       </button>
                     </div>
                   </div>
