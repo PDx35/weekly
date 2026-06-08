@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { routes } from '@/lib/routes';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
+import { Logo } from '../chrome/Logo';
 
 type Step = 'phone' | 'otp' | 'onboarding';
 
@@ -231,20 +232,17 @@ export function AuthScreen() {
             onClick={() => router.push(routes.home())}
             className="flex items-center gap-2 text-2xl font-bold tracking-tight cursor-pointer shrink-0 z-10"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-800 shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            </span>
-            <span>Weekly <span className="text-amber-400 font-extrabold">Market</span></span>
+            <Logo />
           </div>
 
           <div className="space-y-6 z-10">
             <span className="inline-block rounded-full bg-emerald-800/60 border border-emerald-700/50 px-4 py-1 text-xs font-bold tracking-wider text-emerald-250 uppercase">
               15 MINUTE DELIVERY
             </span>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight uppercase !text-white">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-tight uppercase !text-white">
               DELICIOUS &amp; FRESH GROCERIES AT YOUR DOOR.
             </h2>
-            <p className="text-emerald-100 text-sm leading-relaxed max-w-md">
+            <p className="text-emerald-100 text-sm leading-relaxed max-w-md pb-4 pt-2">
               Join thousands of happy households getting farm-fresh veggies, dairy products, and organic groceries delivered instantly.
             </p>
             
