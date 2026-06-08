@@ -331,53 +331,6 @@ function AccountContent() {
         `
       }} />
 
-      {/* WEEKLY MARKET HEADER */}
-      <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href={routes.home()} className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              </span>
-              <span>
-                Weekly <span className="text-emerald-600 font-extrabold">Market</span>
-              </span>
-            </Link>
-
-            <button 
-              onClick={() => router.push(routes.addresses())}
-              className="flex items-center gap-2 rounded-full border border-neutral-200/80 bg-neutral-50/60 px-3.5 py-1.5 hover:bg-neutral-50 hover:border-neutral-300 transition-all text-left max-w-[200px] sm:max-w-[240px] truncate"
-            >
-              <span className="text-emerald-600 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              </span>
-              <div className="flex flex-col text-[10px] sm:text-xs">
-                <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-tight leading-none">Deliver to</span>
-                <span className="font-extrabold text-neutral-800 truncate mt-0.5 max-w-[120px] sm:max-w-[150px] leading-tight">{locationLabel}</span>
-              </div>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link href={routes.cart()} className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              {cartCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href={routes.account()}
-              className="flex h-9 items-center justify-center rounded-full bg-emerald-600 px-4 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors shadow-sm"
-            >
-              {user.name.split(' ')[0]}
-            </Link>
-          </div>
-        </div>
-      </header>
-
       {/* ==================== DESKTOP LAYOUT (1024px and up) ==================== */}
       <main className="hidden lg:block mx-auto max-w-7xl px-6 py-8">
         {/* Profile Header Card */}
@@ -434,7 +387,7 @@ function AccountContent() {
         {/* Quick Actions Grid */}
         <section className="mb-8">
           <h2 className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest mb-4">Quick Shortcuts</h2>
-          <div className="grid grid-cols-8 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             {quickActions.map((act) => (
               <button
                 key={act.id}
@@ -443,12 +396,12 @@ function AccountContent() {
                   if (act.id === 'wallet') setIsAddMoneyOpen(true);
                   document.getElementById('desktop-details')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="group flex flex-col justify-between items-start p-4 rounded-2xl bg-white border border-neutral-100 hover:border-emerald-200/50 shadow-sm hover:shadow-md transition-all text-left"
+                className="group flex flex-col justify-center items-center p-4 rounded-2xl bg-white border border-neutral-100 hover:border-emerald-200/50 shadow-sm hover:shadow-md transition-all text-center aspect-square"
               >
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${act.bgColor} ${act.color} group-hover:scale-110 duration-200 transition-transform`}>
+                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${act.bgColor} ${act.color} group-hover:scale-110 duration-200 transition-transform shrink-0`}>
                   <Icon name={act.icon} size={20} />
                 </span>
-                <span className="mt-4 font-extrabold text-neutral-900 text-xs tracking-tight leading-tight">{act.label}</span>
+                <span className="mt-4 font-extrabold text-neutral-900 text-xs tracking-tight leading-tight text-center">{act.label}</span>
               </button>
             ))}
           </div>
@@ -575,18 +528,18 @@ function AccountContent() {
                     handleItemClick(act.target);
                     if (act.id === 'wallet') setIsAddMoneyOpen(true);
                   }}
-                  className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-neutral-100/70 shadow-sm active:scale-95 duration-100 transition-all text-center"
+                  className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-neutral-100/70 shadow-sm active:scale-95 duration-100 transition-all text-center aspect-square"
                 >
-                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${act.bgColor} ${act.color}`}>
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${act.bgColor} ${act.color} shrink-0`}>
                     <Icon name={act.icon} size={18} />
                   </span>
-                  <span className="mt-2 text-[10px] font-bold text-neutral-800 leading-tight block truncate w-full">{act.label.split(' ')[0]}</span>
+                  <span className="mt-2 text-[10px] font-bold text-neutral-800 leading-tight text-center">{act.label}</span>
                 </button>
               ))}
             </div>
 
             {/* Wallet Quick bar */}
-            <div className="p-3.5 rounded-2xl bg-white border border-neutral-100 shadow-sm flex items-center justify-between">
+            {/*<div className="p-3.5 rounded-2xl bg-white border border-neutral-100 shadow-sm flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
                   <Icon name="wallet" size={16} />
@@ -599,7 +552,7 @@ function AccountContent() {
               >
                 + Add Cash
               </button>
-            </div>
+            </div>*/}
 
             {/* Active Delivery Highlight sticky header */}
             {activeDeliveries.length > 0 && (
