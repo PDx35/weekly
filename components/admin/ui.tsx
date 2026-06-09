@@ -86,18 +86,22 @@ export function AdminModal({
   title,
   onClose,
   children,
+  size = 'lg',
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** Width preset. `lg` (default) for single-column forms, `xl`/`2xl` for wider layouts. */
+  size?: 'lg' | 'xl' | '2xl';
 }) {
+  const maxWidth = { lg: 'max-w-lg', xl: 'max-w-2xl', '2xl': 'max-w-4xl' }[size];
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/40 p-4 backdrop-blur-sm sm:p-8 transition-all"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-3xl border border-white/20 bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className={cn('w-full rounded-2xl bg-white shadow-xl', maxWidth)}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4">

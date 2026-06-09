@@ -18,6 +18,11 @@ import type { AdminCategory, AdminProduct, AdminTicket } from '@/lib/admin/types
 import { timeAgo } from '@/lib/orders';
 import type { Order } from '@/lib/types';
 
+// Import the new analytics widgets
+import { InventoryAlerts } from '@/components/admin/InventoryAlerts';
+import { TopProducts } from '@/components/admin/TopProducts';
+import { OrderStatusBreakdown } from '@/components/admin/OrderStatusBreakdown';
+
 interface DashboardData {
   products: AdminProduct[];
   categories: AdminCategory[];
@@ -74,10 +79,22 @@ function Dashboard() {
   const stats = useMemo(() => {
     if (!data) return null;
     const { products, categories, orders, tickets } = data;
-    const revenue = orders
-      .filter((o) => o.status !== 'cancelled')
-      .reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
+
+    // Filter out cancelled orders for revenue and performance calculations
+    const activeOrders = orders.filter((o) => o.status !== 'cancelled');
+    const revenue = activeOrders.reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
     const recent = [...orders].sort((a, b) => (b.placedAt ?? 0) - (a.placedAt ?? 0)).slice(0, 6);
+
+    // Calculate Average Order Value (AOV)
+    const aov = activeOrders.length > 0 ? revenue / activeOrders.length : 0;
+
+    // Calculate Active Customers (unique UIDs in active orders)
+    const activeCustomers = new Set(activeOrders.map((o) => o.uid)).size;
+
+    // Calculate Order Fulfillment Rate (delivered orders / active orders)
+    const deliveredCount = orders.filter((o) => o.status === 'delivered').length;
+    const fulfillmentRate = activeOrders.length > 0 ? (deliveredCount / activeOrders.length) * 100 : 0;
+
     return {
       products: products.length,
       categories: categories.length,
@@ -86,6 +103,9 @@ function Dashboard() {
       pending: orders.filter((o) => PENDING_STATUSES.includes(o.status)).length,
       openTickets: tickets.filter((t) => t.status !== 'resolved').length,
       recent,
+      aov,
+      activeCustomers,
+      fulfillmentRate,
     };
   }, [data]);
 
@@ -114,6 +134,13 @@ function Dashboard() {
             <StatCard label="Active Products" value={stats.products} icon={Package} />
             <StatCard label="Categories" value={stats.categories} icon={Tags} />
             <StatCard label="Open Tickets" value={stats.openTickets} icon={Ticket} />
+          </div>
+
+          {/* New Analytics Row: Out/Low Stock, Top Products, Order Status Distribution */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <InventoryAlerts products={data.products} categories={data.categories} />
+            <TopProducts orders={data.orders} products={data.products} categories={data.categories} />
+            <OrderStatusBreakdown orders={data.orders} />
           </div>
 
           {/* Charts */}
