@@ -69,7 +69,7 @@ export function MobileTop() {
           </button>
           <Link
             href={user ? routes.account() : routes.auth()}
-            className="flex h-9 items-center justify-center rounded-full bg-neutral-900 px-4 text-xs font-semibold text-white hover:bg-neutral-800 transition-colors"
+            className="md:hidden lg:display flex h-9 items-center justify-center rounded-full bg-neutral-900 px-4 text-xs font-semibold text-white hover:bg-neutral-800 transition-colors"
           >
             {user ? user.name.split(' ')[0] : 'Sign In'}
           </Link>
