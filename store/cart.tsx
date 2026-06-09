@@ -19,7 +19,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { trackAddToCart } from '@/lib/analytics';
 import { PRODUCTS as MOCK_PRODUCTS } from '@/lib/data';
@@ -67,6 +67,12 @@ interface CartContextValue {
   toast: ReactNode | null;
   /** Show a transient toast message. */
   showToast: (msg: ReactNode) => void;
+  /**
+   * True once the cart is settled for display: localStorage hydrated and the
+   * live product catalog fetched. Gate cart UI (totals, floating bar) on this
+   * to avoid flashing stale counts/prices computed from the mock fallback.
+   */
+  ready: boolean;
   activeVariant: ActiveVariantInfo | null;
   setActiveVariant: (variant: ActiveVariantInfo | null) => void;
 }
@@ -90,6 +96,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>([]);
   const [activeVariant, setActiveVariant] = useState<ActiveVariantInfo | null>(null);
+  // Gates for `ready`: localStorage hydration done + product catalog fetched.
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [productsFetched, setProductsFetched] = useState(false);
 
   const hydrated = useRef(false);
   const cartRef = useRef<CartMap>(cart);
@@ -107,7 +116,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         /* fallback to MOCK_PRODUCTS is handled in cartItems lookup */
-      });
+      })
+      .finally(() => setProductsFetched(true));
   }, []);
 
   // Keep a ref to the latest cart for the sign-in merge (read in an effect).
@@ -122,6 +132,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR-safe localStorage hydration
     setCart(loadLS());
     hydrated.current = true;
+    setIsHydrated(true);
   }, []);
 
   // Persist to localStorage on every change (after hydration).
@@ -160,9 +171,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // Write cart changes through to Firestore while signed in (after merge).
+  // `updateDoc` replaces the whole `cart` map, so removing an item (or emptying
+  // the cart) actually clears it remotely. `setDoc(…, { merge: true })` would
+  // deep-merge the map and leave removed keys behind — they'd then reappear on
+  // the next refresh via the sign-in merge below. The doc already exists by now
+  // (the merge effect creates it before setting `mergedUid`).
   useEffect(() => {
     if (!user || mergedUid.current !== user.uid) return;
-    setDoc(doc(db, 'users', user.uid), { cart }, { merge: true }).catch(() => {
+    updateDoc(doc(db, 'users', user.uid), { cart }).catch(() => {
       /* ignore offline / rules errors */
     });
   }, [cart, user]);
@@ -247,6 +263,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [cartItems],
   );
 
+  const ready = isHydrated && productsFetched;
+
   const value = useMemo<CartContextValue>(
     () => ({
       cart,
@@ -259,6 +277,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartSubtotal,
       toast,
       showToast,
+      ready,
       activeVariant,
       setActiveVariant,
     }),
@@ -273,6 +292,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartSubtotal,
       toast,
       showToast,
+      ready,
       activeVariant,
       setActiveVariant,
     ],

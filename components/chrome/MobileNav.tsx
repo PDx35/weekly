@@ -19,7 +19,7 @@ interface NavItem {
 export function MobileNav() {
   const router = useRouter();
   const pathname = usePathname();
-  const { cart, setQty, showToast, cartCount, cartSubtotal, activeVariant } = useCart();
+  const { cart, setQty, showToast, cartCount, cartSubtotal, activeVariant, ready } = useCart();
   const { user } = useAuth();
 
   const [shouldPulse, setShouldPulse] = useState(false);
@@ -254,8 +254,8 @@ export function MobileNav() {
       {!isCartPage && (
         <div 
           className={`floating-cart-container ${isProductPage ? 'pd-page-cart' : ''} ${
-            cartCount > 0 
-              ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+            ready && cartCount > 0
+              ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
               : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
           }`}
         >

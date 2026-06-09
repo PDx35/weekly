@@ -406,7 +406,7 @@ export default function HomePage() {
     const handleScroll = () => {
       const trigger = document.getElementById('categories-scroll-trigger');
       if (trigger) {
-        const stickyOffset = window.innerWidth < 768 ? 92 : 73;
+        const stickyOffset = window.innerWidth < 768 ? 111 : 73;
         setIsCategoriesStuck(trigger.getBoundingClientRect().bottom <= stickyOffset);
       }
     };
@@ -635,7 +635,7 @@ export default function HomePage() {
 
       {/* DYNAMIC POPULAR CATEGORIES */}
       <div id="categories-scroll-trigger" className="w-full h-px pointer-events-none" aria-hidden="true" />
-      <div id="our-categories-sticky-wrapper" className={`sticky top-[92px] md:top-[73px] z-30 transition-all duration-300 ${isCategoriesStuck ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-100 pb-2 pt-2 mb-10' : 'bg-white shadow-sm md:shadow-none md:bg-transparent border-b border-neutral-100 md:border-transparent pb-4 pt-4 md:pt-6 mb-10'}`}>
+      <div id="our-categories-sticky-wrapper" className={`sticky top-[111px] md:top-[73px] z-30 transition-all duration-300 ${isCategoriesStuck ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-100 pb-2 pt-2 mb-10' : 'bg-white shadow-sm md:shadow-none md:bg-transparent border-b border-neutral-100 md:border-transparent pb-4 pt-4 md:pt-6 mb-10'}`}>
         <section id="our-categories-section" className="mx-auto max-w-7xl px-0 md:px-6 text-center">
           <div className={`transition-all duration-300 overflow-hidden origin-top ${isCategoriesStuck ? 'max-h-0 h-0 opacity-0 scale-y-0 mb-0 invisible' : 'max-h-[100px] h-auto opacity-100 scale-y-100 mb-6 visible'}`}>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 uppercase m-0 p-0">
@@ -676,7 +676,7 @@ export default function HomePage() {
 
       {/* STYLE 1: COMPACT HORIZONTAL SCROLL - BEST SELLERS */}
       <section className="mx-auto max-w-7xl px-6 flex flex-col w-full mt-4">
-        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 uppercase text-center mb-6">
+        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-neutral-900 uppercase text-center pb-6">
           Our Seasonal Offers
         </h2>
 

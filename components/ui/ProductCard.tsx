@@ -10,7 +10,73 @@ import { Img } from '@/components/ui/Img';
 import { Rating } from '@/components/ui/Rating';
 import { Price } from '@/components/ui/Price';
 import { QtyStepper } from '@/components/ui/QtyStepper';
+import { VariantPickerSheet } from '@/components/catalogue/VariantPickerSheet';
 import type { Product } from '@/lib/types';
+
+/** Total units in the cart for a product family (base option + every variant). */
+export function familyQty(cart: Record<string, number>, product: Product): number {
+  let total = cart[product.id] || 0;
+  for (const v of product.variants ?? []) total += cart[v.id] || 0;
+  return total;
+}
+
+/**
+ * Cart control for a product card. Plain {@link QtyStepper} when the product has
+ * no variants; for products with variants it shows an "ADD" button that opens
+ * the {@link VariantPickerSheet} so the shopper picks a pack size first.
+ */
+export function AddOrVariant({
+  product,
+  size = 'sm',
+}: {
+  product: Product;
+  size?: 'sm' | 'md';
+}) {
+  const { cart, setQty, showToast } = useCart();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const hasVariants = (product.variants?.length ?? 0) > 0;
+
+  if (!hasVariants) {
+    const qty = cart[product.id] || 0;
+    const handleQtyChange = (q: number) => {
+      if (q > product.inventory) {
+        showToast(`Only ${product.inventory} units of ${product.name} are available.`);
+        return;
+      }
+      setQty(product.id, q);
+    };
+    return <QtyStepper qty={qty} size={size} onChange={handleQtyChange} />;
+  }
+
+  const total = familyQty(cart, product);
+  const open = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSheetOpen(true);
+  };
+
+  return (
+    <>
+      {total > 0 ? (
+        <button
+          onClick={open}
+          aria-label={`Edit pack sizes for ${product.name}`}
+          className={`qty-add qty-${size} flex items-center justify-center gap-1.5 rounded-xl border border-emerald-600 bg-emerald-600 font-extrabold text-white shadow-sm transition-all duration-200 hover:bg-emerald-700 active:scale-95`}
+        >
+          {total} <span className="text-[11px] font-bold uppercase tracking-wide opacity-90">in cart</span>
+        </button>
+      ) : (
+        <button
+          onClick={open}
+          aria-label={`Choose a pack size for ${product.name}`}
+          className={`qty-add qty-${size} flex items-center justify-center rounded-xl border border-emerald-600 font-extrabold text-emerald-700 shadow-sm transition-all duration-200 hover:border-emerald-700 hover:bg-emerald-50 active:scale-95`}
+        >
+          <span className="mr-1.5 text-base font-black text-emerald-700">+</span> ADD
+        </button>
+      )}
+      {sheetOpen && <VariantPickerSheet product={product} onClose={() => setSheetOpen(false)} />}
+    </>
+  );
+}
 
 // Shared Wishlist Hook
 export function useWishlist(productId: string) {
@@ -53,19 +119,11 @@ export function ProductCard({
   layout?: 'vertical' | 'horizontal' | 'responsive';
 }) {
   const router = useRouter();
-  const { cart, setQty, showToast } = useCart();
-  const qty = cart[product.id] || 0;
+  const { cart } = useCart();
+  const qty = familyQty(cart, product);
   const { isWishlisted, toggleWishlist } = useWishlist(product.id);
 
   const isAvailable = product.stock && product.inventory > 0;
-
-  const handleQtyChange = (q: number) => {
-    if (q > product.inventory) {
-      showToast(`Only ${product.inventory} units of ${product.name} are available.`);
-      return;
-    }
-    setQty(product.id, q);
-  };
 
   const layoutClass = layout === 'horizontal'
     ? 'horizontal'
@@ -131,7 +189,7 @@ export function ProductCard({
               <span className="stock-full">Out of Stock</span>
             </button>
           ) : (
-            <QtyStepper qty={qty} size="sm" onChange={handleQtyChange} />
+            <AddOrVariant product={product} size="sm" />
           )}
         </div>
       </div>
@@ -143,19 +201,11 @@ export function ProductCard({
  * Space-saving card perfect for compact scrolling lists or rails. */
 export function ProductCardCompact({ product }: { product: Product }) {
   const router = useRouter();
-  const { cart, setQty, showToast } = useCart();
-  const qty = cart[product.id] || 0;
+  const { cart } = useCart();
+  const qty = familyQty(cart, product);
   const { isWishlisted, toggleWishlist } = useWishlist(product.id);
 
   const isAvailable = product.stock && product.inventory > 0;
-
-  const handleQtyChange = (q: number) => {
-    if (q > product.inventory) {
-      showToast(`Only ${product.inventory} units of ${product.name} are available.`);
-      return;
-    }
-    setQty(product.id, q);
-  };
 
   return (
     <article className="w-full h-full bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col justify-between p-2.5 relative group" onClick={() => router.push(routes.product(product.slug))}>
@@ -221,7 +271,7 @@ export function ProductCardCompact({ product }: { product: Product }) {
               Out
             </button>
           ) : (
-            <QtyStepper qty={qty} size="sm" onChange={handleQtyChange} />
+            <AddOrVariant product={product} size="sm" />
           )}
         </div>
       </div>
@@ -233,19 +283,9 @@ export function ProductCardCompact({ product }: { product: Product }) {
  * Card highlighting high discount offers, best for promo carousels and flash sales. */
 export function ProductCardOffer({ product }: { product: Product }) {
   const router = useRouter();
-  const { cart, setQty, showToast } = useCart();
-  const qty = cart[product.id] || 0;
   const { isWishlisted, toggleWishlist } = useWishlist(product.id);
 
   const isAvailable = product.stock && product.inventory > 0;
-
-  const handleQtyChange = (q: number) => {
-    if (q > product.inventory) {
-      showToast(`Only ${product.inventory} units of ${product.name} are available.`);
-      return;
-    }
-    setQty(product.id, q);
-  };
 
   const discountPercent = product.mrp ? Math.round((1 - product.price / product.mrp) * 100) : 0;
 
@@ -310,7 +350,7 @@ export function ProductCardOffer({ product }: { product: Product }) {
               Unavailable
             </button>
           ) : (
-            <QtyStepper qty={qty} size="sm" onChange={handleQtyChange} />
+            <AddOrVariant product={product} size="sm" />
           )}
         </div>
       </div>
