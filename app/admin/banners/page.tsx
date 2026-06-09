@@ -17,6 +17,17 @@ import type { AdminBanner, AdminCategory, AdminProduct } from '@/lib/admin/types
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '@/lib/firebase/client';
 import { useCart } from '@/store/cart';
+import { Icon } from '@/components/ui/Icon';
+
+/** Error-styled content for the global toast (red icon over the dark toast pill). */
+function errorToast(message: string) {
+  return (
+    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <Icon name="info" size={16} style={{ color: '#f87171' }} />
+      {message}
+    </span>
+  );
+}
 
 function ImageUploadField({
   label,
@@ -65,12 +76,12 @@ function ImageUploadField({
       <span className="text-sm font-medium text-neutral-700">{label}</span>
       <div className="flex gap-2">
         <AdminInput
-          placeholder="Paste URL or choose a file..."
+          placeholder="Paste URL or choose a file…"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
-        <label className="flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-neutral-300 px-3.5 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-100">
-          {uploading ? 'Uploading...' : 'Upload'}
+        <label className="flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-neutral-300 px-3.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100">
+          {uploading ? 'Uploading…' : 'Upload'}
           <input
             type="file"
             accept="image/*"
@@ -82,13 +93,13 @@ function ImageUploadField({
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}
       {value && (
-        <div className="flex items-center gap-2 mt-1">
+        <div className="mt-1 flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value} alt="Preview" className="h-12 w-24 rounded object-cover border border-neutral-200" />
+          <img src={value} alt="Preview" className="h-12 w-24 rounded border border-neutral-200 object-cover" />
           <button
             type="button"
             onClick={() => onChange('')}
-            className="text-xs text-red-600 hover:underline font-medium"
+            className="text-xs font-medium text-neutral-500 hover:text-neutral-800"
           >
             Clear
           </button>
@@ -96,6 +107,23 @@ function ImageUploadField({
       )}
     </div>
   );
+}
+
+/** Neutral placeholder shown when a banner has no thumbnail. */
+function Thumb({ src }: { src?: string }) {
+  if (!src) {
+    return (
+      <div className="flex h-10 w-16 shrink-0 items-center justify-center rounded border border-dashed border-neutral-300 bg-neutral-50 text-neutral-300">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="m21 15-5-5L5 21" />
+        </svg>
+      </div>
+    );
+  }
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt="" className="h-10 w-16 shrink-0 rounded border border-neutral-200 object-cover" />;
 }
 
 type Draft = {
@@ -204,11 +232,10 @@ function BannersManager() {
   const save = async () => {
     if (!draft) return;
     if (!draft.title.trim() || !draft.imageUrlDesktop.trim()) {
-      setError('Banner Title and Desktop Image URL are required.');
+      showToast(errorToast('Banner Title and Desktop Image URL are required.'));
       return;
     }
     setSaving(true);
-    setError('');
 
     const payload: Omit<AdminBanner, 'id'> = {
       title: draft.title.trim(),
@@ -240,7 +267,7 @@ function BannersManager() {
       close();
       await reload();
     } catch {
-      setError('Saving banner failed.');
+      showToast(errorToast('Saving banner failed.'));
     } finally {
       setSaving(false);
     }
@@ -253,7 +280,7 @@ function BannersManager() {
       showToast('Banner deleted');
       await reload();
     } catch {
-      setError('Delete banner failed.');
+      showToast(errorToast('Delete banner failed.'));
     }
   };
 
@@ -264,7 +291,7 @@ function BannersManager() {
       await reload();
       showToast('Banner order updated');
     } catch {
-      setError('Failed to update banner order');
+      showToast(errorToast('Failed to update banner order'));
     }
   };
 
@@ -283,8 +310,6 @@ function BannersManager() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-sm text-red-600 font-bold">{error}</p>}
-
       {!loading && items.length > 0 && (
         <FilterBar>
           <AdminInput
@@ -325,21 +350,25 @@ function BannersManager() {
 
       {loading ? (
         <p className="text-sm text-neutral-500">Loading Banners…</p>
+      ) : error ? (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
       ) : items.length === 0 ? (
         <p className="text-sm text-neutral-500">No banners defined yet. Click &quot;Add Banner&quot; above to create one.</p>
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No banners matching criteria.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
           <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+            <thead className="border-b border-neutral-200 bg-neutral-50 text-left text-xs font-medium uppercase tracking-wide text-neutral-500">
               <tr>
-                <SortTh label="Banner Details" sortKey="title" current={sort} onToggle={toggle} />
+                <SortTh label="Banner" sortKey="title" current={sort} onToggle={toggle} />
                 <SortTh label="Placement" sortKey="type" current={sort} onToggle={toggle} />
                 <SortTh label="Priority" sortKey="priority" current={sort} onToggle={toggle} />
-                <SortTh label="Active" sortKey="active" current={sort} onToggle={toggle} />
-                <th className="px-4 py-2.5">Performance (CTR)</th>
-                <th className="px-4 py-2.5" />
+                <SortTh label="Status" sortKey="active" current={sort} onToggle={toggle} />
+                <th className="px-4 py-3 font-medium">Performance</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
@@ -347,46 +376,64 @@ function BannersManager() {
                 const views = b.views ?? 0;
                 const clicks = b.clicks ?? 0;
                 const ctr = views > 0 ? ((clicks / views) * 100).toFixed(1) + '%' : '0.0%';
-                
+
                 return (
-                  <tr key={b.id} className="border-t border-neutral-100 hover:bg-neutral-50/50">
+                  <tr key={b.id} className="border-t border-neutral-100 transition-colors hover:bg-neutral-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={b.imageUrlDesktop} alt="" className="h-10 w-16 object-cover rounded border border-neutral-200" />
-                        <div>
-                          <div className="font-extrabold text-neutral-900 leading-tight">{b.title}</div>
-                          {b.subtitle && <div className="text-[10px] text-neutral-400 font-semibold mt-0.5">{b.subtitle}</div>}
-                          <div className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded w-max mt-1">
-                            Links: {b.targetType} ({b.targetValue || 'none'})
+                        <Thumb src={b.imageUrlDesktop} />
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-neutral-900">
+                            {b.title || <span className="italic text-neutral-400">Untitled</span>}
+                          </div>
+                          {b.subtitle && (
+                            <div className="mt-0.5 truncate text-xs text-neutral-500">{b.subtitle}</div>
+                          )}
+                          <div className="mt-1 text-xs text-neutral-400">
+                            Links to {b.targetType} · {b.targetValue || 'none'}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 capitalize font-bold text-neutral-600 text-xs">{b.type.replace('_', ' ')}</td>
+                    <td className="px-4 py-3 capitalize text-neutral-600">
+                      {(b.type ?? '').replace(/_/g, ' ') || '—'}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold">{b.priority ?? 0}</span>
-                        <div className="flex flex-col gap-0.5">
-                          <button onClick={() => adjustPriority(b, 1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1 rounded">▲</button>
-                          <button onClick={() => adjustPriority(b, -1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1 rounded">▼</button>
+                        <span className="tabular-nums font-medium text-neutral-900">{b.priority ?? 0}</span>
+                        <div className="flex flex-col">
+                          <button
+                            onClick={() => adjustPriority(b, 1)}
+                            aria-label="Increase priority"
+                            className="flex h-3.5 w-4 items-center justify-center rounded-t border border-neutral-200 text-[8px] leading-none text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                          >
+                            ▲
+                          </button>
+                          <button
+                            onClick={() => adjustPriority(b, -1)}
+                            aria-label="Decrease priority"
+                            className="flex h-3.5 w-4 items-center justify-center rounded-b border border-t-0 border-neutral-200 text-[8px] leading-none text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                          >
+                            ▼
+                          </button>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
-                        b.active ? 'bg-emerald-100 text-emerald-800' : 'bg-neutral-100 text-neutral-500'
-                      }`}>
-                        {b.active ? 'Active' : 'Disabled'}
+                    <td className="px-4 py-3">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 px-2 py-0.5 text-xs font-medium text-neutral-600">
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${b.active ? 'bg-emerald-500' : 'bg-neutral-300'}`}
+                        />
+                        {b.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs">
-                      <div className="font-bold text-neutral-800">
+                    <td className="px-4 py-3">
+                      <div className="text-neutral-700">
                         {clicks} clicks / {views} views
                       </div>
-                      <div className="text-[10px] text-neutral-400 font-semibold mt-0.5">CTR: {ctr}</div>
+                      <div className="mt-0.5 text-xs text-neutral-400">CTR {ctr}</div>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       <button
                         onClick={() => {
                           setEditing(b);
@@ -407,13 +454,13 @@ function BannersManager() {
                             endDate: b.endDate ?? '',
                           });
                         }}
-                        className="mr-3 font-extrabold text-emerald-700 hover:underline"
+                        className="mr-4 font-medium text-neutral-700 hover:text-neutral-900 hover:underline"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => del(b)}
-                        className="font-extrabold text-red-600 hover:underline"
+                        className="font-medium text-neutral-500 hover:text-red-600 hover:underline"
                       >
                         Delete
                       </button>
@@ -427,7 +474,7 @@ function BannersManager() {
       )}
 
       {draft && (
-        <AdminModal title={editing ? 'Edit Banner' : 'New Banner'} onClose={close}>
+        <AdminModal title={editing ? 'Edit Banner' : 'New Banner'} onClose={close} size="2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-2 no-scrollbar">
             
             {/* Left side settings */}
@@ -517,8 +564,10 @@ function BannersManager() {
               </div>
 
               {/* Target linking fields */}
-              <div className="p-4 rounded-xl border border-neutral-100 bg-neutral-50/50 space-y-4">
-                <div className="text-xs font-bold text-neutral-800">Banner Action Target (Redirection)</div>
+              <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+                <div className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Action Target (Redirection)
+                </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <Labeled label="Action Target">
@@ -590,8 +639,10 @@ function BannersManager() {
             <div className="space-y-6">
               
               {/* Scheduling Banner */}
-              <div className="p-4 rounded-xl border border-neutral-100 bg-neutral-50/50 space-y-4">
-                <div className="text-xs font-bold text-neutral-800">Publishing Schedule</div>
+              <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+                <div className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Publishing Schedule
+                </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <Labeled label="Start Date (Optional)">
@@ -612,36 +663,38 @@ function BannersManager() {
               </div>
 
               {/* LIVE MOCKUP PREVIEW */}
-              <div className="space-y-3">
-                <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block">Live Visual Preview</span>
-                <div 
-                  className="w-full h-44 rounded-2xl p-6 flex flex-col justify-between text-left overflow-hidden relative shadow-md"
+              <div className="space-y-2">
+                <span className="block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  Live Preview
+                </span>
+                <div
+                  className="relative flex h-44 w-full flex-col justify-between overflow-hidden rounded-xl border border-neutral-200 p-6 text-left"
                   style={{ backgroundColor: draft.bgColor || '#10b981' }}
                 >
                   {draft.imageUrlDesktop && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img 
-                      src={draft.imageUrlDesktop} 
-                      alt="" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-75 pointer-events-none transition-opacity duration-300" 
+                    <img
+                      src={draft.imageUrlDesktop}
+                      alt=""
+                      className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-80"
                     />
                   )}
-                  
-                  <div className="z-10 bg-white/10 backdrop-blur-xs p-3 rounded-xl max-w-[70%] border border-white/10 shadow-sm">
+
+                  <div className="z-10 max-w-[75%]">
                     {draft.subtitle && (
-                      <span className="text-[10px] uppercase font-black tracking-widest text-white/90 block leading-none mb-1">
+                      <span className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-white/85">
                         {draft.subtitle}
                       </span>
                     )}
-                    <h3 className="font-black text-lg sm:text-xl uppercase text-white leading-tight">
-                      {draft.title || 'BANNER TITLE'}
+                    <h3 className="text-xl font-semibold leading-tight text-white drop-shadow-sm">
+                      {draft.title || 'Banner title'}
                     </h3>
                   </div>
 
-                  <button 
+                  <button
                     type="button"
-                    className="z-10 bg-amber-400 text-neutral-950 font-black text-xs px-4 py-2 rounded-full w-max shadow transition-transform hover:scale-105"
-                    style={{ color: draft.ctaColor || '#000000' }}
+                    className="z-10 w-max rounded-md bg-white px-4 py-2 text-xs font-semibold text-neutral-900 shadow-sm"
+                    style={{ color: draft.ctaColor && draft.ctaColor !== '#ffffff' ? draft.ctaColor : undefined }}
                   >
                     {draft.ctaText || 'Shop Now'}
                   </button>
@@ -656,16 +709,18 @@ function BannersManager() {
               />
 
               {editing && (
-                <div className="p-4 rounded-xl border border-neutral-100 bg-neutral-50/50 space-y-1">
-                  <div className="text-xs font-bold text-neutral-500">Banner Performance Metrics</div>
-                  <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                    Performance Metrics
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">Total Views</span>
-                      <div className="text-lg font-black text-neutral-900">{editing.views ?? 0}</div>
+                      <span className="text-xs text-neutral-500">Total Views</span>
+                      <div className="text-lg font-semibold tabular-nums text-neutral-900">{editing.views ?? 0}</div>
                     </div>
                     <div>
-                      <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">Total Clicks</span>
-                      <div className="text-lg font-black text-neutral-900">{editing.clicks ?? 0}</div>
+                      <span className="text-xs text-neutral-500">Total Clicks</span>
+                      <div className="text-lg font-semibold tabular-nums text-neutral-900">{editing.clicks ?? 0}</div>
                     </div>
                   </div>
                 </div>
@@ -675,7 +730,7 @@ function BannersManager() {
 
           </div>
 
-          <div className="mt-5 flex justify-end gap-2 border-t pt-4">
+          <div className="mt-5 flex justify-end gap-2 border-t border-neutral-200 pt-4">
             <AdminButton variant="ghost" onClick={close}>
               Cancel
             </AdminButton>
