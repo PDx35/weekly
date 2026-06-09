@@ -16,7 +16,8 @@ export function MobileTop() {
   const router = useRouter();
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  const { addresses, selectedAddr } = useAuth();
+  const { user, addresses, selectedAddr } = useAuth();
+
   const { pincode, detect, locationName } = useServiceability();
   const activeAddr = addresses.find((a) => a.id === selectedAddr) || addresses[0];
 
@@ -56,6 +57,7 @@ export function MobileTop() {
         ? `${locationName} (${pincode})` 
         : locationName || pincode || 'Location');
 
+
   return (
     <div className="mtop flex flex-col p-0! bg-white">
       <div className="px-4 pt-3 pb-2 flex flex-col gap-2">
@@ -65,6 +67,12 @@ export function MobileTop() {
             <b>{locationLabel}</b>
             <Icon name="chevD" size={13} />
           </button>
+          <Link
+            href={user ? routes.account() : routes.auth()}
+            className="flex h-9 items-center justify-center rounded-full bg-neutral-900 px-4 text-xs font-semibold text-white hover:bg-neutral-800 transition-colors"
+          >
+            {user ? user.name.split(' ')[0] : 'Sign In'}
+          </Link>
         </div>
         <div className="mtop-search">
           <SearchBox />
