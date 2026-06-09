@@ -43,7 +43,7 @@ export function MobileNav() {
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   const isProductPage = pathname.startsWith('/product/');
 
-  const isCartPage = pathname === routes.cart();
+  const isCartPage = pathname === routes.cart() || pathname === routes.checkout();
 
   let activeItem = activeVariant;
   if (!activeItem && isProductPage) {
