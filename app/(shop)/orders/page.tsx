@@ -13,7 +13,7 @@ import { rupee } from '@/components/ui/Price';
 import { catOf, find } from '@/lib/data';
 import { fetchUserOrders, timeAgo } from '@/lib/orders';
 import { routes } from '@/lib/routes';
-import type { Order } from '@/lib/types';
+import type { Order, Product } from '@/lib/types';
 import { useAuth } from '@/store/auth';
 import { useCart } from '@/store/cart';
 
@@ -40,6 +40,16 @@ function OrdersContent() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [invoice, setInvoice] = useState<Order | null>(null);
+  const [liveProducts, setLiveProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((data: Product[]) => {
+        if (data && data.length) setLiveProducts(data);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -106,10 +116,19 @@ function OrdersContent() {
               </div>
               <div className="order-thumbs">
                 {o.items.slice(0, 5).map((it) => {
-                  const product = find(it.productId);
+                  let product = find(it.productId) || liveProducts.find((p) => p.id === it.productId);
+                  if (!product && liveProducts.length > 0) {
+                    const parent = liveProducts.find((p) =>
+                      p.variants?.some((v) => v.id === it.productId)
+                    );
+                    if (parent) product = parent;
+                  }
+
                   return (
                     <Img
                       key={it.productId}
+                      product={product}
+                      src={it.imageUrl || product?.images?.[0]}
                       cat={product ? catOf(product.cat) : undefined}
                       ratio="1 / 1"
                       radius="10px"

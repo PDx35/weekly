@@ -525,19 +525,19 @@ export default function HomePage() {
   // Recommended products (Style 7)
   const recommendedProducts = useMemo(() => {
     const list = products.filter((p) => p.rating >= 4.4);
-    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
+    return list.length >= 4 ? list : Array.from(new Set([...list, ...products])).slice(0, 8);
   }, [products]);
 
   // Frequently Bought (Style 1: dynamic simulation using ratings and presence in categories)
   const frequentlyBought = useMemo(() => {
     const list = products.filter((p) => p.rating >= 4.6);
-    return list.length >= 4 ? list : [...list, ...products].reverse().slice(0, 8);
+    return list.length >= 4 ? list : Array.from(new Set([...list, ...products.slice().reverse()])).slice(0, 8);
   }, [products]);
 
   // Trending Near You (Style 3: simulated area-popularity)
   const trendingNear = useMemo(() => {
     const list = [...products].reverse().filter((p) => p.rating >= 4.3);
-    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
+    return list.length >= 4 ? list : Array.from(new Set([...list, ...products])).slice(0, 8);
   }, [products]);
 
   // Daily Essentials (Everyday groceries)
@@ -548,7 +548,7 @@ export default function HomePage() {
   // Top Rated (Style 2: Premium 5-star ratings or close)
   const topRated = useMemo(() => {
     const list = products.filter((p) => p.rating >= 4.8);
-    return list.length >= 4 ? list : [...list, ...products].slice(0, 8);
+    return list.length >= 4 ? list : Array.from(new Set([...list, ...products])).slice(0, 8);
   }, [products]);
 
   // Budget Deals (Deepest discounts simulated by mrp - price diff)

@@ -34,6 +34,7 @@ interface CreateOrderResponse {
   keyId?: string;
   freshmartOrderId?: string;
   error?: string;
+  isMock?: boolean;
 }
 
 function CheckoutContent() {
@@ -169,6 +170,35 @@ function CheckoutContent() {
         setPlacing(false);
         return;
       }
+      
+      // Handle mock order fallback for local development
+      if (data.isMock && user) {
+        const mockOrder = {
+          id: data.orderId || data.freshmartOrderId || 'MOCK' + Date.now(),
+          uid: user.uid,
+          items: cartItems.map(c => ({
+             productId: c.product.id,
+             name: c.product.name,
+             unit: c.product.unit,
+             price: c.product.price,
+             qty: c.qty,
+             imageUrl: c.product.images?.[0]
+          })),
+          address: addr,
+          payment: { method, label: payMeta.label, status: method === 'cod' ? 'pending_cod' : 'created' },
+          totals: bill,
+          slot,
+          status: 'confirmed',
+          statusHistory: [{ status: 'confirmed', at: Date.now() }],
+          placedAt: Date.now(),
+          eta: 32,
+        };
+        try {
+          const existing = JSON.parse(localStorage.getItem('freshmart_mock_orders') || '[]');
+          localStorage.setItem('freshmart_mock_orders', JSON.stringify([mockOrder, ...existing]));
+        } catch {}
+      }
+
       if (data.online) {
         await payOnline(data, token);
         return;

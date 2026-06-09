@@ -106,6 +106,7 @@ export interface OrderItem {
   unit: string;
   price: number;
   qty: number;
+  imageUrl?: string;
 }
 
 /** The computed bill for a cart/order. */

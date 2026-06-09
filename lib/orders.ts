@@ -38,8 +38,21 @@ export function stageFromStatus(status: OrderStatus): number {
 
 /** Fetch the signed-in user's orders, newest first. */
 export async function fetchUserOrders(uid: string): Promise<Order[]> {
-  // Filter by uid only (no composite index needed); sort client-side.
-  const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
-  const orders = snap.docs.map((d) => d.data() as Order);
+  const orders: Order[] = [];
+  try {
+    const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
+    orders.push(...snap.docs.map((d) => d.data() as Order));
+  } catch (err) {
+    console.warn('Failed to fetch orders from Firestore:', err);
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      const mockOrders = JSON.parse(localStorage.getItem('freshmart_mock_orders') || '[]');
+      const userMocks = mockOrders.filter((o: Order) => o.uid === uid);
+      orders.push(...userMocks);
+    } catch {}
+  }
+
   return orders.sort((a, b) => b.placedAt - a.placedAt);
 }

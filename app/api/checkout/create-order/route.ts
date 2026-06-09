@@ -43,10 +43,23 @@ function newOrderId(): string {
 
 export async function POST(request: Request) {
   if (!isAdminConfigured()) {
-    return NextResponse.json(
-      { error: 'Order placement is not configured yet (Firebase Admin service account missing).' },
-      { status: 503 },
-    );
+    console.warn('Firebase Admin is not configured. Using mock order placement.');
+    const body = (await request.json().catch(() => ({}))) as CreateOrderBody;
+    const method = body.method ?? 'cod';
+    const orderId = newOrderId();
+
+    if (method !== 'cod') {
+      return NextResponse.json({
+        online: true,
+        razorpayOrderId: 'rzp_mock_' + orderId,
+        amount: body.clientTotal || 0,
+        keyId: 'mock_key',
+        freshmartOrderId: orderId,
+        isMock: true,
+      });
+    }
+
+    return NextResponse.json({ orderId, isMock: true });
   }
 
   // 1. Authenticate the caller.
@@ -92,6 +105,7 @@ export async function POST(request: Request) {
       unit: product.unit,
       price: product.price,
       qty,
+      imageUrl: product.images?.[0],
     });
   }
 

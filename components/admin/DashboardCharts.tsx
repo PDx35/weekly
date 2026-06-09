@@ -111,8 +111,8 @@ const composedConfig = {
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
-      <h3 className="mb-3 text-sm font-semibold text-neutral-900">{title}</h3>
+    <div className="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <h3 className="text-base font-semibold text-neutral-900">{title}</h3>
       {children}
     </div>
   );
@@ -175,8 +175,8 @@ export function DashboardCharts({ orders, products, categories }: Props) {
   }, [orders, products, categories, range]);
 
   return (
-    <>
-      <div className="mb-3 flex items-center justify-end">
+    <div className="flex flex-col w-full h-full gap-4">
+      <div className="flex items-center justify-end">
         <AdminSelect
           value={range}
           onChange={(e) => setRange(e.target.value as Range)}
@@ -189,10 +189,10 @@ export function DashboardCharts({ orders, products, categories }: Props) {
         </AdminSelect>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <ChartCard title={`Orders & revenue · ${RANGE_LABEL[range]}`}>
-            <EvilComposedChart config={composedConfig} data={series} className="h-72 w-full">
+            <EvilComposedChart config={composedConfig} data={series} className="h-[300px] w-full mt-2">
               <Grid />
               <XAxis dataKey="period" />
               <YAxis yAxisId="left" allowDecimals={false} width={32} />
@@ -213,7 +213,8 @@ export function DashboardCharts({ orders, products, categories }: Props) {
           </ChartCard>
         </div>
 
-        <ChartCard title={`Category sales · ${RANGE_LABEL[range]}`}>
+        <div>
+          <ChartCard title={`Category sales · ${RANGE_LABEL[range]}`}>
           {categoryData.length === 0 ? (
             <div className="flex h-72 items-center justify-center text-sm text-neutral-500">
               No category sales in this range yet.
@@ -231,8 +232,9 @@ export function DashboardCharts({ orders, products, categories }: Props) {
               <PieLegend />
             </EvilPieChart>
           )}
-        </ChartCard>
+          </ChartCard>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
