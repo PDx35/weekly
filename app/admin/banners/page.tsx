@@ -14,8 +14,6 @@ import {
 } from '@/components/admin/ui';
 import { createDoc, listAll, removeDoc, updateDocFields } from '@/lib/admin/db';
 import type { AdminBanner, AdminCategory, AdminProduct } from '@/lib/admin/types';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '@/lib/firebase/client';
 import { useCart } from '@/store/cart';
 
 function ImageUploadField({
@@ -48,13 +46,32 @@ function ImageUploadField({
       const fileExt = file.name.split('.').pop() || 'png';
       const safePrefix = pathPrefix.trim().replace(/[^a-zA-Z0-9_-]/g, '_') || 'banner';
       const fileName = `${safePrefix}-${Date.now()}.${fileExt}`;
-      const storageRef = ref(storage, `images/banners/${fileName}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadUrl = await getDownloadURL(snapshot.ref);
-      onChange(downloadUrl);
+
+      // 1. Get presigned URL
+      const res = await fetch('/api/admin/s3-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: fileName, contentType: file.type }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to get presigned URL');
+      const { url, publicUrl } = await res.json();
+
+      // 2. Upload directly to S3
+      const uploadRes = await fetch(url, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      });
+
+      if (!uploadRes.ok) throw new Error('Failed to upload to S3');
+
+      onChange(publicUrl);
     } catch (err: unknown) {
       console.error('Upload failed:', err);
-      setError('Upload failed. Ensure Storage rules allow writes.');
+      setError('Upload failed. Check AWS credentials and S3 CORS policy.');
     } finally {
       setUploading(false);
     }
