@@ -134,7 +134,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <main className="flex-1 p-5 md:p-10">{children}</main>
+          <main className="flex-1 relative overflow-hidden">
+            <div className="absolute top-0 -left-40 w-96 h-96 bg-emerald-400/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none" />
+            <div className="absolute top-0 -right-40 w-96 h-96 bg-blue-400/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none" />
+            <div className="absolute -bottom-40 left-20 w-96 h-96 bg-indigo-400/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000 pointer-events-none" />
+            <div className="relative z-10 p-5 md:p-10">{children}</div>
+          </main>
         </div>
       </div>
     </AdminGuard>

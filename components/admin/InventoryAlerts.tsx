@@ -35,7 +35,7 @@ export function InventoryAlerts({ products, categories }: InventoryAlertsProps) 
     });
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-2xl border border-neutral-200/60 bg-white/60 p-5 shadow-sm backdrop-blur-xl transition-all hover:shadow-md">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-neutral-900">Inventory Alerts</h3>
         <span className="rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-semibold text-rose-700">
@@ -52,51 +52,43 @@ export function InventoryAlerts({ products, categories }: InventoryAlertsProps) 
           <p className="text-xs text-neutral-500">All items are sufficiently stocked.</p>
         </div>
       ) : (
-        <div className="max-h-[300px] overflow-y-auto pr-1">
-          <div className="divide-y divide-neutral-100">
-            {alerts.slice(0, 15).map((p) => (
-              <div key={p.id} className="group py-2.5 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`size-2 shrink-0 rounded-full ${
-                        p.isOutOfStock
-                          ? 'animate-pulse bg-rose-600'
-                          : 'bg-amber-500'
-                      }`}
-                      aria-hidden="true"
-                    />
-                    <h4 className="truncate text-sm font-medium text-neutral-900 group-hover:text-emerald-700 transition-colors">
+        <div className="max-h-[300px] overflow-y-auto pr-2 relative mt-4 no-scrollbar">
+          <div className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-neutral-200/60 via-neutral-200/60 to-transparent" />
+          <div className="flex flex-col gap-5">
+            {alerts.slice(0, 15).map((p, idx) => (
+              <div key={p.id} className="group relative flex items-start gap-4 p-2 -mx-2 rounded-xl transition-all hover:bg-white/40 hover:shadow-[0_2px_10px_-2px_rgba(0,0,0,0.02)]">
+                <div className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-neutral-200 z-10 shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:ring-emerald-200">
+                  {p.isOutOfStock ? (
+                    <div className="size-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse" />
+                  ) : (
+                    <div className="size-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-center pt-1.5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="truncate text-sm font-semibold text-neutral-900 group-hover:text-emerald-700 transition-colors">
                       {p.name}
                     </h4>
+                    <span className="text-[10px] font-medium text-neutral-400 whitespace-nowrap">
+                      {p.isOutOfStock ? '0 left' : `${p.stock} left`}
+                    </span>
                   </div>
-                  <p className="mt-0.5 pl-4 text-xs text-neutral-500 truncate">
-                    {categoryMap.get(p.category) ?? p.category} · Threshold: {p.threshold}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0">
-                  <span
-                    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-                      p.isOutOfStock
-                        ? 'bg-rose-50 text-rose-700'
-                        : 'bg-amber-50 text-amber-800'
-                    }`}
-                  >
-                    {p.isOutOfStock ? 'Out of stock' : `${p.stock} left`}
-                  </span>
-
-                  <Link
-                    href={`/admin/products?search=${encodeURIComponent(p.name)}`}
-                    className="text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
-                  >
-                    Restock
-                  </Link>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-neutral-500 truncate">
+                      {categoryMap.get(p.category) ?? p.category}
+                    </p>
+                    <Link
+                      href={`/admin/products?search=${encodeURIComponent(p.name)}`}
+                      className="text-[10px] font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                    >
+                      Update
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
             {alerts.length > 15 && (
-              <div className="pt-2.5 text-center">
+              <div className="pt-2 text-center text-xs font-medium text-neutral-500 relative z-10 bg-white/60 py-2 rounded-md backdrop-blur-md">
                 <Link
                   href="/admin/products"
                   className="text-xs font-semibold text-emerald-700 hover:underline"

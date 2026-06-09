@@ -92,5 +92,5 @@ export function SortTh({ label, sortKey, current, onToggle, className = '' }: So
 
 /** Simple flex wrapper for filter controls above a table. */
 export function FilterBar({ children }: { children: React.ReactNode }) {
-  return <div className="mb-4 flex flex-wrap items-center gap-3">{children}</div>;
+  return <div className="mb-4 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">{children}</div>;
 }

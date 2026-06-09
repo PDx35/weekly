@@ -211,42 +211,46 @@ function Categories() {
 
   return (
     <>
-      <AdminPageHeader
-        title="Categories"
-        action={
-          <AdminButton
-            onClick={() => {
-              setEditing(null);
-              setDraft(emptyDraft());
-            }}
-          >
-            + Add category
-          </AdminButton>
-        }
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+        <AdminPageHeader
+          title="Categories"
+          action={
+            <AdminButton
+              onClick={() => {
+                setEditing(null);
+                setDraft(emptyDraft());
+              }}
+            >
+              + Add category
+            </AdminButton>
+          }
+        />
+      </div>
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {!loading && items.length > 0 && (
-        <FilterBar>
-          <AdminInput
-            placeholder="Search name or id…"
-            value={searchQ}
-            onChange={(e) => setSearchQ(e.target.value)}
-            className="!w-52"
-          />
-          <AdminSelect
-            value={filterActive}
-            onChange={(e) => setFilterActive(e.target.value as 'all' | 'yes' | 'no')}
-            className="!w-36"
-          >
-            <option value="all">Status</option>
-            <option value="yes">Active</option>
-            <option value="no">Inactive</option>
-          </AdminSelect>
-          <span className="text-xs text-neutral-400">
-            {sorted.length} of {items.length}
-          </span>
-        </FilterBar>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <FilterBar>
+            <AdminInput
+              placeholder="Search name or id…"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              className="w-full sm:!w-52"
+            />
+            <AdminSelect
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value as 'all' | 'yes' | 'no')}
+              className="w-full sm:!w-36"
+            >
+              <option value="all">Status</option>
+              <option value="yes">Active</option>
+              <option value="no">Inactive</option>
+            </AdminSelect>
+            <span className="text-xs text-neutral-400">
+              {sorted.length} of {items.length}
+            </span>
+          </FilterBar>
+        </div>
       )}
 
       {loading ? (
@@ -256,25 +260,45 @@ function Categories() {
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No categories match filters.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200/60 bg-white/60 shadow-sm backdrop-blur-xl p-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+          <table className="w-full text-sm text-left">
+            <thead className="border-b border-neutral-200 bg-white/50 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               <tr>
                 <SortTh label="Name" sortKey="name" current={sort} onToggle={toggle} />
                 <SortTh label="Id" sortKey="id" current={sort} onToggle={toggle} />
                 <SortTh label="Order" sortKey="order" current={sort} onToggle={toggle} />
                 <SortTh label="Active" sortKey="active" current={sort} onToggle={toggle} />
-                <th className="px-4 py-2.5" />
+                <th className="px-6 py-4" />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-neutral-100">
               {sorted.map((c) => (
-                <tr key={c.id} className="border-t border-neutral-100">
-                  <td className="px-4 py-2.5 font-medium">{c.name}</td>
-                  <td className="px-4 py-2.5 text-neutral-500">{c.id}</td>
-                  <td className="px-4 py-2.5">{c.sortOrder ?? 0}</td>
-                  <td className="px-4 py-2.5">{c.active ? 'Yes' : 'No'}</td>
-                  <td className="px-4 py-2.5 text-right">
+                <tr key={c.id} className="group transition-all duration-200 hover:bg-neutral-50/80 hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative z-0 hover:z-10 cursor-pointer rounded-xl">
+                  <td className="px-6 py-4 font-semibold text-neutral-900 transition-colors group-hover:text-emerald-700">
+                    <div className="flex items-center gap-3">
+                      {c.homeIconUrl ? (
+                        <img src={c.homeIconUrl} alt="" className="size-8 rounded-lg border border-neutral-200 object-cover" />
+                      ) : (
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 border border-neutral-200">
+                          <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        </div>
+                      )}
+                      {c.name}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-neutral-500 font-mono text-xs">{c.id}</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center justify-center min-w-[24px] h-6 rounded-md bg-neutral-100 text-xs font-medium text-neutral-600">
+                      {c.sortOrder ?? 0}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="relative flex items-center justify-center size-6 rounded-full bg-neutral-50 border border-neutral-200">
+                      <span className={`absolute inline-flex h-full w-full rounded-full opacity-20 ${c.active !== false ? 'bg-emerald-500' : 'bg-neutral-500'}`} />
+                      <span className={`relative size-2 rounded-full ${c.active !== false ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right opacity-0 transition-opacity group-hover:opacity-100">
                     <button
                       onClick={() => {
                         setEditing(c);
@@ -287,13 +311,13 @@ function Categories() {
                           browseIconUrl: c.browseIconUrl ?? '',
                         });
                       }}
-                      className="mr-3 font-medium text-emerald-700 hover:underline"
+                      className="mr-3 font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => del(c)}
-                      className="font-medium text-red-600 hover:underline"
+                      className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                     >
                       Delete
                     </button>

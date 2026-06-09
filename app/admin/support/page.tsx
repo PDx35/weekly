@@ -78,38 +78,42 @@ function Support() {
 
   return (
     <>
-      <AdminPageHeader title="Support tickets" />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+        <AdminPageHeader title="Support tickets" />
+      </div>
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {!loading && items.length > 0 && (
-        <FilterBar>
-          <AdminInput
-            placeholder="Search topic, ticket, order…"
-            value={searchQ}
-            onChange={(e) => setSearchQ(e.target.value)}
-            className="!w-60"
-          />
-          <AdminSelect
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as 'all' | 'open' | 'resolved')}
-            className="!w-36"
-          >
-            <option value="all">All tickets</option>
-            <option value="open">Open</option>
-            <option value="resolved">Resolved</option>
-          </AdminSelect>
-          <AdminSelect
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'status' | 'topic')}
-            className="!w-36"
-          >
-            <option value="status">Sort: Status</option>
-            <option value="topic">Sort: Topic</option>
-          </AdminSelect>
-          <span className="text-xs text-neutral-400">
-            {sorted.length} of {items.length}
-          </span>
-        </FilterBar>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <FilterBar>
+            <AdminInput
+              placeholder="Search topic, ticket, order…"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              className="w-full sm:!w-60"
+            />
+            <AdminSelect
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'open' | 'resolved')}
+              className="w-full sm:!w-36"
+            >
+              <option value="all">All tickets</option>
+              <option value="open">Open</option>
+              <option value="resolved">Resolved</option>
+            </AdminSelect>
+            <AdminSelect
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'status' | 'topic')}
+              className="w-full sm:!w-36"
+            >
+              <option value="status">Sort: Status</option>
+              <option value="topic">Sort: Topic</option>
+            </AdminSelect>
+            <span className="text-xs text-neutral-400">
+              {sorted.length} of {items.length}
+            </span>
+          </FilterBar>
+        </div>
       )}
 
       {loading ? (
@@ -119,22 +123,22 @@ function Support() {
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No tickets match filters.</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
           {sorted.map((t) => (
-            <div key={t.id} className="rounded-xl border border-neutral-200 bg-white p-4">
-              <div className="mb-1.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-neutral-900">{t.topic || 'Request'}</span>
+            <div key={t.id} className="rounded-2xl border border-neutral-200/60 bg-white/60 p-5 shadow-sm backdrop-blur-xl transition-all duration-200 hover:bg-neutral-50/80 hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-neutral-900">{t.topic || 'Request'}</span>
                   <span
                     className={
                       t.status === 'resolved'
-                        ? 'rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-500'
-                        : 'rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700'
+                        ? 'rounded bg-neutral-100 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-neutral-500'
+                        : 'rounded bg-amber-100/80 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-800'
                     }
                   >
                     {t.status ?? 'open'}
                   </span>
-                  {t.ticketId && <span className="text-xs text-neutral-400">#{t.ticketId}</span>}
+                  {t.ticketId && <span className="text-xs font-mono font-medium text-neutral-400">#{t.ticketId}</span>}
                 </div>
                 {t.status === 'resolved' ? (
                   <AdminButton
@@ -153,10 +157,13 @@ function Support() {
                   </AdminButton>
                 )}
               </div>
-              <p className="text-sm text-neutral-700">{t.message}</p>
-              <div className="mt-2 text-xs text-neutral-400">
-                {t.orderId ? `Order ${t.orderId} · ` : ''}
-                {t.uid ? `User ${t.uid}` : 'Guest'}
+              <p className="text-sm text-neutral-700 bg-white/50 rounded-xl p-4 border border-neutral-100">{t.message}</p>
+              <div className="mt-4 flex items-center gap-2 text-xs font-medium text-neutral-500">
+                {t.orderId ? (
+                  <span className="flex items-center gap-1"><span className="text-neutral-400">Order</span> <span className="text-neutral-800">#{t.orderId}</span></span>
+                ) : null}
+                {t.orderId && <span className="text-neutral-300">•</span>}
+                <span className="flex items-center gap-1"><span className="text-neutral-400">User</span> <span className="text-neutral-800">{t.uid || 'Guest'}</span></span>
               </div>
             </div>
           ))}

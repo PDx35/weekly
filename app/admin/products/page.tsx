@@ -370,29 +370,31 @@ function Products() {
         onChange={handleImport}
       />
 
-      <AdminPageHeader
-        title="Products"
-        action={
-          <div className="flex items-center gap-2">
-            <AdminButton
-              variant="ghost"
-              onClick={downloadSampleCsv}
-            >
-              ↓ Sample CSV
-            </AdminButton>
-            <AdminButton
-              variant="ghost"
-              onClick={() => fileRef.current?.click()}
-              disabled={categories.length === 0 || importing}
-            >
-              {importing ? 'Importing…' : '⬆ Import CSV'}
-            </AdminButton>
-            <AdminButton onClick={openNew} disabled={categories.length === 0}>
-              + Add product
-            </AdminButton>
-          </div>
-        }
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+        <AdminPageHeader
+          title="Products"
+          action={
+            <div className="flex items-center gap-2">
+              <AdminButton
+                variant="ghost"
+                onClick={downloadSampleCsv}
+              >
+                ↓ Sample CSV
+              </AdminButton>
+              <AdminButton
+                variant="ghost"
+                onClick={() => fileRef.current?.click()}
+                disabled={categories.length === 0 || importing}
+              >
+                {importing ? 'Importing…' : '⬆ Import CSV'}
+              </AdminButton>
+              <AdminButton onClick={openNew} disabled={categories.length === 0}>
+                + Add product
+              </AdminButton>
+            </div>
+          }
+        />
+      </div>
 
       {categories.length === 0 && !loading && (
         <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700">
@@ -402,38 +404,40 @@ function Products() {
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {!loading && products.length > 0 && (
-        <FilterBar>
-          <AdminInput
-            placeholder="Search name…"
-            value={searchQ}
-            onChange={(e) => setSearchQ(e.target.value)}
-            className="!w-52"
-          />
-          <AdminSelect
-            value={filterCat}
-            onChange={(e) => setFilterCat(e.target.value)}
-            className="!w-44"
-          >
-            <option value="all">All categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect
-            value={filterAvail}
-            onChange={(e) => setFilterAvail(e.target.value as 'all' | 'yes' | 'no')}
-            className="!w-36"
-          >
-            <option value="all">Availability</option>
-            <option value="yes">Available</option>
-            <option value="no">Unavailable</option>
-          </AdminSelect>
-          <span className="text-xs text-neutral-400">
-            {sorted.length} of {products.length}
-          </span>
-        </FilterBar>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <FilterBar>
+            <AdminInput
+              placeholder="Search name…"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              className="w-full sm:!w-52"
+            />
+            <AdminSelect
+              value={filterCat}
+              onChange={(e) => setFilterCat(e.target.value)}
+              className="w-full sm:!w-44"
+            >
+              <option value="all">All categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </AdminSelect>
+            <AdminSelect
+              value={filterAvail}
+              onChange={(e) => setFilterAvail(e.target.value as 'all' | 'yes' | 'no')}
+              className="w-full sm:!w-36"
+            >
+              <option value="all">Availability</option>
+              <option value="yes">Available</option>
+              <option value="no">Unavailable</option>
+            </AdminSelect>
+            <span className="text-xs text-neutral-400">
+              {sorted.length} of {products.length}
+            </span>
+          </FilterBar>
+        </div>
       )}
 
       {loading ? (
@@ -443,45 +447,73 @@ function Products() {
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No products match filters.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200/60 bg-white/60 shadow-sm backdrop-blur-xl p-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+          <table className="w-full text-sm text-left">
+            <thead className="border-b border-neutral-200 bg-white/50 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               <tr>
-                <SortTh label="Name" sortKey="name" current={sort} onToggle={toggle} />
+                <SortTh label="Product" sortKey="name" current={sort} onToggle={toggle} />
                 <SortTh label="Category" sortKey="category" current={sort} onToggle={toggle} />
                 <SortTh label="Price" sortKey="price" current={sort} onToggle={toggle} />
                 <SortTh label="Stock" sortKey="stock" current={sort} onToggle={toggle} />
                 <SortTh label="Available" sortKey="available" current={sort} onToggle={toggle} />
-                <th className="px-4 py-2.5" />
+                <th className="px-6 py-4" />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-neutral-100">
               {sorted.map((p) => (
-                <tr key={p.id} className="border-t border-neutral-100">
-                  <td className="px-4 py-2.5 font-medium">{p.name}</td>
-                  <td className="px-4 py-2.5 text-neutral-600">{categoryName(p.category)}</td>
-                  <td className="px-4 py-2.5">
+                <tr key={p.id} className="group transition-all duration-200 hover:bg-neutral-50/80 hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative z-0 hover:z-10 cursor-pointer rounded-xl">
+                  <td className="px-6 py-3">
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50">
+                        {p.imageUrls?.[0] ? (
+                          <img src={p.imageUrls[0]} alt={p.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                            <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-semibold text-neutral-900 transition-colors group-hover:text-emerald-700">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-neutral-600">{categoryName(p.category)}</td>
+                  <td className="px-6 py-4 font-medium text-neutral-800">
                     {p.discountPrice && p.discountPrice < p.price ? (
-                      <span>
-                        {rupee(p.discountPrice)}{' '}
-                        <s className="text-neutral-400">{rupee(p.price)}</s>
+                      <span className="flex items-center gap-1.5">
+                        {rupee(p.discountPrice)}
+                        <s className="text-xs text-neutral-400">{rupee(p.price)}</s>
                       </span>
                     ) : (
                       rupee(p.price ?? 0)
                     )}
                   </td>
-                  <td className="px-4 py-2.5">{p.stock ?? 0}</td>
-                  <td className="px-4 py-2.5">{p.isAvailable ? 'Yes' : 'No'}</td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
+                      (p.stock ?? 0) <= 0
+                        ? 'bg-rose-50 text-rose-700'
+                        : (p.stock ?? 0) <= 5
+                        ? 'bg-amber-50 text-amber-800'
+                        : 'bg-emerald-50 text-emerald-800'
+                    }`}>
+                      {p.stock ?? 0} in stock
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="relative flex items-center justify-center size-6 rounded-full bg-neutral-50 border border-neutral-200">
+                      <span className={`absolute inline-flex h-full w-full rounded-full opacity-20 ${p.isAvailable ? 'bg-emerald-500' : 'bg-neutral-500'}`} />
+                      <span className={`relative size-2 rounded-full ${p.isAvailable ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right opacity-0 transition-opacity group-hover:opacity-100">
                     <button
                       onClick={() => openEdit(p)}
-                      className="mr-3 font-medium text-emerald-700 hover:underline"
+                      className="mr-3 font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => del(p)}
-                      className="font-medium text-red-600 hover:underline"
+                      className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                     >
                       Delete
                     </button>

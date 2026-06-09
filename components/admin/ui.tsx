@@ -123,7 +123,7 @@ export function AdminModal({
 /** Page heading with an optional action slot. */
 export function AdminPageHeader({ title, action }: { title: string; action?: ReactNode }) {
   return (
-    <div className="mb-8 flex items-center justify-between gap-4">
+    <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <h1 className="text-2xl font-black tracking-tight text-neutral-900">{title}</h1>
       {action}
     </div>

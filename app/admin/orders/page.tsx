@@ -97,45 +97,49 @@ function Orders() {
 
   return (
     <>
-      <AdminPageHeader title="Orders" />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+        <AdminPageHeader title="Orders" />
+      </div>
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {!loading && orders.length > 0 && (
-        <FilterBar>
-          <AdminInput
-            placeholder="Search order id…"
-            value={searchQ}
-            onChange={(e) => setSearchQ(e.target.value)}
-            className="!w-52"
-          />
-          <AdminSelect
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="!w-44"
-          >
-            <option value="all">All statuses</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s.replace(/_/g, ' ')}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect
-            value={filterPayment}
-            onChange={(e) => setFilterPayment(e.target.value)}
-            className="!w-40"
-          >
-            <option value="all">All payments</option>
-            {paymentMethods.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </AdminSelect>
-          <span className="text-xs text-neutral-400">
-            {sorted.length} of {orders.length}
-          </span>
-        </FilterBar>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <FilterBar>
+            <AdminInput
+              placeholder="Search order id…"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              className="w-full sm:!w-52"
+            />
+            <AdminSelect
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full sm:!w-44"
+            >
+              <option value="all">All statuses</option>
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {s.replace(/_/g, ' ')}
+                </option>
+              ))}
+            </AdminSelect>
+            <AdminSelect
+              value={filterPayment}
+              onChange={(e) => setFilterPayment(e.target.value)}
+              className="w-full sm:!w-40"
+            >
+              <option value="all">All payments</option>
+              {paymentMethods.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </AdminSelect>
+            <span className="text-xs text-neutral-400">
+              {sorted.length} of {orders.length}
+            </span>
+          </FilterBar>
+        </div>
       )}
 
       {loading ? (
@@ -145,42 +149,46 @@ function Orders() {
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No orders match filters.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200/60 bg-white/60 shadow-sm backdrop-blur-xl p-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+          <table className="w-full text-sm text-left">
+            <thead className="border-b border-neutral-200 bg-white/50 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               <tr>
                 <SortTh label="Order" sortKey="id" current={sort} onToggle={toggle} />
                 <SortTh label="Items" sortKey="items" current={sort} onToggle={toggle} />
                 <SortTh label="Total" sortKey="total" current={sort} onToggle={toggle} />
-                <th className="px-4 py-2.5">Payment</th>
+                <th className="px-6 py-4">Payment</th>
                 <SortTh label="Placed" sortKey="placed" current={sort} onToggle={toggle} />
                 <SortTh label="Status" sortKey="status" current={sort} onToggle={toggle} />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-neutral-100">
               {sorted.map((o) => (
-                <tr key={o.id} className="border-t border-neutral-100 align-top">
-                  <td className="px-4 py-2.5 font-medium">
+                <tr key={o.id} className="group transition-all duration-200 hover:bg-neutral-50/80 hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative z-0 hover:z-10 cursor-pointer rounded-xl align-top">
+                  <td className="px-6 py-4 font-semibold text-neutral-900 transition-colors group-hover:text-emerald-700">
                     #{o.id}
-                    <div className="text-xs font-normal text-neutral-400">{o.address?.label}</div>
+                    <div className="mt-1 text-xs font-normal text-neutral-400">{o.address?.label}</div>
                   </td>
-                  <td className="px-4 py-2.5 text-neutral-600">
-                    {o.items?.reduce((a, b) => a + b.qty, 0) ?? 0}
+                  <td className="px-6 py-4 text-neutral-600">
+                    <span className="inline-flex items-center rounded-md bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600">
+                      {o.items?.reduce((a, b) => a + b.qty, 0) ?? 0} items
+                    </span>
                   </td>
-                  <td className="px-4 py-2.5">{rupee(o.totals?.grand ?? 0)}</td>
-                  <td className="px-4 py-2.5 text-neutral-600">
-                    {o.payment?.label}
-                    <div className="text-xs text-neutral-400">{o.payment?.status}</div>
+                  <td className="px-6 py-4 font-medium text-neutral-800">{rupee(o.totals?.grand ?? 0)}</td>
+                  <td className="px-6 py-4 text-neutral-600">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-medium text-neutral-700">{o.payment?.label}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-neutral-400">{o.payment?.status}</span>
+                    </div>
                   </td>
-                  <td className="px-4 py-2.5 text-neutral-500">
+                  <td className="px-6 py-4 text-xs font-medium text-neutral-500">
                     {o.placedAt ? timeAgo(o.placedAt) : '—'}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-6 py-4">
                     <AdminSelect
                       value={o.status}
                       disabled={savingId === o.id}
                       onChange={(e) => changeStatus(o, e.target.value as OrderStatus)}
-                      className="h-8 w-44"
+                      className="h-9 w-44"
                     >
                       {STATUSES.map((s) => (
                         <option key={s} value={s}>

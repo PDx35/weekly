@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { BillRows } from '@/components/cart/BillRows';
 import { Button } from '@/components/ui/Button';
 import { Empty } from '@/components/ui/Empty';
@@ -13,7 +13,7 @@ import { catOf, find } from '@/lib/data';
 import { db } from '@/lib/firebase/client';
 import { stageFromStatus } from '@/lib/orders';
 import { routes } from '@/lib/routes';
-import type { Order } from '@/lib/types';
+import type { Order, Product } from '@/lib/types';
 import { useAuth } from '@/store/auth';
 
 const TRACK_STAGES: { k: string; icon: IconName; t: string; d: string }[] = [
@@ -30,12 +30,21 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing'>('loading');
 
+  const [liveProducts, setLiveProducts] = useState<Product[]>([]);
+
   useEffect(() => {
     let active = true;
     (async () => {
       try {
-        const snap = await getDoc(doc(db, 'orders', orderId));
+        const [snap, prodSnap] = await Promise.all([
+          getDoc(doc(db, 'orders', orderId)),
+          getDocs(collection(db, 'products')),
+        ]);
         if (!active) return;
+        
+        const products = prodSnap.docs.map((d) => ({ id: d.id, ...d.data() })) as Product[];
+        setLiveProducts(products);
+
         if (snap.exists()) {
           setOrder(snap.data() as Order);
           setStatus('ready');
@@ -120,11 +129,24 @@ export function ConfirmScreen({ orderId }: { orderId: string }) {
             <h2>Order details</h2>
             <div className="review-items">
               {order.items.map((it) => {
-                const product = find(it.productId);
+                let product = find(it.productId);
+                
+                if (!product && liveProducts.length > 0) {
+                  product = liveProducts.find((p) => p.id === it.productId);
+                  if (!product) {
+                    const parent = liveProducts.find((p) =>
+                      (p as Product & { variants?: { id: string }[] }).variants?.some((v) => v.id === it.productId)
+                    );
+                    if (parent) product = parent;
+                  }
+                }
+
                 return (
                   <div key={it.productId} className="review-item">
                     <Img
-                      cat={product ? catOf(product.cat) : undefined}
+                      product={product}
+                      src={it.imageUrl || product?.images?.[0]}
+                      cat={product ? catOf(product?.cat) : undefined}
                       ratio="1 / 1"
                       radius="8px"
                       className="review-thumb"

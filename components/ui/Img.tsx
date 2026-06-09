@@ -32,7 +32,7 @@ export function Img({
   className = '',
   radius,
 }: ImgProps) {
-  const imageUrl = src ?? product?.images?.[0];
+  const imageUrl = src ?? product?.images?.[0] ?? (product as any)?.imageUrls?.[0];
   const text = label || (product ? product.name : 'product photo');
 
   if (imageUrl) {

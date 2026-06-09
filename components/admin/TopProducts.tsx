@@ -75,7 +75,7 @@ export function TopProducts({ orders, products, categories }: TopProductsProps) 
   const maxQty = salesLeaderboard[0]?.qty ?? 1;
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-2xl border border-neutral-200/60 bg-white/60 p-5 shadow-sm backdrop-blur-xl transition-all hover:shadow-md">
       <h3 className="mb-3 text-sm font-semibold text-neutral-900">Top Selling Products</h3>
 
       {salesLeaderboard.length === 0 ? (
@@ -88,7 +88,7 @@ export function TopProducts({ orders, products, categories }: TopProductsProps) 
           {salesLeaderboard.map((item, index) => {
             const percentage = Math.min(100, Math.max(8, (item.qty / maxQty) * 100));
             return (
-              <div key={item.id} className="space-y-1.5">
+              <div key={item.id} className="group space-y-1.5 rounded-lg p-2 transition-colors hover:bg-neutral-50/80 cursor-default">
                 <div className="flex items-start justify-between gap-4 text-xs">
                   <div className="min-w-0">
                     <span className="font-semibold text-neutral-500 mr-1.5">#{index + 1}</span>
@@ -106,10 +106,10 @@ export function TopProducts({ orders, products, categories }: TopProductsProps) 
                 </div>
 
                 {/* Relative progress bar */}
-                <div className="h-2 w-full rounded-full bg-neutral-100 overflow-hidden">
+                <div className="h-2 w-full rounded-full bg-neutral-100/80 overflow-hidden shadow-inner">
                   <div
                     style={{ width: `${percentage}%` }}
-                    className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 shadow-[0_0_10px_rgba(52,211,153,0.4)] transition-all duration-1000 ease-out"
                   />
                 </div>
               </div>

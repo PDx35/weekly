@@ -67,7 +67,7 @@ export function OrderStatusBreakdown({ orders }: OrderStatusBreakdownProps) {
   }, [orders]);
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-2xl border border-neutral-200/60 bg-white/60 p-5 shadow-sm backdrop-blur-xl transition-all hover:shadow-md">
       <h3 className="mb-3 text-sm font-semibold text-neutral-900 pb-4">Order Status Distribution</h3>
 
       {stats.totalOrders === 0 ? (
@@ -85,7 +85,7 @@ export function OrderStatusBreakdown({ orders }: OrderStatusBreakdownProps) {
                 <div
                   key={s.status}
                   style={{ width: `${s.percentage}%` }}
-                  className={`${s.bgColor} h-full transition-all duration-300`}
+                  className={`${s.bgColor} h-full transition-all duration-700 ease-in-out hover:opacity-80 cursor-pointer hover:scale-y-110 origin-bottom`}
                   title={`${s.label}: ${s.count} (${s.percentage}%)`}
                 />
               ))}

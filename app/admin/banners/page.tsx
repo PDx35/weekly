@@ -270,57 +270,61 @@ function BannersManager() {
 
   return (
     <>
-      <AdminPageHeader
-        title="Banners & Promotions"
-        action={
-          <AdminButton
-            onClick={() => {
-              setEditing(null);
-              setDraft(emptyDraft());
-            }}
-          >
-            + Add Banner
-          </AdminButton>
-        }
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+        <AdminPageHeader
+          title="Banners & Promotions"
+          action={
+            <AdminButton
+              onClick={() => {
+                setEditing(null);
+                setDraft(emptyDraft());
+              }}
+            >
+              + Add Banner
+            </AdminButton>
+          }
+        />
+      </div>
       {error && <p className="mb-4 text-sm text-red-600 font-bold">{error}</p>}
 
       {!loading && items.length > 0 && (
-        <FilterBar>
-          <AdminInput
-            placeholder="Search banner title…"
-            value={searchQ}
-            onChange={(e) => setSearchQ(e.target.value)}
-            className="!w-52"
-          />
-          <AdminSelect
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="!w-44"
-          >
-            <option value="all">All Placements</option>
-            <option value="hero">Home Hero Banner</option>
-            <option value="promo">Promotional Banners</option>
-            <option value="category">Category Banners</option>
-            <option value="offer">Offer Banners</option>
-            <option value="brand">Brand Banners</option>
-            <option value="seasonal">Seasonal Banners</option>
-            <option value="mid_page">Mid-Page Banners</option>
-            <option value="footer">Footer Promo Banners</option>
-          </AdminSelect>
-          <AdminSelect
-            value={filterActive}
-            onChange={(e) => setFilterActive(e.target.value as 'all' | 'yes' | 'no')}
-            className="!w-36"
-          >
-            <option value="all">Status</option>
-            <option value="yes">Active</option>
-            <option value="no">Inactive</option>
-          </AdminSelect>
-          <span className="text-xs text-neutral-400">
-            {sorted.length} of {items.length}
-          </span>
-        </FilterBar>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+          <FilterBar>
+            <AdminInput
+              placeholder="Search banner title…"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              className="w-full sm:!w-52"
+            />
+            <AdminSelect
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="w-full sm:!w-44"
+            >
+              <option value="all">All Placements</option>
+              <option value="hero">Home Hero Banner</option>
+              <option value="promo">Promotional Banners</option>
+              <option value="category">Category Banners</option>
+              <option value="offer">Offer Banners</option>
+              <option value="brand">Brand Banners</option>
+              <option value="seasonal">Seasonal Banners</option>
+              <option value="mid_page">Mid-Page Banners</option>
+              <option value="footer">Footer Promo Banners</option>
+            </AdminSelect>
+            <AdminSelect
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value as 'all' | 'yes' | 'no')}
+              className="w-full sm:!w-36"
+            >
+              <option value="all">Status</option>
+              <option value="yes">Active</option>
+              <option value="no">Inactive</option>
+            </AdminSelect>
+            <span className="text-xs text-neutral-400">
+              {sorted.length} of {items.length}
+            </span>
+          </FilterBar>
+        </div>
       )}
 
       {loading ? (
@@ -330,32 +334,32 @@ function BannersManager() {
       ) : sorted.length === 0 ? (
         <p className="text-sm text-neutral-500">No banners matching criteria.</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+        <div className="overflow-x-auto rounded-2xl border border-neutral-200/60 bg-white/60 shadow-sm backdrop-blur-xl p-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+          <table className="w-full text-sm text-left">
+            <thead className="border-b border-neutral-200 bg-white/50 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               <tr>
                 <SortTh label="Banner Details" sortKey="title" current={sort} onToggle={toggle} />
                 <SortTh label="Placement" sortKey="type" current={sort} onToggle={toggle} />
                 <SortTh label="Priority" sortKey="priority" current={sort} onToggle={toggle} />
                 <SortTh label="Active" sortKey="active" current={sort} onToggle={toggle} />
-                <th className="px-4 py-2.5">Performance (CTR)</th>
-                <th className="px-4 py-2.5" />
+                <th className="px-6 py-4">Performance (CTR)</th>
+                <th className="px-6 py-4" />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-neutral-100">
               {sorted.map((b) => {
                 const views = b.views ?? 0;
                 const clicks = b.clicks ?? 0;
                 const ctr = views > 0 ? ((clicks / views) * 100).toFixed(1) + '%' : '0.0%';
                 
                 return (
-                  <tr key={b.id} className="border-t border-neutral-100 hover:bg-neutral-50/50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                  <tr key={b.id} className="group transition-all duration-200 hover:bg-neutral-50/80 hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] relative z-0 hover:z-10 cursor-pointer rounded-xl">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={b.imageUrlDesktop} alt="" className="h-10 w-16 object-cover rounded border border-neutral-200" />
+                        <img src={b.imageUrlDesktop} alt="" className="h-12 w-20 object-cover rounded-lg border border-neutral-200 shadow-sm transition-transform duration-300 group-hover:scale-105" />
                         <div>
-                          <div className="font-extrabold text-neutral-900 leading-tight">{b.title}</div>
+                          <div className="font-semibold text-neutral-900 leading-tight group-hover:text-emerald-700 transition-colors">{b.title}</div>
                           {b.subtitle && <div className="text-[10px] text-neutral-400 font-semibold mt-0.5">{b.subtitle}</div>}
                           <div className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded w-max mt-1">
                             Links: {b.targetType} ({b.targetValue || 'none'})
@@ -363,30 +367,30 @@ function BannersManager() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 capitalize font-bold text-neutral-600 text-xs">{b.type.replace('_', ' ')}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4 capitalize font-bold text-neutral-600 text-xs">{(b.type || 'hero').replace('_', ' ')}</td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold">{b.priority ?? 0}</span>
-                        <div className="flex flex-col gap-0.5">
-                          <button onClick={() => adjustPriority(b, 1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1 rounded">▲</button>
-                          <button onClick={() => adjustPriority(b, -1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1 rounded">▼</button>
+                        <span className="font-mono font-bold bg-neutral-100 rounded px-2 py-0.5">{b.priority ?? 0}</span>
+                        <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => adjustPriority(b, 1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1.5 py-0.5 rounded text-neutral-500 hover:text-neutral-900">▲</button>
+                          <button onClick={() => adjustPriority(b, -1)} className="text-[8px] bg-neutral-100 hover:bg-neutral-200 px-1.5 py-0.5 rounded text-neutral-500 hover:text-neutral-900">▼</button>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+                    <td className="px-6 py-4 text-xs">
+                      <span className={`px-2 py-1 rounded-full text-[9px] font-black uppercase ${
                         b.active ? 'bg-emerald-100 text-emerald-800' : 'bg-neutral-100 text-neutral-500'
                       }`}>
                         {b.active ? 'Active' : 'Disabled'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-6 py-4 text-xs">
                       <div className="font-bold text-neutral-800">
                         {clicks} clicks / {views} views
                       </div>
                       <div className="text-[10px] text-neutral-400 font-semibold mt-0.5">CTR: {ctr}</div>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-6 py-4 text-right opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         onClick={() => {
                           setEditing(b);
@@ -407,13 +411,13 @@ function BannersManager() {
                             endDate: b.endDate ?? '',
                           });
                         }}
-                        className="mr-3 font-extrabold text-emerald-700 hover:underline"
+                        className="mr-3 font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => del(b)}
-                        className="font-extrabold text-red-600 hover:underline"
+                        className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                       >
                         Delete
                       </button>
