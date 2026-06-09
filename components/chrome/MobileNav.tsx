@@ -43,6 +43,8 @@ export function MobileNav() {
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   const isProductPage = pathname.startsWith('/product/');
 
+  const isCartPage = pathname === routes.cart();
+
   let activeItem = activeVariant;
   if (!activeItem && isProductPage) {
     const slug = pathname.split('/').filter(Boolean).pop();
@@ -249,34 +251,36 @@ export function MobileNav() {
       `}} />
 
       {/* Floating Dynamic Cart Button */}
-      <div 
-        className={`floating-cart-container ${isProductPage ? 'pd-page-cart' : ''} ${
-          cartCount > 0 
-            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
-            : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
-        }`}
-      >
-        <button
-          onClick={() => router.push(routes.cart())}
-          className={`flex w-full items-center justify-between rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 px-5 py-3.5 text-white font-bold transition-all hover:brightness-105 active:scale-98 shadow-lg shadow-emerald-600/35 border border-emerald-500/30 ${
-            shouldPulse ? 'animate-cart-pulse' : ''
+      {!isCartPage && (
+        <div 
+          className={`floating-cart-container ${isProductPage ? 'pd-page-cart' : ''} ${
+            cartCount > 0 
+              ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+              : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
           }`}
         >
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <button
+            onClick={() => router.push(routes.cart())}
+            className={`flex w-full items-center justify-between rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 px-5 py-3.5 text-white font-bold transition-all hover:brightness-105 active:scale-98 shadow-lg shadow-emerald-600/35 border border-emerald-500/30 ${
+              shouldPulse ? 'animate-cart-pulse' : ''
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="text-xs font-semibold leading-none opacity-90">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+                <span className="text-sm font-extrabold mt-0.5">₹{cartSubtotal}</span>
+              </div>
             </div>
-            <div className="flex flex-col items-start">
-              <span className="text-xs font-semibold leading-none opacity-90">{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
-              <span className="text-sm font-extrabold mt-0.5">₹{cartSubtotal}</span>
+            <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-white/15 px-3.5 py-1.5 rounded-full hover:bg-white/20 transition-colors">
+              <span>View Cart</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-white/15 px-3.5 py-1.5 rounded-full hover:bg-white/20 transition-colors">
-            <span>View Cart</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
-      </div>
+          </button>
+        </div>
+      )}
 
       {/* Glassmorphic Floating Navigation Dock */}
       {!isProductPage && (

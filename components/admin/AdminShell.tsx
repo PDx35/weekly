@@ -56,7 +56,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-500 to-emerald-400 text-white shadow-lg shadow-emerald-500/20">
                 <Store size={20} strokeWidth={2.5} />
               </div>
-              <span className="font-bold text-white text-lg tracking-tight">fresh<span className="text-emerald-400">mart</span></span>
+              <span className="font-bold text-white text-lg tracking-tight">Weekly<span className="text-emerald-400">Market</span></span>
             </div>
           </div>
           <nav className="flex flex-1 flex-col gap-1.5 px-4 py-6 overflow-y-auto">

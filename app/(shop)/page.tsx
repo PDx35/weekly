@@ -1142,7 +1142,7 @@ export default function HomePage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
             </div>
             <h3 className="font-extrabold text-neutral-900 uppercase text-sm">Free Delivery</h3>
-            <p className="text-xs text-neutral-500 max-w-[200px]">Get free delivery on all orders above ₹500 within your local area.</p>
+            <p className="text-xs text-neutral-500 max-w-[200px]">Get free delivery on all orders above ₹99 within your local area.</p>
           </div>
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="h-16 w-16 bg-neutral-100 text-neutral-900 rounded-full flex items-center justify-center shadow-sm">

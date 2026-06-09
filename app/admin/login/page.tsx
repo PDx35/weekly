@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
     <div className="grid min-h-screen place-items-center bg-neutral-50 p-4">
       <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <div className="mb-1 text-xl font-bold">
-          fresh<span className="text-emerald-600">mart</span> Admin
+          Weekly<span className="text-emerald-600">Market</span> Admin
         </div>
         <p className="mb-5 text-sm text-neutral-500">Sign in with your admin account.</p>
 

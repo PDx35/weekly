@@ -11,7 +11,7 @@ import type { OrderTotals } from './types';
 /** Free delivery at/above this subtotal; flat fee below it. */
 export const FREE_DELIVERY_THRESHOLD = 199;
 const DELIVERY_FEE = 25;
-const HANDLING_FEE = 9;
+const HANDLING_FEE = 0;
 
 /** Compute the full bill from a subtotal and an optional discount. */
 export function computeBill(subtotal: number, discount = 0): OrderTotals {
