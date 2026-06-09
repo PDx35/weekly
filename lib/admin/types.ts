@@ -28,6 +28,7 @@ export interface AdminProduct {
   imageUrls: string[];
   weight?: number;
   pieces?: number;
+  lowStockAlertAt?: number;
 }
 
 export interface AdminCoupon {

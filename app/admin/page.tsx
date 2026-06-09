@@ -10,6 +10,11 @@ import type { AdminCategory, AdminProduct, AdminTicket } from '@/lib/admin/types
 import { timeAgo } from '@/lib/orders';
 import type { Order } from '@/lib/types';
 
+// Import the new analytics widgets
+import { InventoryAlerts } from '@/components/admin/InventoryAlerts';
+import { TopProducts } from '@/components/admin/TopProducts';
+import { OrderStatusBreakdown } from '@/components/admin/OrderStatusBreakdown';
+
 interface DashboardData {
   products: AdminProduct[];
   categories: AdminCategory[];
@@ -19,11 +24,21 @@ interface DashboardData {
 
 const PENDING_STATUSES: Order['status'][] = ['pending', 'confirmed', 'packed', 'out_for_delivery'];
 
-function StatCard({ label, value }: { label: string; value: string | number }) {
+function StatCard({
+  label,
+  value,
+  hoverColor = 'hover:border-emerald-500',
+}: {
+  label: string;
+  value: string | number;
+  hoverColor?: string;
+}) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
-      <div className="text-2xl font-bold text-neutral-900">{value}</div>
-      <div className="mt-1 text-sm text-neutral-500">{label}</div>
+    <div
+      className={`rounded-xl border border-neutral-200 bg-white p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${hoverColor}`}
+    >
+      <div className="text-2xl font-bold text-neutral-900 leading-none">{value}</div>
+      <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">{label}</div>
     </div>
   );
 }
@@ -55,10 +70,22 @@ function Dashboard() {
   const stats = useMemo(() => {
     if (!data) return null;
     const { products, categories, orders, tickets } = data;
-    const revenue = orders
-      .filter((o) => o.status !== 'cancelled')
-      .reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
+
+    // Filter out cancelled orders for revenue and performance calculations
+    const activeOrders = orders.filter((o) => o.status !== 'cancelled');
+    const revenue = activeOrders.reduce((sum, o) => sum + (o.totals?.grand ?? 0), 0);
     const recent = [...orders].sort((a, b) => (b.placedAt ?? 0) - (a.placedAt ?? 0)).slice(0, 6);
+
+    // Calculate Average Order Value (AOV)
+    const aov = activeOrders.length > 0 ? revenue / activeOrders.length : 0;
+
+    // Calculate Active Customers (unique UIDs in active orders)
+    const activeCustomers = new Set(activeOrders.map((o) => o.uid)).size;
+
+    // Calculate Order Fulfillment Rate (delivered orders / active orders)
+    const deliveredCount = orders.filter((o) => o.status === 'delivered').length;
+    const fulfillmentRate = activeOrders.length > 0 ? (deliveredCount / activeOrders.length) * 100 : 0;
+
     return {
       products: products.length,
       categories: categories.length,
@@ -67,6 +94,9 @@ function Dashboard() {
       pending: orders.filter((o) => PENDING_STATUSES.includes(o.status)).length,
       openTickets: tickets.filter((t) => t.status !== 'resolved').length,
       recent,
+      aov,
+      activeCustomers,
+      fulfillmentRate,
     };
   }, [data]);
 
@@ -83,15 +113,20 @@ function Dashboard() {
         <p className="text-sm text-neutral-500">Loading…</p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-            <StatCard label="Revenue" value={rupee(stats.revenue)} />
-            <StatCard label="Orders" value={stats.orders} />
-            <StatCard label="Pending fulfilment" value={stats.pending} />
-            <StatCard label="Products" value={stats.products} />
-            <StatCard label="Categories" value={stats.categories} />
-            <StatCard label="Open tickets" value={stats.openTickets} />
+          {/* Key KPI Stats Grid */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <StatCard label="Revenue" value={rupee(stats.revenue)} hoverColor="hover:border-emerald-500" />
+            <StatCard label="Orders" value={stats.orders} hoverColor="hover:border-cyan-500" />
+            <StatCard label="Pending fulfilment" value={stats.pending} hoverColor="hover:border-amber-500" />
+            <StatCard label="Average Order Value" value={rupee(Math.round(stats.aov))} hoverColor="hover:border-teal-500" />
+            <StatCard label="Fulfillment Rate" value={`${Math.round(stats.fulfillmentRate)}%`} hoverColor="hover:border-emerald-600" />
+            <StatCard label="Active Customers" value={stats.activeCustomers} hoverColor="hover:border-sky-500" />
+            <StatCard label="Products" value={stats.products} hoverColor="hover:border-neutral-400" />
+            <StatCard label="Categories" value={stats.categories} hoverColor="hover:border-neutral-400" />
+            <StatCard label="Open tickets" value={stats.openTickets} hoverColor="hover:border-rose-500" />
           </div>
 
+          {/* Composed Performance Charts */}
           <div className="mt-6">
             <DashboardCharts
               orders={data.orders}
@@ -100,6 +135,14 @@ function Dashboard() {
             />
           </div>
 
+          {/* New Analytics Row: Out/Low Stock, Top Products, Order Status Distribution */}
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <InventoryAlerts products={data.products} categories={data.categories} />
+            <TopProducts orders={data.orders} products={data.products} categories={data.categories} />
+            <OrderStatusBreakdown orders={data.orders} />
+          </div>
+
+          {/* Recent Orders Section */}
           <h2 className="pt-8 pb-4 text-base font-semibold text-neutral-900">Recent orders</h2>
           <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
             {stats.recent.length === 0 ? (
