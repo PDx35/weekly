@@ -12,6 +12,25 @@ export interface AdminCategory {
   browseIconUrl?: string;
 }
 
+/**
+ * A purchasable pack-size option for a product (e.g. "5 kg", "10 kg").
+ * Matches the Firestore `products.variants[]` shape consumed by the storefront.
+ */
+export interface AdminProductVariant {
+  /** Stable id (timestamp-based for new variants). */
+  id: string;
+  /** Display label shown as the pack-size chip, e.g. "5 kg". */
+  label: string;
+  /** MRP / list price for this variant. */
+  price: number;
+  /** Selling price when discounted (0/absent = sell at `price`). */
+  discountPrice?: number;
+  unit?: string;
+  stock: number;
+  weight?: number;
+  pieces?: number;
+}
+
 export interface AdminProduct {
   id: string;
   name: string;
@@ -29,6 +48,8 @@ export interface AdminProduct {
   weight?: number;
   pieces?: number;
   lowStockAlertAt?: number;
+  /** Optional pack-size variants; empty/absent = single default option. */
+  variants?: AdminProductVariant[];
 }
 
 export interface AdminCoupon {

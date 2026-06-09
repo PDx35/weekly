@@ -15,7 +15,7 @@ import {
 } from '@/components/admin/ui';
 import { rupee } from '@/components/ui/Price';
 import { createDoc, listAll, removeDoc, updateDocFields } from '@/lib/admin/db';
-import type { AdminCategory, AdminProduct } from '@/lib/admin/types';
+import type { AdminCategory, AdminProduct, AdminProductVariant } from '@/lib/admin/types';
 import { auth, storage } from '@/lib/firebase/client';
 
 function ProductImageUploadField({
@@ -146,6 +146,125 @@ function ProductImageUploadField({
   );
 }
 
+/** A variant row in the editor; numeric fields are strings while editing. */
+type VariantDraft = {
+  id: string;
+  label: string;
+  price: string;
+  discountPrice: string;
+  unit: string;
+  stock: string;
+  weight: string;
+  pieces: string;
+};
+
+/**
+ * Inline editor for a product's pack-size variants. Each row carries its own
+ * price/discount/stock/weight, mirroring the storefront's variant selector.
+ */
+function VariantEditor({
+  variants,
+  onChange,
+}: {
+  variants: VariantDraft[];
+  onChange: (variants: VariantDraft[]) => void;
+}) {
+  const update = (index: number, patch: Partial<VariantDraft>) =>
+    onChange(variants.map((v, i) => (i === index ? { ...v, ...patch } : v)));
+  const remove = (index: number) => onChange(variants.filter((_, i) => i !== index));
+  const add = () => onChange([...variants, emptyVariant()]);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-neutral-700">Variants (pack sizes)</span>
+        <AdminButton variant="ghost" onClick={add}>
+          + Add variant
+        </AdminButton>
+      </div>
+
+      {variants.length === 0 ? (
+        <p className="text-xs text-neutral-400">
+          No variants — the product is sold as a single option using the fields above.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {variants.map((v, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-3"
+            >
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <Labeled label="Label">
+                    <AdminInput
+                      value={v.label}
+                      onChange={(e) => update(i, { label: e.target.value })}
+                      placeholder="5 kg"
+                    />
+                  </Labeled>
+                </div>
+                <Labeled label="Unit">
+                  <AdminInput
+                    value={v.unit}
+                    onChange={(e) => update(i, { unit: e.target.value })}
+                    placeholder="kg"
+                  />
+                </Labeled>
+                <Labeled label="Weight">
+                  <AdminInput
+                    type="number"
+                    value={v.weight}
+                    onChange={(e) => update(i, { weight: e.target.value })}
+                  />
+                </Labeled>
+                <Labeled label="Price (MRP)">
+                  <AdminInput
+                    type="number"
+                    value={v.price}
+                    onChange={(e) => update(i, { price: e.target.value })}
+                  />
+                </Labeled>
+                <Labeled label="Discount price">
+                  <AdminInput
+                    type="number"
+                    value={v.discountPrice}
+                    onChange={(e) => update(i, { discountPrice: e.target.value })}
+                    placeholder="0 = none"
+                  />
+                </Labeled>
+                <Labeled label="Stock">
+                  <AdminInput
+                    type="number"
+                    value={v.stock}
+                    onChange={(e) => update(i, { stock: e.target.value })}
+                  />
+                </Labeled>
+                <Labeled label="Pieces">
+                  <AdminInput
+                    type="number"
+                    value={v.pieces}
+                    onChange={(e) => update(i, { pieces: e.target.value })}
+                  />
+                </Labeled>
+              </div>
+              <div className="mt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => remove(i)}
+                  className="text-xs font-medium text-rose-600 hover:text-rose-700 hover:underline"
+                >
+                  Remove variant
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 type Draft = {
   name: string;
   category: string;
@@ -158,7 +277,19 @@ type Draft = {
   imageUrls: string;
   weight: string;
   pieces: string;
+  variants: VariantDraft[];
 };
+
+const emptyVariant = (): VariantDraft => ({
+  id: '',
+  label: '',
+  price: '',
+  discountPrice: '',
+  unit: '',
+  stock: '0',
+  weight: '',
+  pieces: '1',
+});
 
 const emptyDraft = (categoryId = ''): Draft => ({
   name: '',
@@ -172,6 +303,18 @@ const emptyDraft = (categoryId = ''): Draft => ({
   imageUrls: '',
   weight: '',
   pieces: '1',
+  variants: [],
+});
+
+const toVariantDraft = (v: AdminProductVariant): VariantDraft => ({
+  id: v.id ?? '',
+  label: v.label ?? '',
+  price: String(v.price ?? ''),
+  discountPrice: v.discountPrice ? String(v.discountPrice) : '',
+  unit: v.unit ?? '',
+  stock: String(v.stock ?? 0),
+  weight: v.weight ? String(v.weight) : '',
+  pieces: v.pieces ? String(v.pieces) : '1',
 });
 
 const toDraft = (p: AdminProduct): Draft => ({
@@ -186,6 +329,7 @@ const toDraft = (p: AdminProduct): Draft => ({
   imageUrls: (p.imageUrls ?? []).join('\n'),
   weight: p.weight ? String(p.weight) : '',
   pieces: p.pieces ? String(p.pieces) : '1',
+  variants: (p.variants ?? []).map(toVariantDraft),
 });
 
 const parseImages = (text: string): string[] =>
@@ -302,6 +446,18 @@ function Products() {
       setError('Name and category are required.');
       return;
     }
+    // Variants must have a label; drop blank rows, assign stable ids to new ones.
+    const variantRows = draft.variants.filter((v) => v.label.trim());
+    const variants: AdminProductVariant[] = variantRows.map((v, i) => ({
+      id: v.id || `${Date.now()}${i}`,
+      label: v.label.trim(),
+      price: Number(v.price) || 0,
+      discountPrice: Number(v.discountPrice) || 0,
+      unit: v.unit.trim(),
+      stock: Number(v.stock) || 0,
+      weight: Number(v.weight) || 0,
+      pieces: Number(v.pieces) || 1,
+    }));
     setSaving(true);
     setError('');
     const payload = {
@@ -316,6 +472,7 @@ function Products() {
       imageUrls: parseImages(draft.imageUrls),
       weight: Number(draft.weight) || 0,
       pieces: Number(draft.pieces) || 1,
+      variants,
     };
     try {
       if (editing) await updateDocFields('products', editing.id, payload);
@@ -616,6 +773,12 @@ function Products() {
                 value={draft.imageUrls}
                 onChange={(val) => setDraft({ ...draft, imageUrls: val })}
                 pathPrefix={draft.name || 'product'}
+              />
+            </div>
+            <div className="col-span-2">
+              <VariantEditor
+                variants={draft.variants}
+                onChange={(variants) => setDraft({ ...draft, variants })}
               />
             </div>
             <div className="col-span-2">
