@@ -8,6 +8,7 @@ export default function AdminRegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [secret, setSecret] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [success, setSuccess] = useState(false);
@@ -20,7 +21,7 @@ export default function AdminRegisterPage() {
       const res = await fetch('/api/admin/setup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name, secret: '' }),
+        body: JSON.stringify({ email, password, name, secret }),
       });
 
       const data = await res.json();
@@ -87,6 +88,16 @@ export default function AdminRegisterPage() {
                 required
                 disabled={busy}
                 minLength={6}
+              />
+            </Labeled>
+            <Labeled label="Setup Secret">
+              <AdminInput
+                type="password"
+                value={secret}
+                onChange={(e) => setSecret(e.target.value)}
+                placeholder="Enter the ADMIN_SETUP_SECRET"
+                required
+                disabled={busy}
               />
             </Labeled>
             {err && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">{err}</p>}
