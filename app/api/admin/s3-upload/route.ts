@@ -52,7 +52,17 @@ export async function POST(req: Request) {
       key,
     });
   } catch (error) {
-    console.error('Error generating presigned URL:', error);
-    return NextResponse.json({ error: 'Failed to generate upload URL' }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error generating presigned URL:', message);
+    return NextResponse.json({
+      error: 'Failed to generate upload URL',
+      detail: message,
+      env: {
+        hasRegion: !!process.env.S3_REGION,
+        hasBucket: !!process.env.S3_BUCKET_NAME,
+        hasKeyId: !!process.env.S3_ACCESS_KEY_ID,
+        hasSecret: !!process.env.S3_SECRET_ACCESS_KEY,
+      },
+    }, { status: 500 });
   }
 }
